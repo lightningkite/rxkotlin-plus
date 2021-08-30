@@ -5,7 +5,7 @@ plugins {
     id("kotlin-android")
     id("maven")
     id("signing")
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`
 }
 
@@ -53,7 +53,7 @@ android {
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(30)
-        versionCode = 5
+        versionCode = 0
         versionName = "0.0.1"
     }
     compileOptions {
@@ -64,7 +64,6 @@ android {
 dependencies {
     api(project(":rxkotlin-property"))
     api(project(":rxkotlin-property-android"))
-    implementation(kotlin("reflect"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

@@ -1,6 +1,5 @@
 package com.lightningkite.rxkotlinproperty
 
-import com.lightningkite.rxkotlinproperty.StandardProperty
 import org.junit.Assert.*
 import org.junit.Test
 

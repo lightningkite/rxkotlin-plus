@@ -5,7 +5,7 @@ plugins {
     id("kotlin-android")
     id("maven")
     id("signing")
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`
 }
 
@@ -43,12 +43,9 @@ val deploymentPassword = (System.getenv("OSSRH_PASSWORD")?.takeUnless { it.isEmp
 val useDeployment = deploymentUser != null || deploymentPassword != null
 
 repositories {
-    jcenter()
     mavenCentral()
-    maven("https://jitpack.io")
     google()
     mavenLocal()
-    maven("https://maven.google.com")
 }
 
 android {
@@ -56,8 +53,8 @@ android {
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(30)
-        versionCode = 5
-        versionName = "1.0.5"
+        versionCode = 0
+        versionName = "0.0.1"
     }
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -66,16 +63,13 @@ android {
 
 dependencies {
     api(project(":rxkotlin-property"))
-    testImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test:runner:1.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    api("androidx.appcompat:appcompat:1.2.0")
-    api("com.google.android.material:material:1.2.1")
-    api("androidx.recyclerview:recyclerview:1.1.0")
-    implementation("com.github.bumptech.glide:glide:4.11.0")
-    implementation("com.squareup.picasso:picasso:2.71828")
-    api("com.romandanylyk:pageindicatorview:1.0.3")
+    api("com.google.android.material:material:1.4.0")
+    api("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
 }
 
 tasks {

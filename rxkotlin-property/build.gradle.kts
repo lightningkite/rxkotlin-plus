@@ -4,7 +4,7 @@ plugins {
     id("kotlin")
     id("maven")
     id("signing")
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`
 }
 
