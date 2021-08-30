@@ -55,7 +55,8 @@ tasks {
     val sourceJar by creating(Jar::class) {
         archiveClassifier.set("sources")
 //        from(android.sourceSets["main"].java.srcDirs)
-        from(project.projectDir.resolve("src/include"))
+//        from(project.projectDir.resolve("src"))
+        from(kotlin.sourceSets["main"].kotlin.srcDirs)
     }
     val javadocJar by creating(Jar::class) {
         dependsOn("dokkaJavadoc")
@@ -68,104 +69,96 @@ tasks {
     }
 }
 
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            val release by creating(MavenPublication::class) {
-//                from(components["release"])
-//                artifact(tasks.getByName("sourceJar"))
-//                artifact(tasks.getByName("javadocJar"))
-//                groupId = project.group.toString()
-//                artifactId = project.name
-//                version = project.version.toString()
-//            }
-//            val debug by creating(MavenPublication::class) {
-//                from(components["debug"])
-//                artifact(tasks.getByName("sourceJar"))
-//                artifact(tasks.getByName("javadocJar"))
-//                groupId = project.group.toString()
-//                artifactId = project.name
-//                version = project.version.toString()
-//            }
-//        }
-//    }
-//    if (useSigning) {
-//        signing {
-//            useInMemoryPgpKeys(signingKey, signingPassword)
-//            sign(configurations.archives.get())
-//        }
-//    }
-//}
+afterEvaluate {
+    publishing {
+        publications {
+            val java by creating(MavenPublication::class) {
+                from(components["java"])
+                artifact(tasks.getByName("sourceJar"))
+                artifact(tasks.getByName("javadocJar"))
+                groupId = project.group.toString()
+                artifactId = project.name
+                version = project.version.toString()
+            }
+        }
+    }
+    if (useSigning) {
+        signing {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(configurations.archives.get())
+        }
+    }
+}
 
-//if (useDeployment) {
-//    tasks.register("uploadSnapshot") {
-//        group = "upload"
-//        finalizedBy("uploadArchives")
-//        doLast {
-//            project.version = project.version.toString() + "-SNAPSHOT"
-//        }
-//    }
-//
-//    tasks.named<Upload>("uploadArchives") {
-//        repositories.withConvention(MavenRepositoryHandlerConvention::class) {
-//            mavenDeployer {
-//                beforeDeployment {
-//                    signing.signPom(this)
-//                }
-//            }
-//        }
-//
-//        repositories.withGroovyBuilder {
-//            "mavenDeployer"{
-//                "repository"("url" to "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-//                    "authentication"(
-//                        "userName" to deploymentUser,
-//                        "password" to deploymentPassword
-//                    )
-//                }
-//                "snapshotRepository"("url" to "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-//                    "authentication"(
-//                        "userName" to deploymentUser,
-//                        "password" to deploymentPassword
-//                    )
-//                }
-//                "pom" {
-//                    "project" {
-//                        setProperty("name", "RxKotlin-Property")
-//                        setProperty("packaging", "aar")
-//                        setProperty(
-//                            "description",
-//                            "An observable library for kotlin based on rxkotlin."
-//                        )
-//                        setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
-//
-//                        "scm" {
-//                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-property.git")
-//                            setProperty(
-//                                "developerConnection",
-//                                "scm:git:https://github.com/lightningkite/rxkotlin-property.git"
-//                            )
-//                            setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
-//                        }
-//
-//                        "licenses" {
-//                            "license"{
-//                                setProperty("name", "The MIT License (MIT)")
-//                                setProperty("url", "https://www.mit.edu/~amini/LICENSE.md")
-//                                setProperty("distribution", "repo")
-//                            }
-//
-//                        }
-//                        "developers"{
-//                            "developer"{
-//                                setProperty("id", "bjsvedin")
-//                                setProperty("name", "Brady Svedin")
-//                                setProperty("email", "brady@lightningkite.com")
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+if (useDeployment) {
+    tasks.register("uploadSnapshot") {
+        group = "upload"
+        finalizedBy("uploadArchives")
+        doLast {
+            project.version = project.version.toString() + "-SNAPSHOT"
+        }
+    }
+
+    tasks.named<Upload>("uploadArchives") {
+        repositories.withConvention(MavenRepositoryHandlerConvention::class) {
+            mavenDeployer {
+                beforeDeployment {
+                    signing.signPom(this)
+                }
+            }
+        }
+
+        repositories.withGroovyBuilder {
+            "mavenDeployer"{
+                "repository"("url" to "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    "authentication"(
+                        "userName" to deploymentUser,
+                        "password" to deploymentPassword
+                    )
+                }
+                "snapshotRepository"("url" to "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                    "authentication"(
+                        "userName" to deploymentUser,
+                        "password" to deploymentPassword
+                    )
+                }
+                "pom" {
+                    "project" {
+                        setProperty("name", "RxKotlin-Property")
+                        setProperty("packaging", "aar")
+                        setProperty(
+                            "description",
+                            "An observable library for kotlin based on rxkotlin."
+                        )
+                        setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+
+                        "scm" {
+                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-property.git")
+                            setProperty(
+                                "developerConnection",
+                                "scm:git:https://github.com/lightningkite/rxkotlin-property.git"
+                            )
+                            setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                        }
+
+                        "licenses" {
+                            "license"{
+                                setProperty("name", "The MIT License (MIT)")
+                                setProperty("url", "https://www.mit.edu/~amini/LICENSE.md")
+                                setProperty("distribution", "repo")
+                            }
+
+                        }
+                        "developers"{
+                            "developer"{
+                                setProperty("id", "bjsvedin")
+                                setProperty("name", "Brady Svedin")
+                                setProperty("email", "brady@lightningkite.com")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

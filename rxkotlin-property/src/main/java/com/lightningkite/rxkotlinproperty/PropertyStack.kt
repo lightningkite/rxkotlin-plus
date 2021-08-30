@@ -3,11 +3,11 @@ package com.lightningkite.rxkotlinproperty
 
 import io.reactivex.subjects.PublishSubject
 
-class ObservableStack<T : Any> : Property<List<T>>() {
+class PropertyStack<T : Any> : Property<List<T>>() {
 
     companion object {
-        fun <T: Any> withFirst(value: T): ObservableStack<T> {
-            val result = ObservableStack<T>()
+        fun <T: Any> withFirst(value: T): PropertyStack<T> {
+            val result = PropertyStack<T>()
             result.reset(value)
             return result
         }

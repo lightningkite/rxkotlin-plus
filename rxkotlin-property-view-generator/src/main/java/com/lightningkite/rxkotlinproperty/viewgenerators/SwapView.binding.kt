@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.lightningkite.rxkotlinproperty.until
-import com.lightningkite.rxkotlinproperty.ObservableStack
+import com.lightningkite.rxkotlinproperty.PropertyStack
 import com.lightningkite.rxkotlinproperty.Property
 import com.lightningkite.rxkotlinproperty.android.removed
 import com.lightningkite.rxkotlinproperty.subscribeBy
@@ -17,7 +17,7 @@ import com.lightningkite.rxkotlinproperty.subscribeBy
  *
  */
 
-fun <T: ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: ObservableStack<T>) {
+fun <T: ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: PropertyStack<T>) {
     var currentData = obs.stack.lastOrNull()
     var currentStackSize = obs.stack.size
     var currentView = currentData?.generate(dependency) ?: View(context)
@@ -82,7 +82,7 @@ fun <T: ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: Obser
     }.until(this.removed)
 }
 
-fun <T: ViewGenerator> SwapView.bindStackWithAnimation(dependency: ActivityAccess, obs: ObservableStack<Pair<T, ViewTransition>>) {
+fun <T: ViewGenerator> SwapView.bindStackWithAnimation(dependency: ActivityAccess, obs: PropertyStack<Pair<T, ViewTransition>>) {
     var currentData = obs.stack.lastOrNull()
     var currentStackSize = obs.stack.size
     var currentView = currentData?.first?.generate(dependency) ?: View(context)

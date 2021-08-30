@@ -22,7 +22,7 @@ import io.reactivex.rxkotlin.subscribeBy
  *
  * Created by jivie on 10/12/15.
  */
-abstract class ButterflyActivity(val changeToTheme: Int? = null) : AccessibleActivity() {
+abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : AccessibleActivity() {
 
     abstract val main: ViewGenerator
     lateinit var view: View
