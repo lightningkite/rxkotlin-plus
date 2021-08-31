@@ -12,7 +12,7 @@ import com.lightningkite.rxkotlinproperty.subscribeBy
 
 /**
  *
- * Binds the view in the swap view to the top ViewGenerator in the ObservableStack.
+ * Binds the view in the swap view to the top ViewGenerator in the PropertyStack.
  * Any changes to the top of the stack will manifest in the swap view.
  *
  */
@@ -151,7 +151,7 @@ fun <T: ViewGenerator> SwapView.bindStackWithAnimation(dependency: ActivityAcces
 
 /**
  *
- * Binds the view in the swap view to the top ViewGenerator in the ObservableStack.
+ * Binds the view in the swap view to the top ViewGenerator in the PropertyStack.
  * Any changes to the top of the stack will manifest in the swap view.
  *
  */

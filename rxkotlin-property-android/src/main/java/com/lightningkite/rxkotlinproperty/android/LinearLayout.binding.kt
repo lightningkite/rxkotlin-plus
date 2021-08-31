@@ -14,7 +14,7 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: Standard
 
 /**
  *
- * Binds all the subviews in the linear layout to the list of data in the observable.
+ * Binds all the subviews in the linear layout to the list of data in the property.
  * makeView is the lambda that will return the view linked to an individual item in the
  * list.
  *
@@ -23,7 +23,7 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: Standard
  * layout.bind(
  *  data = data,
  *  defaultValue = 0,
- *  makeView = { observable ->
+ *  makeView = { property ->
  *       val xml = ViewXml()
  *       val view = xml.setup(dependency)
  *       view.text.bindString(obs.map{it -> it.toString()})
@@ -67,7 +67,7 @@ fun <T> LinearLayout.bind(
 
 /**
  *
- * Binds all the subviews in the linear layout to the list of data in the observable in the horizontal direction.
+ * Binds all the subviews in the linear layout to the list of data in the property in the horizontal direction.
  * makeView is the lambda that will return the view linked to an individual item in the
  * list.
  *
@@ -76,7 +76,7 @@ fun <T> LinearLayout.bind(
  * layout.bind(
  *  data = data,
  *  defaultValue = 0,
- *  makeView = { observable ->
+ *  makeView = { property ->
  *       val xml = ViewXml()
  *       val view = xml.setup(dependency)
  *       view.text.bindString(obs.map{it -> it.toString()})

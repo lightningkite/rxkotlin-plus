@@ -4,12 +4,12 @@ package com.lightningkite.rxkotlinproperty
 import io.reactivex.Observable
 
 class CombineManyProperty<IN>(
-    val observables: List<Property<IN>>
+    val properties: List<Property<IN>>
 ): Property<List<IN>>() {
     override val value: List<IN>
-        get() = observables.map { it.value }
+        get() = properties.map { it.value }
     override val onChange: Observable<Box<List<IN>>>
-        get() = observables.map { it.observable }.combineLatest { items ->
+        get() = properties.map { it.observable }.combineLatest { items ->
             Box.wrap(items.map { it.value })
         }.skip(1)
 }

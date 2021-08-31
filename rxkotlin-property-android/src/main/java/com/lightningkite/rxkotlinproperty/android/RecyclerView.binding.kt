@@ -49,7 +49,7 @@ private fun RecyclerView.defaultLayoutManager(){
 
 /**
  *
- * Binds the data in the RecyclerView to the data provided by the Observable.
+ * Binds the data in the RecyclerView to the data provided by the property.
  * makeView is the lambda that creates the view tied to each item in the list of data.
  *
  * Example
@@ -57,7 +57,7 @@ private fun RecyclerView.defaultLayoutManager(){
  * recycler.bind(
  *  data = data,
  *  defaultValue = 0,
- *  makeView = { observable ->
+ *  makeView = { property ->
  *       val xml = ViewXml()
  *       val view = xml.setup(dependency)
  *       view.text.bindString(obs.map{it -> it.toString()})
@@ -188,7 +188,7 @@ fun RecyclerView.bindMulti(
 
 /**
  *
- * Binds the data in the RecyclerView to the data provided by the Observable.
+ * Binds the data in the RecyclerView to the data provided by the property.
  * This is designed for multiple types of views in the recycler view.
  * determineType is a lambda with an item input. The returned value is an Int determined by what view that item needs.
  * makeView is the lambda that creates the view for the type determined

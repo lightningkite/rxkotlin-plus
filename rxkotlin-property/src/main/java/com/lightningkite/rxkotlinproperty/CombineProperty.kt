@@ -4,17 +4,17 @@ package com.lightningkite.rxkotlinproperty
 import io.reactivex.Observable
 
 class CombineProperty<T, A, B>(
-    val observableA: Property<A>,
-    val observableB: Property<B>,
+    val propertyA: Property<A>,
+    val propertyB: Property<B>,
     val combiner: (A, B) -> T
 ): Property<T>() {
     override val value: T
-        get() = combiner(observableA.value, observableB.value)
+        get() = combiner(propertyA.value, propertyB.value)
     override val onChange: Observable<Box<T>>
         get() {
             val combinerCopy = combiner
-            return observableA.onChange.startWith(Box.wrap(observableA.value))
-                .combineLatest(observableB.onChange.startWith(Box.wrap(observableB.value))) { a: Box<A>, b: Box<B> -> boxWrap(combinerCopy(a.value, b.value)) }
+            return propertyA.onChange.startWith(Box.wrap(propertyA.value))
+                .combineLatest(propertyB.onChange.startWith(Box.wrap(propertyB.value))) { a: Box<A>, b: Box<B> -> boxWrap(combinerCopy(a.value, b.value)) }
                 .skip(1)
         }
 }

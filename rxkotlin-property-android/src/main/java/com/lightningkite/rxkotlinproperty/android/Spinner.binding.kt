@@ -12,8 +12,8 @@ import com.lightningkite.rxkotlinproperty.*
 
 /**
  *
- * Binds the available options to the options Observable
- * Binds the selected item to the selected observable.
+ * Binds the available options to the options property
+ * Binds the selected item to the selected property.
  * makeView is a lambda that return the view for each item in the drop down.
  *
  */

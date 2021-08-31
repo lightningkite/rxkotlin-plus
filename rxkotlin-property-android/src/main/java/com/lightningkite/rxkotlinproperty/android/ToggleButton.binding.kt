@@ -8,7 +8,7 @@ import com.lightningkite.rxkotlinproperty.until
 
 /**
  *
- * Binds the textOn value in the toggle button to the observable provided
+ * Binds the textOn value in the toggle button to the property provided
  *
  * Example
  * val text = StandardProperty("Test Text")
@@ -16,8 +16,8 @@ import com.lightningkite.rxkotlinproperty.until
  *
  */
 
-fun ToggleButton.bindOnString(observable: Property<String>) {
-    observable.subscribeBy { value ->
+fun ToggleButton.bindOnString(property: Property<String>) {
+    property.subscribeBy { value ->
         this.textOn = value
         if(this.isChecked){
             this.text = value
@@ -27,7 +27,7 @@ fun ToggleButton.bindOnString(observable: Property<String>) {
 
 /**
  *
- * Binds the textOff value in the toggle button to the observable provided
+ * Binds the textOff value in the toggle button to the property provided
  *
  * Example
  * val text = StandardProperty("Test Text")
@@ -35,8 +35,8 @@ fun ToggleButton.bindOnString(observable: Property<String>) {
  *
  */
 
-fun ToggleButton.bindOffString(observable: Property<String>) {
-    observable.subscribeBy { value ->
+fun ToggleButton.bindOffString(property: Property<String>) {
+    property.subscribeBy { value ->
         this.textOff = value
         if(!this.isChecked){
             this.text = value
@@ -46,7 +46,7 @@ fun ToggleButton.bindOffString(observable: Property<String>) {
 
 /**
  *
- * Binds both the textOff and textOn values in the toggle button to the observable provided
+ * Binds both the textOff and textOn values in the toggle button to the property provided
  *
  * Example
  * val text = StandardProperty("Test Text")
@@ -54,8 +54,8 @@ fun ToggleButton.bindOffString(observable: Property<String>) {
  *
  */
 
-fun ToggleButton.bindOnOffString(observable: Property<String>) {
-    observable.subscribeBy { value ->
+fun ToggleButton.bindOnOffString(property: Property<String>) {
+    property.subscribeBy { value ->
         this.textOff = value
         this.textOn = value
         this.text = value

@@ -41,8 +41,8 @@ fun <Element, Destination : Any> Observable<Element>.mapNotNull(transform: (Elem
             Observable.just(result)
     }
 
-fun <Element : Any> Single<Element>.working(observable: MutableProperty<Boolean>): Single<Element> {
+fun <Element : Any> Single<Element>.working(property: MutableProperty<Boolean>): Single<Element> {
     return this
-        .doOnSubscribe { it -> observable.value = true  }
-        .doFinally { observable.value = false  }
+        .doOnSubscribe { it -> property.value = true  }
+        .doFinally { property.value = false  }
 }

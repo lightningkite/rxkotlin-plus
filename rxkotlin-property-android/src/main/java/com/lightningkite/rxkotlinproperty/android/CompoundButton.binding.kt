@@ -8,9 +8,9 @@ import com.lightningkite.rxkotlinproperty.until
 
 /**
  *
- * Binds the checked state of the compound button to be checked if the observable value matches the initial value provided.
- * If the button is tapped, it will change the observable value to be the value provided.
- * If the observable value is changed the button check state will update.
+ * Binds the checked state of the compound button to be checked if the property value matches the initial value provided.
+ * If the button is tapped, it will change the property value to be the value provided.
+ * If the property value is changed the button check state will update.
  *
  * Example
  * val selected = StandardProperty<Int>(1)
@@ -18,17 +18,17 @@ import com.lightningkite.rxkotlinproperty.until
  * If selected has a value of 1 the button is checked, otherwise it is unchecked.
  *
  */
-fun <T> CompoundButton.bindSelect(value: T, observable: MutableProperty<T>) {
-    observable.subscribeBy { it ->
+fun <T> CompoundButton.bindSelect(value: T, property: MutableProperty<T>) {
+    property.subscribeBy { it ->
         val shouldBeChecked = it == value
         if (this.isChecked != shouldBeChecked) {
             this.isChecked = shouldBeChecked
         }
     }.until(this.removed)
     setOnCheckedChangeListener { buttonView, isChecked ->
-        if (isChecked && observable.value != value) {
-            observable.value = value
-        } else if (!isChecked && observable.value == value) {
+        if (isChecked && property.value != value) {
+            property.value = value
+        } else if (!isChecked && property.value == value) {
             this.isChecked = true
         }
     }

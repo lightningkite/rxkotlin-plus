@@ -6,25 +6,25 @@ import com.lightningkite.rxkotlinproperty.subscribeBy
 import com.lightningkite.rxkotlinproperty.until
 
 fun ProgressBar.bindInt(
-    observable: Property<Int>
+    property: Property<Int>
 ){
-    observable.subscribeBy { value ->
+    property.subscribeBy { value ->
         this.progress = value
     }.until(this@bindInt.removed)
 }
 
 fun ProgressBar.bindLong(
-    observable: Property<Long>
+    property: Property<Long>
 ){
-    observable.subscribeBy { value ->
+    property.subscribeBy { value ->
         this.progress = value.toInt()
     }.until(this@bindLong.removed)
 }
 
 fun ProgressBar.bindFloat(
-    observable: Property<Float>
+    property: Property<Float>
 ){
-    observable.subscribeBy { value ->
+    property.subscribeBy { value ->
         this.progress = (value.coerceIn(0.0f, 1.0f) * 100).toInt()
     }.until(this@bindFloat.removed)
 }

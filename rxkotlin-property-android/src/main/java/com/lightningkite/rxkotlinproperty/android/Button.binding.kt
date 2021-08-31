@@ -9,8 +9,8 @@ import com.lightningkite.rxkotlinproperty.until
 
 /**
  *
- * Bind Active when provided an observable<Boolean> will turn the button on and off, or allow it to be tapped,
- * according to the value in the observable. As well you can provide a drawable for each state.
+ * Bind Active when provided an property<Boolean> will turn the button on and off, or allow it to be tapped,
+ * according to the value in the property. As well you can provide a drawable for each state.
  * The background drawable will change as the state does. By Default drawable doesn't change.
  *
  *  * Example
@@ -20,11 +20,11 @@ import com.lightningkite.rxkotlinproperty.until
  * when active the button background will be the blue border, otherwise the button will be the grey border.
  */
 fun Button.bindActive(
-    observable: Property<Boolean>,
+    property: Property<Boolean>,
     activeBackground: Drawable,
     inactiveBackground: Drawable
 ) {
-    observable.subscribeBy { it ->
+    property.subscribeBy { it ->
         this.isEnabled = it
         if (it) {
             this.background = activeBackground

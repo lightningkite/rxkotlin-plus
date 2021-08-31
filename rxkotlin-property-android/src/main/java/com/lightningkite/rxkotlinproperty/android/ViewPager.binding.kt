@@ -8,8 +8,8 @@ import com.lightningkite.rxkotlinproperty.*
 
 /**
  *
- * Binds the items in the ViewPager to the list provided, and the showing index to the observable provided.
- * Any changes to the observable will change the current page. AS well updating the pager will update the observable.
+ * Binds the items in the ViewPager to the list provided, and the showing index to the property provided.
+ * Any changes to the property will change the current page. AS well updating the pager will update the property.
  *
  */
 fun <T> ViewPager.bind(
@@ -49,8 +49,8 @@ fun <T> ViewPager.bind(
 
 /**
  *
- * Binds the items in the ViewPager to the list provided, and the showing index to the observable provided.
- * Any changes to the observable will change the current page. AS well updating the pager will update the observable.
+ * Binds the items in the ViewPager to the list provided, and the showing index to the property provided.
+ * Any changes to the property will change the current page. AS well updating the pager will update the property.
  *
  */
 fun <T> ViewPager.bind(

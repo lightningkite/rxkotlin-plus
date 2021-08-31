@@ -10,8 +10,8 @@ import com.lightningkite.rxkotlinproperty.until
 /**
  *
  * Binds the edit text internal text to the Property provided.
- * Any changes made by the user to the edit text will update the value of the observable.
- * Any changes directly to the observable will manifest in the edit text.
+ * Any changes made by the user to the edit text will update the value of the property.
+ * Any changes directly to the property will manifest in the edit text.
  *
  * Example
  * val name = StandardProperty("Jason")
@@ -19,18 +19,18 @@ import com.lightningkite.rxkotlinproperty.until
  * The name field will be populated with "Jason"
  *
  */
-fun EditText.bindString(observable: MutableProperty<String>) {
-    observable.subscribeBy { value ->
-        if (observable.value != text.toString()) {
-            this.setText(observable.value)
+fun EditText.bindString(property: MutableProperty<String>) {
+    property.subscribeBy { value ->
+        if (property.value != text.toString()) {
+            this.setText(property.value)
         }
     }.until(this.removed)
     addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {}
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            if (observable.value != s) {
-                observable.value = (s.toString())
+            if (property.value != s) {
+                property.value = (s.toString())
             }
         }
     })
