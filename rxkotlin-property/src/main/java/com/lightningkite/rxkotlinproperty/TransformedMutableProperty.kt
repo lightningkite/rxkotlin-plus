@@ -21,7 +21,7 @@ class TransformedMutableProperty<A, B>(
         }
     override val onChange: Observable<Box<B>> get() {
         val readCopy = read
-        return basedOn.onChange.map { it -> boxWrap(readCopy(it.value)) }
+        return basedOn.onChange.map { it -> Box.wrap(readCopy(it.value)) }
     }
 }
 

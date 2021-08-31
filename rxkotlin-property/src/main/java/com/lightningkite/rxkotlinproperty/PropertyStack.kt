@@ -23,13 +23,13 @@ class PropertyStack<T : Any> : Property<List<T>>() {
 
     fun push(t: T) {
         stack.add(t)
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
     }
 
     fun swap(t: T) {
         stack.removeAt(stack.lastIndex)
         stack.add(t)
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
     }
 
     fun pop(): Boolean {
@@ -37,7 +37,7 @@ class PropertyStack<T : Any> : Property<List<T>>() {
             return false
         }
         stack.removeAt(stack.lastIndex)
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
         return true
     }
 
@@ -46,7 +46,7 @@ class PropertyStack<T : Any> : Property<List<T>>() {
             return false
         }
         stack.removeAt(stack.lastIndex)
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
         return true
     }
 
@@ -71,7 +71,7 @@ class PropertyStack<T : Any> : Property<List<T>>() {
                 found = true
             }
         }
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
     }
 
     fun popTo(predicate: (T) -> Boolean) {
@@ -83,7 +83,7 @@ class PropertyStack<T : Any> : Property<List<T>>() {
                 found = true
             }
         }
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
     }
 
     fun root() {
@@ -93,6 +93,6 @@ class PropertyStack<T : Any> : Property<List<T>>() {
     fun reset(t: T) {
         stack.clear()
         stack.add(t)
-        onChange.onNext(boxWrap(stack))
+        onChange.onNext(Box.wrap(stack))
     }
 }

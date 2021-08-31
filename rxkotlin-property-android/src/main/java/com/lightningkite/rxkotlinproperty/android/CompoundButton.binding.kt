@@ -37,10 +37,10 @@ fun <T> CompoundButton.bindSelect(value: T, property: MutableProperty<T>) {
 
 /**
  *
- * Binds the checked state of the compound button to be checked if the observable value matches the initial value provided.
- * If the button is tapped, it will change the observable value to be the value provided.
- * If the observable value is changed the button check state will update
- * This Nullable however allows for the Observable to be null. If null the button is UNCHECKED
+ * Binds the checked state of the compound button to be checked if the property value matches the initial value provided.
+ * If the button is tapped, it will change the property value to be the value provided.
+ * If the property value is changed the button check state will update
+ * This Nullable however allows for the property to be null. If null the button is UNCHECKED
  *
  * Example
  * val selected = StandardProperty<Int>(1)
@@ -49,18 +49,18 @@ fun <T> CompoundButton.bindSelect(value: T, property: MutableProperty<T>) {
  *
  */
 
-fun <T> CompoundButton.bindSelectNullable(value: T, observable: MutableProperty<T?>) {
-    observable.subscribeBy { it ->
+fun <T> CompoundButton.bindSelectNullable(value: T, property: MutableProperty<T?>) {
+    property.subscribeBy { it ->
         val shouldBeChecked = it == value
         if (this.isChecked != shouldBeChecked) {
             this.isChecked = shouldBeChecked
         }
     }.until(this.removed)
     setOnCheckedChangeListener { buttonView, isChecked ->
-        if (isChecked && observable.value != value) {
-            observable.value = value
-        } else if (!isChecked && observable.value == value) {
-            observable.value = null
+        if (isChecked && property.value != value) {
+            property.value = value
+        } else if (!isChecked && property.value == value) {
+            property.value = null
         }
     }
 }
@@ -70,10 +70,10 @@ fun <T> CompoundButton.bindSelectNullable(value: T, observable: MutableProperty<
 
 /**
  *
- * Binds the checked state of the compound button to be checked if the observable value matches the initial value provided or null.
- * The observable is allowed to be null, and the button will be marked as checked if it is null.
- * If the button is tapped, it will change the observable value to be the value provided.
- * If the observable value is changed the button check state will update.
+ * Binds the checked state of the compound button to be checked if the property value matches the initial value provided or null.
+ * The property is allowed to be null, and the button will be marked as checked if it is null.
+ * If the button is tapped, it will change the property value to be the value provided.
+ * If the property value is changed the button check state will update.
  *
  * Example
  * val selected = StandardProperty<Int>(1)
@@ -81,9 +81,9 @@ fun <T> CompoundButton.bindSelectNullable(value: T, observable: MutableProperty<
  * If selected has a value of 1 or null the button is checked, otherwise it is unchecked.
  *
  */
-fun <T> CompoundButton.bindSelectInvert(value: T, observable: MutableProperty<T?>) {
+fun <T> CompoundButton.bindSelectInvert(value: T, property: MutableProperty<T?>) {
     var suppress = false
-    observable.subscribeBy { it ->
+    property.subscribeBy { it ->
         if (!suppress) {
             suppress = true
             val shouldBeChecked = it == value || it == null
@@ -96,11 +96,11 @@ fun <T> CompoundButton.bindSelectInvert(value: T, observable: MutableProperty<T?
     setOnCheckedChangeListener { buttonView, isChecked ->
         if (!suppress) {
             suppress = true
-            if (!isChecked && observable.value == value) {
-                observable.value = null
+            if (!isChecked && property.value == value) {
+                property.value = null
                 buttonView.isChecked = true
-            } else if (observable.value != value) {
-                observable.value = value
+            } else if (property.value != value) {
+                property.value = value
                 buttonView.isChecked = true
             }
             suppress = false
@@ -110,9 +110,9 @@ fun <T> CompoundButton.bindSelectInvert(value: T, observable: MutableProperty<T?
 
 /**
  *
- * Binds the checked state of the compound button to the observable value.
- * If the button is tapped, it will change the observable value.
- * If the observable value is changed the button check state will update to match.
+ * Binds the checked state of the compound button to the property value.
+ * If the button is tapped, it will change the property value.
+ * If the property value is changed the button check state will update to match.
  *
  *
  * Example
@@ -121,15 +121,15 @@ fun <T> CompoundButton.bindSelectInvert(value: T, observable: MutableProperty<T?
  * If selected is true the button is checked, otherwise it is unchecked.
  *
  */
-fun CompoundButton.bind(observable: MutableProperty<Boolean>) {
-    observable.subscribeBy { it ->
+fun CompoundButton.bind(property: MutableProperty<Boolean>) {
+    property.subscribeBy { it ->
         if (it != this.isChecked) {
             this.isChecked = it
         }
     }.until(this.removed)
     setOnCheckedChangeListener { buttonView, isChecked ->
-        if (observable.value != isChecked) {
-            observable.value = isChecked
+        if (property.value != isChecked) {
+            property.value = isChecked
         }
     }
 }

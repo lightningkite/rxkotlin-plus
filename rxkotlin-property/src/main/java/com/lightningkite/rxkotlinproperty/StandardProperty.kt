@@ -12,10 +12,10 @@ class StandardProperty<T>(
         get() = underlyingValue
         set(value) {
             underlyingValue = value
-            onChange.onNext(boxWrap(value))
+            onChange.onNext(Box.wrap(value))
         }
 
     override fun update() {
-        onChange.onNext(boxWrap(value))
+        onChange.onNext(Box.wrap(value))
     }
 }

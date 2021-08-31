@@ -14,7 +14,7 @@ class CombineProperty<T, A, B>(
         get() {
             val combinerCopy = combiner
             return propertyA.onChange.startWith(Box.wrap(propertyA.value))
-                .combineLatest(propertyB.onChange.startWith(Box.wrap(propertyB.value))) { a: Box<A>, b: Box<B> -> boxWrap(combinerCopy(a.value, b.value)) }
+                .combineLatest(propertyB.onChange.startWith(Box.wrap(propertyB.value))) { a: Box<A>, b: Box<B> -> Box.wrap(combinerCopy(a.value, b.value)) }
                 .skip(1)
         }
 }

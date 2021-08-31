@@ -18,10 +18,10 @@ class EventToProperty<T>(override var value: T, val wrapped: Observable<Box<T>>)
 }
 
 fun <Element> Observable<Element>.asProperty(defaultValue: Element): Property<Element> {
-    return EventToProperty<Element>(defaultValue, this.map { it -> boxWrap(it) })
+    return EventToProperty<Element>(defaultValue, this.map { it -> Box.wrap(it) })
 }
 
-fun <Element> Observable<Element>.asObservablePropertyDefaultNull(): Property<Element?> {
-    return EventToProperty<Element?>(null, this.map { it -> boxWrap(it) })
+fun <Element> Observable<Element>.asPropertyDefaultNull(): Property<Element?> {
+    return EventToProperty<Element?>(null, this.map { it -> Box.wrap(it) })
 }
 

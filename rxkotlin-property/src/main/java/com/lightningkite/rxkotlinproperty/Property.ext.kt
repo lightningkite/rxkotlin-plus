@@ -6,8 +6,8 @@ import io.reactivex.annotations.CheckReturnValue
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 
-val <T> Property<T>.observable: Observable<Box<T>> get() = Observable.concat(Observable.create { it.onNext(boxWrap(value)); it.onComplete() }, onChange)
-val <T> Property<T>.observableNN: Observable<T> get() = Observable.concat(Observable.create { it.onNext(boxWrap(value)); it.onComplete() }, onChange).map { it -> it.value }
+val <T> Property<T>.observable: Observable<Box<T>> get() = Observable.concat(Observable.create { it.onNext(Box.wrap(value)); it.onComplete() }, onChange)
+val <T> Property<T>.observableNN: Observable<T> get() = Observable.concat(Observable.create { it.onNext(Box.wrap(value)); it.onComplete() }, onChange).map { it -> it.value }
 val <T> Property<T>.onChangeNN: Observable<T> get() = onChange.map { it -> it.value }
 
 @CheckReturnValue
@@ -46,3 +46,4 @@ fun Property<Boolean>.whileActive(action: () -> Disposable): Disposable {
         }
     }
 }
+

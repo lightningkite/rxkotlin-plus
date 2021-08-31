@@ -40,8 +40,8 @@ fun EditText.bindString(property: MutableProperty<String>) {
  *
  * Binds the edit text internal text to the Property provided.
  * This also limits the input type to a valid integer.
- * Any changes made by the user to the edit text will update the value of the observable.
- * Any changes directly to the observable will manifest in the edit text.
+ * Any changes made by the user to the edit text will update the value of the property.
+ * Any changes directly to the property will manifest in the edit text.
  *
  * Example
  * val value = StandardProperty(23)
@@ -49,8 +49,8 @@ fun EditText.bindString(property: MutableProperty<String>) {
  * The name field will be populated with "23"
  *
  */
-fun EditText.bindInteger(observable: MutableProperty<Int>) {
-    observable.subscribeBy { value ->
+fun EditText.bindInteger(property: MutableProperty<Int>) {
+    property.subscribeBy { value ->
         val currentValue = this.text.toString().toIntOrNull()
         if (value != currentValue) {
             this.setText(value.takeUnless { it == 0 }?.toString() ?: "")
@@ -61,8 +61,8 @@ fun EditText.bindInteger(observable: MutableProperty<Int>) {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val currentValue = s.toString().toIntOrNull() ?: 0
-            if (observable.value != currentValue) {
-                observable.value = currentValue
+            if (property.value != currentValue) {
+                property.value = currentValue
             }
         }
     })
@@ -74,8 +74,8 @@ fun EditText.bindInteger(observable: MutableProperty<Int>) {
  *
  * Binds the edit text internal text to the Property provided.
  * This also limits the input type to a valid double.
- * Any changes made by the user to the edit text will update the value of the observable.
- * Any changes directly to the observable will manifest in the edit text.
+ * Any changes made by the user to the edit text will update the value of the property.
+ * Any changes directly to the property will manifest in the edit text.
  *
  * Example
  * val value = StandardProperty(23.3)
@@ -83,8 +83,8 @@ fun EditText.bindInteger(observable: MutableProperty<Int>) {
  * The name field will be populated with "23.3"
  *
  */
-fun EditText.bindDouble(observable: MutableProperty<Double>) {
-    observable.subscribeBy { value ->
+fun EditText.bindDouble(property: MutableProperty<Double>) {
+    property.subscribeBy { value ->
         val currentValue = this.text.toString().toDoubleOrNull()
         if (value != currentValue) {
             this.setText(value.takeUnless { it == 0.0 }?.toString() ?: "")
@@ -95,8 +95,8 @@ fun EditText.bindDouble(observable: MutableProperty<Double>) {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val currentValue = s.toString().toDoubleOrNull() ?: 0.0
-            if (observable.value != currentValue) {
-                observable.value = currentValue
+            if (property.value != currentValue) {
+                property.value = currentValue
             }
         }
     })
@@ -107,8 +107,8 @@ fun EditText.bindDouble(observable: MutableProperty<Double>) {
  *
  * Binds the edit text internal text to the Property provided.
  * This also limits the input type to a valid integer.
- * Any changes made by the user to the edit text will update the value of the observable.
- * Any changes directly to the observable will manifest in the edit text.
+ * Any changes made by the user to the edit text will update the value of the property.
+ * Any changes directly to the property will manifest in the edit text.
  *
  * Blanks or invalid numbers are interpreted as null.
  *
@@ -118,8 +118,8 @@ fun EditText.bindDouble(observable: MutableProperty<Double>) {
  * The name field will be populated with "23"
  *
  */
-fun EditText.bindIntegerNullable(observable: MutableProperty<Int?>) {
-    observable.subscribeBy { value ->
+fun EditText.bindIntegerNullable(property: MutableProperty<Int?>) {
+    property.subscribeBy { value ->
         val currentValue = this.text.toString().toIntOrNull()
         if (value != currentValue) {
             this.setText(value.takeUnless { it == 0 }?.toString() ?: "")
@@ -130,8 +130,8 @@ fun EditText.bindIntegerNullable(observable: MutableProperty<Int?>) {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val currentValue = s.toString().toIntOrNull()
-            if (observable.value != currentValue) {
-                observable.value = currentValue
+            if (property.value != currentValue) {
+                property.value = currentValue
             }
         }
     })
@@ -143,8 +143,8 @@ fun EditText.bindIntegerNullable(observable: MutableProperty<Int?>) {
  *
  * Binds the edit text internal text to the Property provided.
  * This also limits the input type to a valid double.
- * Any changes made by the user to the edit text will update the value of the observable.
- * Any changes directly to the observable will manifest in the edit text.
+ * Any changes made by the user to the edit text will update the value of the property.
+ * Any changes directly to the property will manifest in the edit text.
  *
  * Blanks or invalid numbers are interpreted as null.
  *
@@ -154,8 +154,8 @@ fun EditText.bindIntegerNullable(observable: MutableProperty<Int?>) {
  * The name field will be populated with "23.3"
  *
  */
-fun EditText.bindDoubleNullable(observable: MutableProperty<Double?>) {
-    observable.subscribeBy { value ->
+fun EditText.bindDoubleNullable(property: MutableProperty<Double?>) {
+    property.subscribeBy { value ->
         val currentValue = this.text.toString().toDoubleOrNull()
         if (value != currentValue) {
             this.setText(value.takeUnless { it == 0.0 }?.toString() ?: "")
@@ -166,8 +166,8 @@ fun EditText.bindDoubleNullable(observable: MutableProperty<Double?>) {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val currentValue = s.toString().toDoubleOrNull()
-            if (observable.value != currentValue) {
-                observable.value = currentValue
+            if (property.value != currentValue) {
+                property.value = currentValue
             }
         }
     })
