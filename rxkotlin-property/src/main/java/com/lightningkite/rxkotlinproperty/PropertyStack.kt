@@ -50,18 +50,6 @@ class PropertyStack<T : Any> : Property<List<T>>() {
         return true
     }
 
-//    fun backPressPop(): Boolean {
-//        val last = stack.lastOrNull()
-//        if(last is HasBackAction && last.onBackPressed()) return true
-//        return pop()
-//    }
-//
-//    fun backPressDismiss(): Boolean {
-//        val last = stack.lastOrNull()
-//        if(last is HasBackAction && last.onBackPressed()) return true
-//        return dismiss()
-//    }
-
     fun popTo(t: T) {
         var found = false
         for (i in 0..stack.lastIndex) {
