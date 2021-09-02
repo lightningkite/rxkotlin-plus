@@ -20,7 +20,7 @@ class ViewStringTemplate(val template: ViewString, val arguments: List<Any>) : V
     override fun get(dependency: ActivityAccess): String {
         val templateResolved = template.get(dependency)
         val fixedArguments = arguments.map { it -> (it as? ViewString)?.get(dependency) ?: it }
-        return templateResolved.format(fixedArguments)
+        return templateResolved.format(*fixedArguments.toTypedArray())
     }
 }
 
