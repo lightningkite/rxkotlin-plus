@@ -9,5 +9,6 @@ pluginManagement {
 }
 
 include("rxkotlin-property")
+include("rxkotlin-property-plugin")
 include("rxkotlin-property-android")
 include("rxkotlin-property-view-generator")
