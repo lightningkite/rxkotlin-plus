@@ -214,7 +214,7 @@ private fun generateFile(
         line("//")
         line("// ${viewName}VG.swift")
         line("// Created by RxKotlinProperty Prototype Generator")
-        line("// Sections of this file can be replaces if the marker, '${CodeSection.overwriteMarker}', is left in place.")
+        line("// Sections of this file will be replaced if the marker, '${CodeSection.overwriteMarker}', is left in place.")
         line("//")
         line("package $packageName")
         line("")

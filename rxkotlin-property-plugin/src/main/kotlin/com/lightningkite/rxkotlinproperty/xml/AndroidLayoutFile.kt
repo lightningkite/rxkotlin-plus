@@ -191,7 +191,7 @@ data class AndroidLayoutFile(
     fun toString(packageName: String, applicationPackage: String): String = """
     |//
     |// ${name}Xml.kt
-    |// Created by Khrysalis XML Android
+    |// Created by RxKotlinProperty Prototype Generator
     |//
     |package $packageName
     |

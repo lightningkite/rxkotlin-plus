@@ -46,6 +46,7 @@ class PrototyperPlugin : Plugin<Project> {
             }
         }
         project.tasks.create("VGPrototype") { task ->
+            task.dependsOn("VGCreateLayoutClasses")
             task.group = "prototype"
             task.doLast {
                 createPrototypeViewGenerators(
