@@ -24,6 +24,6 @@ class SwapView @JvmOverloads constructor(
             getChildAt(i).dispatchApplyWindowInsets(newInsets)
         }
         return newInsets
-        return insets
     }
 }
+

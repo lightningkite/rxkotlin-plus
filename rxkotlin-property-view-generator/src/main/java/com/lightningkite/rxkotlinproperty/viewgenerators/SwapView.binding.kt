@@ -3,11 +3,10 @@ package com.lightningkite.rxkotlinproperty.viewgenerators
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.lightningkite.rxkotlinproperty.until
-import com.lightningkite.rxkotlinproperty.PropertyStack
-import com.lightningkite.rxkotlinproperty.Property
+import com.lightningkite.rxkotlinproperty.*
 import com.lightningkite.rxkotlinproperty.android.removed
-import com.lightningkite.rxkotlinproperty.subscribeBy
+import java.util.*
+
 
 
 /**
@@ -17,7 +16,7 @@ import com.lightningkite.rxkotlinproperty.subscribeBy
  *
  */
 
-fun <T: ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: PropertyStack<T>) {
+fun <T : ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: PropertyStack<T>) {
     var currentData = obs.stack.lastOrNull()
     var currentStackSize = obs.stack.size
     var currentView = currentData?.generate(dependency) ?: View(context)
@@ -28,7 +27,7 @@ fun <T: ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: Prope
         )
     )
     obs.subscribeBy { datas ->
-        visibility = if(datas.isEmpty()) View.GONE else View.VISIBLE
+        visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
         post {
             if (currentData == datas.lastOrNull()) return@post
 
@@ -80,16 +79,23 @@ fun <T: ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: Prope
             }
         }
     }.until(this.removed)
+
 }
 
-fun <T: ViewGenerator> SwapView.bindStackWithAnimation(dependency: ActivityAccess, obs: PropertyStack<Pair<T, ViewTransition>>) {
+fun <T : ViewGenerator> SwapView.bindStackWithAnimation(
+    dependency: ActivityAccess,
+    obs: PropertyStack<Pair<T, ViewTransition>>
+) {
     var currentData = obs.stack.lastOrNull()
     var currentStackSize = obs.stack.size
     var currentView = currentData?.first?.generate(dependency) ?: View(context)
 
-    addView(currentView, FrameLayout.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT))
+    addView(
+        currentView, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+    )
 
     obs.subscribeBy { datas ->
         if (currentData == datas.lastOrNull()) return@subscribeBy
@@ -113,7 +119,9 @@ fun <T: ViewGenerator> SwapView.bindStackWithAnimation(dependency: ActivityAcces
             addView(
                 newView, FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT))
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            )
 
             when {
                 oldStackSize == 0 -> {

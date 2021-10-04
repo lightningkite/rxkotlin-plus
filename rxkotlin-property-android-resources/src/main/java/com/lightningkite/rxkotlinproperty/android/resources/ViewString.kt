@@ -1,36 +1,36 @@
 //! This file will translate using Khrysalis.
-package com.lightningkite.rxkotlinproperty.viewgenerators
+package com.lightningkite.rxkotlinproperty.android.resources
 
-import com.lightningkite.rxkotlinproperty.android.StringResource
+import android.content.Context
 
 
 interface ViewString {
-    fun get(dependency: ActivityAccess): String
+    fun get(context: Context): String
 }
 
 class ViewStringRaw(val string: String) : ViewString {
-    override fun get(dependency: ActivityAccess): String = string
+    override fun get(context: Context): String = string
 }
 
-class ViewStringResource(val resource: StringResource) : ViewString {
-    override fun get(dependency: ActivityAccess): String = dependency.context.getString(resource)
+class ViewStringResource(val resource: Int) : ViewString {
+    override fun get(context: Context): String = context.getString(resource)
 }
 
 class ViewStringTemplate(val template: ViewString, val arguments: List<Any>) : ViewString {
-    override fun get(dependency: ActivityAccess): String {
-        val templateResolved = template.get(dependency)
-        val fixedArguments = arguments.map { it -> (it as? ViewString)?.get(dependency) ?: it }
+    override fun get(context: Context): String {
+        val templateResolved = template.get(context)
+        val fixedArguments = arguments.map { it -> (it as? ViewString)?.get(context) ?: it }
         return templateResolved.format(*fixedArguments.toTypedArray())
     }
 }
 
-class ViewStringComplex(val getter: (ActivityAccess) -> String) : ViewString {
-    override fun get(dependency: ActivityAccess): String = getter(dependency)
+class ViewStringComplex(val getter: (Context) -> String) : ViewString {
+    override fun get(context: Context): String = getter(context)
 }
 
 class ViewStringList(val parts: List<ViewString>, val separator: String = "\n"): ViewString {
-    override fun get(dependency: ActivityAccess): String {
-        return parts.joinToString(separator) { it -> it.get(dependency) }
+    override fun get(context: Context): String {
+        return parts.joinToString(separator) { it -> it.get(context) }
     }
 }
 

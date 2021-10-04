@@ -63,12 +63,11 @@ android {
 
 dependencies {
     api(project(":rxkotlin-property"))
+    api(project(":rxkotlin-property-android"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    api("com.google.android.material:material:1.4.0")
-    api("androidx.recyclerview:recyclerview:1.2.1")
+    api("com.google.android.exoplayer:exoplayer:2.15.1")
     implementation("com.github.bumptech.glide:glide:4.12.0")
 }
 

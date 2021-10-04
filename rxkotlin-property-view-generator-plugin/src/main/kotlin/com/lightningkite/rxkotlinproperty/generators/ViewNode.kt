@@ -94,7 +94,7 @@ class ViewNode(
             }
         }
 
-        fun root(map: Map<String, ViewNode>) = map["Root"] ?: map["Main"] ?: map["Landing"] ?: map.values.firstOrNull()
+        fun root(map: Map<String, ViewNode>): ViewNode? = map["Root"] ?: map["Main"] ?: map["Landing"] ?: map.values.firstOrNull()
 
         fun assertNoLeaks(map: Map<String, ViewNode>) {
             val root = root(map) ?: return

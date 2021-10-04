@@ -49,10 +49,10 @@ repositories {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(31)
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(30)
+        targetSdkVersion(31)
         versionCode = 0
         versionName = "0.0.1"
     }
@@ -63,7 +63,7 @@ android {
 
 dependencies {
     api(project(":rxkotlin-property"))
-    api(project(":rxkotlin-property-android"))
+    api(project(":rxkotlin-property-android-resources"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

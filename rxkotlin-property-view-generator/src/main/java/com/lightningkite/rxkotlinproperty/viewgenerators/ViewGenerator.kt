@@ -2,6 +2,8 @@
 package com.lightningkite.rxkotlinproperty.viewgenerators
 
 import android.view.View
+import com.lightningkite.rxkotlinproperty.android.resources.ViewString
+import com.lightningkite.rxkotlinproperty.android.resources.ViewStringRaw
 
 abstract class ViewGenerator {
     open val titleString: ViewString

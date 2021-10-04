@@ -2,6 +2,7 @@
 package com.lightningkite.rxkotlinproperty.viewgenerators
 
 import com.lightningkite.rxkotlinproperty.StandardProperty
+import com.lightningkite.rxkotlinproperty.android.resources.ViewString
 import io.reactivex.subjects.PublishSubject
 
 val lastDialog = StandardProperty<DialogRequest?>(null)
