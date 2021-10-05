@@ -224,6 +224,7 @@ private fun generateFile(
         line("import android.view.*")
         line("import com.lightningkite.rxkotlinproperty.*")
         line("import com.lightningkite.rxkotlinproperty.android.*")
+        line("import com.lightningkite.rxkotlinproperty.android.resources.*")
         line("import com.lightningkite.rxkotlinproperty.viewgenerators.*")
         line("import $applicationPackage.R")
         line("import $applicationPackage.layouts.*")

@@ -62,7 +62,7 @@ android {
 }
 
 dependencies {
-    api(project(":rxkotlin-property"))
+    api(project(":property"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

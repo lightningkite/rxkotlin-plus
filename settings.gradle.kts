@@ -8,8 +8,8 @@ pluginManagement {
     }
 }
 
-include("rxkotlin-property")
-include("rxkotlin-property-plugin")
-include("rxkotlin-property-android")
-include("rxkotlin-property-android-resources")
-include("rxkotlin-property-view-generator")
+include("property")
+include("android-bindings")
+include("android-resources")
+include("view-generator")
+include("view-generator-plugin")
