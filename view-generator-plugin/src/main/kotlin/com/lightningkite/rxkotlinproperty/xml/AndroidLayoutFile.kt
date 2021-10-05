@@ -100,7 +100,7 @@ data class AndroidLayoutFile(
                         if(node.name == "Spinner") {
                             val raw = node.allAttributes["android:textColor"]
                             val colorText = when {
-                                raw == null -> "0xFF000000.asColor()"
+                                raw == null -> "0xFF000000.toInt()"
                                 raw.startsWith("@color/") -> {
                                     val colorName = raw.removePrefix("@color/")
                                     "view.context.getColor(R.color.${colorName})"
@@ -198,6 +198,7 @@ data class AndroidLayoutFile(
     |import android.widget.*
     |import android.view.*
     |import com.lightningkite.rxkotlinproperty.viewgenerators.ActivityAccess
+    |import com.lightningkite.rxkotlinproperty.android.*
     |import $applicationPackage.R
     |
     |class ${name}Xml {
