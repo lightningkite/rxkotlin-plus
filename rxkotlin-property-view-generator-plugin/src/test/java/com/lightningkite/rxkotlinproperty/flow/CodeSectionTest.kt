@@ -60,7 +60,7 @@ class ClientSessionVG(
         xml.messages.onClick(captureWeak(this){ self -> self.clientSession.reset(MessagesListVG(stack = this.clientSession)) })
         
         //--- Set up newMessageCount
-        xml.newMessageCount.textString = "2"
+        xml.newMessageCount.text = "2"
         
         //--- Set up profile
         xml.profile.onClick(captureWeak(this){ self -> self.clientSession.reset(ClientProfileEditableVG(stack = this.clientSession, dialog = this.dialog, root = this.root)) })
