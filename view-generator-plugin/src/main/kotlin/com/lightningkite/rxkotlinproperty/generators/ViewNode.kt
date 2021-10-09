@@ -180,6 +180,14 @@ class ViewNode(
             .toSet()
     }
 
+
+    fun getStackAndFile(node: XmlNode, attribute:String):Pair<String, String>{
+        val prefix = attribute.removePrefix("@").substringBefore('/')
+        val file = attribute.substringAfter("/").camelCase().capitalize()
+        val onStack = node.allAttributes[attributeOnStack] ?: if(prefix != "layout") prefix else "stack"
+        return file to onStack
+    }
+
     fun gather(node: XmlNode, xml: File, styles: Styles, parentPath: String? = "xml") {
         val path = parentPath?.let { parentPath ->
             node.allAttributes["android:id"]?.removePrefix("@+id/")?.camelCase()?.let {
@@ -187,11 +195,11 @@ class ViewNode(
             }
         }
         node.allAttributes[attributePush]?.let {
-            val onStack = node.allAttributes[attributeOnStack] ?: "stack"
+            val (file, onStack) =  getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.Push(
                     stack = onStack,
-                    viewName = it.removePrefix("@layout/").camelCase().capitalize()
+                    viewName = file
                 )
             )
             requires.add(
@@ -203,11 +211,11 @@ class ViewNode(
             )
         }
         node.allAttributes[attributeSwap]?.let {
-            val onStack = node.allAttributes[attributeOnStack] ?: "stack"
+            val (file, onStack) =  getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.Swap(
                     stack = onStack,
-                    viewName = it.removePrefix("@layout/").camelCase().capitalize()
+                    viewName = file
                 )
             )
             requires.add(
@@ -219,11 +227,11 @@ class ViewNode(
             )
         }
         node.allAttributes[attributeReset]?.let {
-            val onStack = node.allAttributes[attributeOnStack] ?: "stack"
+            val (file, onStack) =  getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.Reset(
                     stack = onStack,
-                    viewName = it.removePrefix("@layout/").camelCase().capitalize()
+                    viewName = file
                 )
             )
             requires.add(
@@ -235,11 +243,11 @@ class ViewNode(
             )
         }
         node.allAttributes[attributePopTo]?.let {
-            val onStack = node.allAttributes[attributeOnStack] ?: "stack"
+            val (file, onStack) =  getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.PopTo(
                     stack = onStack,
-                    viewType = it.removePrefix("@layout/").camelCase().capitalize()
+                    viewType = file
                 )
             )
             requires.add(

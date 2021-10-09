@@ -113,6 +113,14 @@ private fun generateFile(
     val inits = ArrayList<() -> Unit>()
     val actions = ArrayList<() -> Unit>()
 
+
+    fun getStackAndFile(node: XmlNode, attribute:String):Pair<String, String>{
+        val prefix = attribute.removePrefix("@").substringBefore('/')
+        val file = attribute.substringAfter("/").camelCase().capitalize()
+        val onStack = node.allAttributes[ViewNode.attributeOnStack] ?: if(prefix != "layout") prefix else "stack"
+        return file to onStack
+    }
+
     with(TabWriter(into)) {
         fun handleNodeClick(
             node: XmlNode,
@@ -138,29 +146,26 @@ private fun generateFile(
                 println(it)
             }
             node.allAttributes[ViewNode.attributePush]?.let {
-                val otherViewNode =
-                    viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()] ?: return@let
-                val stackName = node.allAttributes[ViewNode.attributeOnStack] ?: "stack"
+                val (nodeName, stackName) = getStackAndFile(node, it)
+                val otherViewNode = viewNodeMap[nodeName] ?: return@let
                 makeAction {
                     line("$stackName.push(${makeView(otherViewNode, stackName, view)})")
                 }
             } ?: node.allAttributes[ViewNode.attributeSwap]?.let {
-                val otherViewNode =
-                    viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()] ?: return@let
-                val stackName = node.allAttributes[ViewNode.attributeOnStack] ?: "stack"
+                val (nodeName, stackName) = getStackAndFile(node, it)
+                val otherViewNode = viewNodeMap[nodeName] ?: return@let
                 makeAction {
                     line("this.$stackName.swap(${makeView(otherViewNode, stackName, view)})")
                 }
             } ?: node.allAttributes[ViewNode.attributePopTo]?.let {
-                val otherViewNode = it.removePrefix("@layout/").camelCase().capitalize()
-                val stackName = node.allAttributes[ViewNode.attributeOnStack] ?: "stack"
+                val (nodeName, stackName) = getStackAndFile(node, it)
+                val otherViewNode = viewNodeMap[nodeName] ?: return@let
                 makeAction {
                     line("this.$stackName.popTo { it -> it is ${otherViewNode}VG }")
                 }
             } ?: node.allAttributes[ViewNode.attributeReset]?.let {
-                val otherViewNode =
-                    viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()] ?: return@let
-                val stackName = node.allAttributes[ViewNode.attributeOnStack] ?: "stack"
+                val (nodeName, stackName) = getStackAndFile(node, it)
+                val otherViewNode = viewNodeMap[nodeName] ?: return@let
                 makeAction {
                     line("this.$stackName.reset(${makeView(otherViewNode, stackName, view)})")
                 }
@@ -236,12 +241,10 @@ private fun generateFile(
             line("${CodeSection.sectionMarker} Dependencies ${CodeSection.overwriteMarker}")
             val things = (viewNode.totalRequires(viewNodeMap).sortedBy { it.name })
             things.forEachIndexed { index, it ->
-                if (it.type.contains("VG") || it.type.contains("ViewGenerator")) {
-                    line("val $it" + (if (index == things.lastIndex) "" else ","))
-                } else if ((it.type.contains("->") || it.type.contains("-]")) && !it.type.endsWith('?')) {
-                    line("val ${it.name}: ${it.kotlinType}" + (if (it.default != null) " = " + it.default else "") + (if (index == things.lastIndex) "" else ","))
+                if ((it.type.contains("->") || it.type.contains("-]")) && !it.type.endsWith('?')) {
+                    line("val ${it.name}: ${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
                 } else {
-                    line("val $it" + (if (index == things.lastIndex) "" else ","))
+                    line("val $it,")
                 }
             }
             line("${CodeSection.sectionMarker} Extends ${CodeSection.overwriteMarker}")
