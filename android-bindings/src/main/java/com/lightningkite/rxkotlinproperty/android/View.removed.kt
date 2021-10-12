@@ -1,33 +1,35 @@
 package com.lightningkite.rxkotlinproperty.android
 
 import android.view.View
-import com.lightningkite.rxkotlinproperty.DisposeCondition
-import com.lightningkite.rxkotlinproperty.until
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import java.util.*
 
-val View.removed: DisposeCondition
+val View.removed: CompositeDisposable
     get() {
-        return DisposeCondition { disposable ->
+        return View_lifecycleDeferTo.getOrPut(this) {
+            val composite = CompositeDisposable()
             this.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
                 override fun onViewDetachedFromWindow(v: View) {
-                    disposable.dispose()
+                    composite.dispose()
                     v.removeOnAttachStateChangeListener(this)
                 }
 
                 override fun onViewAttachedToWindow(v: View) {
                     findReplacedRemovedCondition()?.let {
                         v.removeOnAttachStateChangeListener(this)
-                        disposable.until(it)
+                        composite.addTo(it)
                     }
                 }
             })
+            composite
         }
     }
 
-val View_lifecycleDeferTo = WeakHashMap<View, DisposeCondition>()
-fun View.setRemovedCondition(condition: DisposeCondition) {
+private val View_lifecycleDeferTo = WeakHashMap<View, CompositeDisposable>()
+fun View.setRemovedCondition(condition: CompositeDisposable) {
     View_lifecycleDeferTo[this] = condition
 }
-fun View.findReplacedRemovedCondition(): DisposeCondition? {
+fun View.findReplacedRemovedCondition(): CompositeDisposable? {
     return View_lifecycleDeferTo[this] ?: (this.parent as? View)?.findReplacedRemovedCondition()
 }

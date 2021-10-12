@@ -10,9 +10,9 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.ViewFlipper
-import com.lightningkite.rxkotlinproperty.Property
-import com.lightningkite.rxkotlinproperty.subscribeBy
-import com.lightningkite.rxkotlinproperty.until
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  *
@@ -23,7 +23,7 @@ import com.lightningkite.rxkotlinproperty.until
  *
  */
 
-fun ViewFlipper.bindLoading(loading: Property<Boolean>, color: ColorResource? = null) {
+fun ViewFlipper.bindLoading(loading: Observable<Boolean>, color: ColorResource? = null) {
     if (this.inAnimation == null)
         this.inAnimation = AlphaAnimation(0f, 1f).apply {
             duration = 250
@@ -45,5 +45,5 @@ fun ViewFlipper.bindLoading(loading: Property<Boolean>, color: ColorResource? = 
     }
     loading.subscribeBy { it ->
         this.displayedChild = if (it) 1 else 0
-    }.until(this.removed)
+    }.addTo(this.removed)
 }

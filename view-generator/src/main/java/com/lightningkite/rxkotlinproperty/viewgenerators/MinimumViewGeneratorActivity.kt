@@ -13,9 +13,6 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import com.lightningkite.rxkotlinproperty.R
-import com.lightningkite.rxkotlinproperty.onChangeNN
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
 
 /**
  * An activity that implements [ActivityAccess].

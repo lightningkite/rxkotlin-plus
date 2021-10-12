@@ -5,73 +5,67 @@ import android.view.ViewPropertyAnimator
 
 typealias TransitionAnimation = (View) -> ViewPropertyAnimator
 
-enum class ViewTransition(
-    val enterPush: TransitionAnimation,
-    val exitPush: TransitionAnimation,
-    val enterPop: TransitionAnimation,
-    val exitPop: TransitionAnimation
+enum class ViewTransitionUnidirectional(
+    val enter: TransitionAnimation,
+    val exit: TransitionAnimation
 ) {
-    PUSH_POP(enterPush = { view ->
+    PUSH(enter = { view ->
         view.translationX = (view.parent as View).width.toFloat()
         view.animate()
             .translationX(0f)
-    }, exitPush = { view ->
+    }, exit = { view ->
         view.animate()
             .translationX(-1f * view.width.toFloat())
-    }, enterPop = { view ->
+    }),
+    POP(enter = { view ->
         view.translationX = -1f * (view.parent as View).width.toFloat()
         view.animate()
             .translationX(0f)
-    }, exitPop = { view ->
+    }, exit = { view ->
         view.animate()
             .translationX(view.width.toFloat())
     }),
-
-    UP_DOWN(enterPush = { view ->
+    UP(enter = { view ->
         view.translationY = (view.parent as View).height.toFloat()
         view.animate()
             .translationY(0f)
-    }, exitPush = { view ->
+    }, exit = { view ->
         view.animate()
             .translationY(-1f * view.height.toFloat())
-    }, enterPop = { view ->
+    }),
+    DOWN(enter = { view ->
         view.translationY = -1f * (view.parent as View).height.toFloat()
         view.animate()
             .translationY(0f)
-    }, exitPop = { view ->
+    }, exit = { view ->
         view.animate()
             .translationY(view.height.toFloat())
     }),
-
-    FADE_IN_OUT(enterPush = { view ->
+    FADE(enter = { view ->
         view.alpha = 0f
         view.visibility = View.VISIBLE
         view.animate()
             .alpha(1f)
-    }, exitPush = { view ->
-        view.animate()
-            .alpha(0f)
-    }, enterPop = { view ->
-        view.alpha = 0f
-        view.animate()
-            .alpha(1f)
-    }, exitPop = { view ->
+    }, exit = { view ->
         view.animate()
             .alpha(0f)
     }),
+    NONE(enter = { view ->
+        view.animate()
+            .translationX(0f)
+    }, exit = { view ->
+        view.animate()
+            .translationX(0f)
+    })
+}
 
-    NONE(enterPush = { view ->
-        view.animate()
-            .translationX(0f)
-    }, exitPush = { view ->
-        view.animate()
-            .translationX(0f)
-    }, enterPop = { view ->
-        view.animate()
-            .translationX(0f)
-    }, exitPop = { view ->
-        view.animate()
-            .translationX(0f)
-    }
-    )
+enum class ViewTransition(
+    val push: ViewTransitionUnidirectional,
+    val pop: ViewTransitionUnidirectional,
+    val neutral: ViewTransitionUnidirectional,
+) {
+    PUSH_POP(ViewTransitionUnidirectional.PUSH, ViewTransitionUnidirectional.POP, ViewTransitionUnidirectional.FADE),
+    UP_DOWN(ViewTransitionUnidirectional.UP, ViewTransitionUnidirectional.DOWN, ViewTransitionUnidirectional.FADE),
+    FADE_IN_OUT(ViewTransitionUnidirectional.FADE, ViewTransitionUnidirectional.FADE, ViewTransitionUnidirectional.FADE),
+    NONE(ViewTransitionUnidirectional.NONE, ViewTransitionUnidirectional.NONE, ViewTransitionUnidirectional.NONE),
 }

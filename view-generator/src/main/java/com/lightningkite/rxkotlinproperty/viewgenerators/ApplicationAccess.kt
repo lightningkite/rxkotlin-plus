@@ -3,23 +3,21 @@ package com.lightningkite.rxkotlinproperty.viewgenerators
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import com.lightningkite.rxkotlinproperty.Property
-import com.lightningkite.rxkotlinproperty.StandardProperty
-import com.lightningkite.rxkotlinproperty.asProperty
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
 
 object ApplicationAccess {
 
-    private val applicationIsActiveEvent = PublishSubject.create<Boolean>()
-    val foreground: Property<Boolean> = applicationIsActiveEvent
+    private val applicationIsActiveEvent = BehaviorSubject.createDefault<Boolean>(true)
+    val foreground: Observable<Boolean> = applicationIsActiveEvent
         .debounce(100L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
         .distinctUntilChanged()
-        .asProperty(true)
 
-    val softInputActive = StandardProperty<Boolean>(false)
+    val softInputActive = BehaviorSubject.createDefault<Boolean>(false)
 
     fun applicationIsActiveStartup(application: Application){
         var activeCount = 0

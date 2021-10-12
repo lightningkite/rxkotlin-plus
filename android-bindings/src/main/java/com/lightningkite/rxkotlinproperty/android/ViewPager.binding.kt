@@ -5,6 +5,11 @@ import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.lightningkite.rxkotlinproperty.*
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.Subject
+import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  *
@@ -14,7 +19,7 @@ import com.lightningkite.rxkotlinproperty.*
  */
 fun <T> ViewPager.bind(
     items: List<T>,
-    showIndex: MutableProperty<Int> = StandardProperty(0),
+    showIndex: Subject<Int> = BehaviorSubject.createDefault(0),
     makeView: (T)->View
 ) {
     adapter = object : PagerAdapter() {
@@ -37,12 +42,12 @@ fun <T> ViewPager.bind(
 
     showIndex.subscribeBy{ value ->
         this.currentItem = value
-    }.until(this.removed)
+    }.addTo(this.removed)
     this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(p0: Int) {}
         override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
         override fun onPageSelected(p0: Int) {
-            showIndex.value = p0
+            showIndex.onNext(p0)
         }
     })
 }
@@ -54,40 +59,37 @@ fun <T> ViewPager.bind(
  *
  */
 fun <T> ViewPager.bind(
-    data: Property<List<T>>,
+    data: Observable<List<T>>,
     defaultValue: T,
-    showIndex: MutableProperty<Int> = StandardProperty(0),
-    makeView: (Property<T>)->View
+    showIndex: Subject<Int> = BehaviorSubject.createDefault(0),
+    makeView: (Observable<T>)->View
 ) {
+    var lastSubmitted = listOf<T>()
     adapter = object : PagerAdapter() {
-
         override fun isViewFromObject(p0: View, p1: Any): Boolean = p1 == p0
-
-        override fun getCount(): Int = data.value.size
-
+        override fun getCount(): Int = lastSubmitted.size
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val view = makeView(data.map { it.getOrElse(position){ defaultValue } })
             container.addView(view)
             return view
         }
-
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
             container.removeView(`object` as View)
         }
     }
-
     data.subscribeBy { list ->
+        lastSubmitted = list
         adapter!!.notifyDataSetChanged()
         this.currentItem
-    }.until(this.removed)
+    }.addTo(this.removed)
     showIndex.subscribeBy{ value ->
         this.currentItem = value
-    }.until(this.removed)
+    }.addTo(this.removed)
     this.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(p0: Int) {}
         override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
         override fun onPageSelected(p0: Int) {
-            showIndex.value = p0
+            showIndex.onNext(p0)
         }
     })
 }

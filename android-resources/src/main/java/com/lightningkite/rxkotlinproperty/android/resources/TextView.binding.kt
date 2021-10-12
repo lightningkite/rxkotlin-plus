@@ -1,10 +1,10 @@
 package com.lightningkite.rxkotlinproperty.android.resources
 
 import android.widget.TextView
-import com.lightningkite.rxkotlinproperty.Property
 import com.lightningkite.rxkotlinproperty.android.removed
-import com.lightningkite.rxkotlinproperty.subscribeBy
-import com.lightningkite.rxkotlinproperty.until
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 
 /**
  *
@@ -16,9 +16,9 @@ import com.lightningkite.rxkotlinproperty.until
  *
  */
 
-fun TextView.bindViewString(property: Property<ViewString>) {
+fun TextView.bindViewString(property: Observable<ViewString>) {
     property.subscribeBy { value ->
         this.text = value.get(context)
-    }.until(this.removed)
+    }.addTo(this.removed)
 }
 

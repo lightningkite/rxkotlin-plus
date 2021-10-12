@@ -49,7 +49,7 @@ class ViewNode(
     companion object {
         val stack = ViewVar(
             "stack",
-            "PropertyStack[ViewGenerator]",
+            "ViewGeneratorStack",
             null
         )
 
@@ -205,7 +205,7 @@ class ViewNode(
             requires.add(
                 ViewVar(
                     name = onStack,
-                    type = "PropertyStack[ViewGenerator]",
+                    type = "ViewGeneratorStack",
                     default = null
                 )
             )
@@ -221,7 +221,7 @@ class ViewNode(
             requires.add(
                 ViewVar(
                     name = onStack,
-                    type = "PropertyStack[ViewGenerator]",
+                    type = "ViewGeneratorStack",
                     default = null
                 )
             )
@@ -237,7 +237,7 @@ class ViewNode(
             requires.add(
                 ViewVar(
                     name = onStack,
-                    type = "PropertyStack[ViewGenerator]",
+                    type = "ViewGeneratorStack",
                     default = null
                 )
             )
@@ -253,7 +253,7 @@ class ViewNode(
             requires.add(
                 ViewVar(
                     name = onStack,
-                    type = "PropertyStack[ViewGenerator]",
+                    type = "ViewGeneratorStack",
                     default = null
                 )
             )
@@ -264,7 +264,7 @@ class ViewNode(
                 requires.add(
                     ViewVar(
                         name = it,
-                        type = "PropertyStack[ViewGenerator]",
+                        type = "ViewGeneratorStack",
                         default = null
                     )
                 )
@@ -276,7 +276,7 @@ class ViewNode(
                 requires.add(
                     ViewVar(
                         name = it,
-                        type = "PropertyStack[ViewGenerator]",
+                        type = "ViewGeneratorStack",
                         default = null
                     )
                 )
@@ -291,7 +291,7 @@ class ViewNode(
             )
         }
         node.allAttributes[attributeStackId]?.let { stackId ->
-            provides.add(ViewVar(stackId, "PropertyStack[ViewGenerator]", "PropertyStack()"))
+            provides.add(ViewVar(stackId, "ViewGeneratorStack", "PropertyStack()"))
             node.allAttributes[attributeStackDefault]?.let {
                 operations.add(
                     ViewStackOp.StartWith(

@@ -1,0 +1,58 @@
+- id: io.reactivex.Single
+  type: type
+  template: io.reactivex.rxjava3.core.Single
+
+- id: io.reactivex.Single
+  type: type
+  template: io.reactivex.rxjava3.core.Single
+
+- id: com.lightningkite.butterfly.views.ViewGenerator
+  type: type
+  template: com.lightningkite.rxkotlinproperty.viewgenerators.ViewGenerator
+
+- id: com.lightningkite.butterfly.android.ActivityAccess
+  type: type
+  template: com.lightningkite.rxkotlinproperty.viewgenerators.ActivityAccess
+
+- id: com.lightningkite.butterfly.observables.StandardObservableProperty
+  type: type
+  template: io.reactivex.rxjava3.subjects.BehaviorSubject
+
+- id: com.lightningkite.butterfly.observables.MutableObservableProperty.value
+  type: set
+  template: ~this~.onNext(~value)
+
+- id: com.lightningkite.butterfly.observables.StandardObservableProperty
+  type: call
+  template: BehaviorSubject.createDefault(~0~)
+
+- id: com.lightningkite.butterfly.observables.binding.bind
+  type: call
+  template:
+    pattern: ~this~.bind(~0~)
+    imports: [com.lightningkite.rxkotlinproperty.android.bind]
+
+- id: com.lightningkite.butterfly.observables.binding.bindInteger
+  type: call
+  template:
+    pattern: ~this~.bind(~0~.toSubjectString)
+    imports: [com.lightningkite.rxkotlinproperty.android.bind, com.lightningkite.rxkotlinproperty.android.toSubjectString]
+
+- id: com.lightningkite.butterfly.time.format
+  type: call
+  template:
+    pattern: DateFormat.getDateTimeInstance(~0~, ~1~).format(~this~)
+
+- id: com.lightningkite.butterfly.observables.binding.bind
+  type: call
+  receiver: com.lightningkite.butterfly.views.widget.DateButton
+  template:
+    pattern: ~this~.bindDate(~*~)
+    imports: [com.lightningkite.rxkotlinproperty.android.bindDate]
+
+- id: com.lightningkite.butterfly.observables.binding.bind
+  type: call
+  receiver: com.lightningkite.butterfly.views.widget.TimeButton
+  template:
+    pattern: ~this~.bindTime(~*~)
+    imports: [com.lightningkite.rxkotlinproperty.android.bindTime]

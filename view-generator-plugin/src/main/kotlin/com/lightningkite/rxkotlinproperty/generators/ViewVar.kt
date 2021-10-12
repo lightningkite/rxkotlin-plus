@@ -17,7 +17,7 @@ data class ViewVar(val name: String, val type: String, val default: String? = nu
         val constructors = HashMap<String, (viewNode: ViewNode, viewNodeMap: Map<String, ViewNode>) -> String>()
 
         init {
-            constructors["PropertyStack[ViewGenerator]"] = { node, nodeMap -> "PropertyStack()" }
+            constructors["ViewGeneratorStack"] = { node, nodeMap -> "PropertyStack()" }
             constructors["Int"] = { node, nodeMap -> "0" }
             constructors["Long"] = { node, nodeMap -> "0L" }
             constructors["String"] = { node, nodeMap -> "\"\"" }

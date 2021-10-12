@@ -1,9 +1,9 @@
 package com.lightningkite.rxkotlinproperty.android
 
 import android.widget.SeekBar
-import com.lightningkite.rxkotlinproperty.MutableProperty
-import com.lightningkite.rxkotlinproperty.subscribeBy
-import com.lightningkite.rxkotlinproperty.until
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.Subject
+import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  *
@@ -14,26 +14,21 @@ import com.lightningkite.rxkotlinproperty.until
  */
 
 fun SeekBar.bind(
-    start: Int,
-    endInclusive: Int,
-    property: MutableProperty<Int>
+    property: Subject<Int>
 ) {
-    this.max = endInclusive - start
-    this.incrementProgressBy(1)
-
     var suppress = false
     property.subscribeBy { value ->
         if (!suppress) {
             suppress = true
-            this.progress = value - start
+            this.progress = value
             suppress = false
         }
-    }.until(this@bind.removed)
+    }.addTo(this@bind.removed)
     this.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
             if (!suppress) {
                 suppress = true
-                property.value = p1 + start
+                property.onNext(p1)
                 suppress = false
             }
         }

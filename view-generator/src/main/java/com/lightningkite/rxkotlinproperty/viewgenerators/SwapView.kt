@@ -2,6 +2,8 @@ package com.lightningkite.rxkotlinproperty.viewgenerators
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
 
@@ -24,6 +26,38 @@ class SwapView @JvmOverloads constructor(
             getChildAt(i).dispatchApplyWindowInsets(newInsets)
         }
         return newInsets
+    }
+
+    var currentView: View = View(context)
+    init {
+        addView(currentView)
+    }
+
+    fun swap(to: View?, transition: ViewTransitionUnidirectional) {
+        val oldView = currentView
+        var newView = to
+
+        if (newView == null) {
+            newView = View(context)
+            visibility = View.GONE
+        } else {
+            visibility = View.VISIBLE
+        }
+
+        post {
+            addView(
+                newView, FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            )
+
+            transition.enter.invoke(newView).start()
+            transition.exit.invoke(oldView).withEndAction {
+                removeView(oldView)
+            }
+            currentView = newView
+        }
     }
 }
 

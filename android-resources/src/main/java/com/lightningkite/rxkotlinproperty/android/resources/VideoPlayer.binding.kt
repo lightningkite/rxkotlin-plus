@@ -7,25 +7,26 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import com.lightningkite.rxkotlinproperty.Property
+import io.reactivex.rxjava3.kotlin.addTo
+import com.lightningkite.rxkotlinproperty.android.kotlin
 import com.lightningkite.rxkotlinproperty.android.removed
-import com.lightningkite.rxkotlinproperty.observable
-import com.lightningkite.rxkotlinproperty.until
+import io.reactivex.rxjava3.core.Observable
+import java9.util.Optional
 
-fun VideoPlayer.bind(video: Property<Video?>){
+fun VideoPlayer.bind(video: Observable<Optional<Video>>) {
     bindVideoToView(this, video)
 }
 
-fun PlayerView.bind(video: Property<Video?>) {
+fun PlayerView.bind(video: Observable<Optional<Video>>) {
     bindVideoToView(this, video)
 }
 
-private fun bindVideoToView(view:PlayerView, video: Property<Video?>){
+private fun bindVideoToView(view: PlayerView, video: Observable<Optional<Video>>) {
     val player: SimpleExoPlayer = SimpleExoPlayer.Builder(view.context).build()
     view.player = player
-    video.observable.doOnDispose { player.release() }.subscribe { videoBox ->
-        val video = videoBox.value
-        if(video == null) {
+    video.doOnDispose { player.release() }.subscribe { videoBox ->
+        val video = videoBox.kotlin
+        if (video == null) {
             player.stop()
             player.clearVideoSurface()
             return@subscribe
@@ -46,23 +47,23 @@ private fun bindVideoToView(view:PlayerView, video: Property<Video?>){
             else -> {
             }
         }
-    }.until(view.removed)
+    }.addTo(view.removed)
 }
 
-fun VideoPlayer.bindAndStart(video: Property<Video?>){
+fun VideoPlayer.bindAndStart(video: Observable<Optional<Video>>) {
     bindVideoToViewAndStart(this, video)
 }
 
-fun PlayerView.bindAndStart(video: Property<Video?>) {
+fun PlayerView.bindAndStart(video: Observable<Optional<Video>>) {
     bindVideoToViewAndStart(this, video)
 }
 
-private fun bindVideoToViewAndStart(view:PlayerView, video:Property<Video?>){
+private fun bindVideoToViewAndStart(view: PlayerView, video: Observable<Optional<Video>>) {
     val player: SimpleExoPlayer = SimpleExoPlayer.Builder(view.context).build()
     view.player = player
-    video.observable.doOnDispose { player.release() }.subscribe { videoBox ->
-        val video = videoBox.value
-        if(video == null) {
+    video.doOnDispose { player.release() }.subscribe { videoBox ->
+        val video = videoBox.kotlin
+        if (video == null) {
             player.stop()
             player.clearVideoSurface()
             return@subscribe
@@ -85,5 +86,5 @@ private fun bindVideoToViewAndStart(view:PlayerView, video:Property<Video?>){
             else -> {
             }
         }
-    }.until(view.removed)
+    }.addTo(view.removed)
 }

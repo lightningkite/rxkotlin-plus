@@ -2,7 +2,7 @@ package com.lightningkite.rxkotlinproperty.viewgenerators
 
 import android.os.Handler
 import android.os.Looper
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 fun delay(milliseconds: Long, action: () -> Unit) {
     if (milliseconds == 0L) action()

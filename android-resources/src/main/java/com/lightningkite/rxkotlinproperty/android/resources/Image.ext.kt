@@ -9,7 +9,7 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 
 
 /**

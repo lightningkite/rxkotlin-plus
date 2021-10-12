@@ -1,9 +1,9 @@
 package com.lightningkite.rxkotlinproperty.android
 
 import android.widget.ToggleButton
-import com.lightningkite.rxkotlinproperty.Property
-import com.lightningkite.rxkotlinproperty.subscribeBy
-import com.lightningkite.rxkotlinproperty.until
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.kotlin.addTo
 
 
 /**
@@ -16,13 +16,13 @@ import com.lightningkite.rxkotlinproperty.until
  *
  */
 
-fun ToggleButton.bindOnString(property: Property<String>) {
+fun ToggleButton.bindOnString(property: Observable<String>) {
     property.subscribeBy { value ->
         this.textOn = value
         if(this.isChecked){
             this.text = value
         }
-    }.until(this.removed)
+    }.addTo(this.removed)
 }
 
 /**
@@ -35,13 +35,13 @@ fun ToggleButton.bindOnString(property: Property<String>) {
  *
  */
 
-fun ToggleButton.bindOffString(property: Property<String>) {
+fun ToggleButton.bindOffString(property: Observable<String>) {
     property.subscribeBy { value ->
         this.textOff = value
         if(!this.isChecked){
             this.text = value
         }
-    }.until(this.removed)
+    }.addTo(this.removed)
 }
 
 /**
@@ -54,10 +54,10 @@ fun ToggleButton.bindOffString(property: Property<String>) {
  *
  */
 
-fun ToggleButton.bindOnOffString(property: Property<String>) {
+fun ToggleButton.bindOnOffString(property: Observable<String>) {
     property.subscribeBy { value ->
         this.textOff = value
         this.textOn = value
         this.text = value
-    }.until(this.removed)
+    }.addTo(this.removed)
 }

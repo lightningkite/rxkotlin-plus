@@ -8,7 +8,6 @@ pluginManagement {
     }
 }
 
-include("property")
 include("android-bindings")
 include("android-resources")
 include("view-generator")

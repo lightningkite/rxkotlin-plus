@@ -6,12 +6,13 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.lightningkite.rxkotlinproperty.Property
+import com.lightningkite.rxkotlinproperty.android.forever
+import com.lightningkite.rxkotlinproperty.android.kotlin
 import com.lightningkite.rxkotlinproperty.android.removed
-import com.lightningkite.rxkotlinproperty.forever
-import com.lightningkite.rxkotlinproperty.subscribeBy
-import com.lightningkite.rxkotlinproperty.until
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import java9.util.Optional
 
 /**
  *
@@ -21,20 +22,38 @@ import io.reactivex.rxkotlin.subscribeBy
  * and a direct bitmap. It will handle all cases and load the image.
  *
  */
-fun ImageView.bindImage(image: Property<Image?>) {
+fun ImageView.bindImage(image: Observable<Image>) {
     image.subscribeBy { it ->
         post {
             this.setImage(it)
         }
-    }.until(this.removed)
+    }.addTo(this.removed)
 }
 
-fun ImageView.bindVideoThumbnail(video: Property<Video?>) {
+fun ImageView.bindVideoThumbnail(video: Observable<Video>) {
     video.subscribeBy {
         post {
             this.setFromVideoThumbnail(it)
         }
-    }.until(removed)
+    }.addTo(removed)
+}
+
+@JvmName("bindImageOptional")
+fun ImageView.bindImage(image: Observable<Optional<Image>>) {
+    image.subscribeBy { it ->
+        post {
+            this.setImage(it.kotlin)
+        }
+    }.addTo(this.removed)
+}
+
+@JvmName("bindVideoThumbnailOptional")
+fun ImageView.bindVideoThumbnail(video: Observable<Optional<Video>>) {
+    video.subscribeBy {
+        post {
+            this.setFromVideoThumbnail(it.kotlin)
+        }
+    }.addTo(removed)
 }
 
 /**

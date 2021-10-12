@@ -1,11 +1,11 @@
 //! This file will translate using Khrysalis.
 package com.lightningkite.rxkotlinproperty.viewgenerators
 
-import com.lightningkite.rxkotlinproperty.StandardProperty
 import com.lightningkite.rxkotlinproperty.android.resources.ViewString
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 
-val lastDialog = StandardProperty<DialogRequest?>(null)
+val lastDialog = BehaviorSubject.create<DialogRequest>()
 val showDialogEvent: PublishSubject<DialogRequest> = PublishSubject.create()
 
 class DialogRequest(
@@ -14,7 +14,7 @@ class DialogRequest(
 )
 
 fun showDialog(request: DialogRequest) {
-    lastDialog.value = request
+    lastDialog.onNext(request)
     showDialogEvent.onNext(request)
 }
 

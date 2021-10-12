@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lightningkite.rxkotlinproperty.*
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlin.reflect.KClass
+import io.reactivex.rxjava3.kotlin.addTo
 
 
 private fun RecyclerView.defaultLayoutManager(){
@@ -37,21 +41,22 @@ private fun RecyclerView.defaultLayoutManager(){
  * )
  */
 
-fun <T> RecyclerView.bind(
-    data: Property<List<T>>,
-    defaultValue: T,
-    makeView: (Property<T>) -> View
+fun <T: Any> RecyclerView.bind(
+    data: Observable<List<T>>,
+    makeView: (Observable<T>) -> View
 ) {
     defaultLayoutManager()
+    var lastPublished: List<T> = listOf()
     adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            data.subscribeBy { _ ->
+            data.subscribeBy { it ->
+                lastPublished = it
                 this.notifyDataSetChanged()
-            }.until(this@bind.removed)
+            }.addTo(this@bind.removed)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val event = StandardProperty<T>(defaultValue)
+            val event = PublishSubject.create<T>()
             val subview = makeView(event)
             subview.setRemovedCondition(this@bind.removed)
             subview.tag = event
@@ -59,158 +64,38 @@ fun <T> RecyclerView.bind(
             return object : RecyclerView.ViewHolder(subview) {}
         }
 
-        override fun getItemCount(): Int = data.value.size
+        override fun getItemCount(): Int = lastPublished.size
 
         @Suppress("UNCHECKED_CAST")
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder.itemView.tag as? StandardProperty<T>)?.let {
-                it.value = data.value[position]
-            } ?: run {
+            (holder.itemView.tag as? PublishSubject<T>)?.onNext(lastPublished[position]) ?: run {
                 println("Failed to find property to update")
             }
         }
     }
 }
 
-class RVTypeHandler(val context: Context) {
-    class Handler(
-        val type: KClass<*>,
-        val defaultValue: Any,
-        val handler: (Property<Any>)->View
-    )
-    internal var typeCount: Int = 0
-        private set
-    private val handlers: ArrayList<Handler> = ArrayList<Handler>()
-    private val defaultHandler: Handler = Handler(
-        type = Any::class,
-        defaultValue = Unit,
-        handler = { obs ->
-            View(context)
-        }
-    )
-
-    fun handle(type: KClass<*>, defaultValue: Any, action: (Property<Any>)->View ) {
-        handlers += Handler(
-            type = type,
-            defaultValue = defaultValue,
-            handler = action
-        )
-        typeCount++
-    }
-    inline fun <reified T: Any> handle(defaultValue: T, noinline action: (Property<T>)->View ) {
-        handle(T::class, defaultValue) { obs ->
-            action(obs.map { it as T })
-        }
-    }
-
-    internal fun type(item: Any): Int {
-        handlers.forEachIndexed { index, handler ->
-            if(handler.type.isInstance(item)){
-                return index
-            }
-        }
-        return typeCount
-    }
-    internal fun make(type: Int): View {
-        val handler = if(type < typeCount) handlers[type] else defaultHandler
-        val event = StandardProperty<Any>(handler.defaultValue)
-        val subview = handler.handler(event)
-        subview.tag = event
-        subview.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        return subview
-    }
-}
-
-fun RecyclerView.bindMulti(
-    data: Property<List<Any>>,
-    typeHandlerSetup: (RVTypeHandler)->Unit
-) {
-    val typeHandler = RVTypeHandler(this.context).apply(typeHandlerSetup)
-    defaultLayoutManager()
-    adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        init {
-            data.subscribeBy { _ ->
-                this.notifyDataSetChanged()
-            }.until(this@bindMulti.removed)
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val subview = typeHandler.make(viewType)
-            subview.setRemovedCondition(this@bindMulti.removed)
-            return object : RecyclerView.ViewHolder(subview) {}
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            return typeHandler.type(data.value.getOrNull(position) ?: return typeHandler.typeCount)
-        }
-        override fun getItemCount(): Int = data.value.size
-
-        @Suppress("UNCHECKED_CAST")
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder.itemView.tag as? MutableProperty<Any>)?.let {
-                it.value = data.value[position]
-            } ?: run {
-                println("Failed to find property to update")
-            }
-        }
-    }
-}
-
-
-/**
- *
- * Binds the data in the RecyclerView to the data provided by the property.
- * This is designed for multiple types of views in the recycler view.
- * determineType is a lambda with an item input. The returned value is an Int determined by what view that item needs.
- * makeView is the lambda that creates the view for the type determined
- *
- * Example
- * val data = StandardProperty(listOf(item1,item2,item3,item4,item5))
- * recycler.bind(
- *  data = data,
- *  defaultValue = Item(),
- *  determineType: { item ->
- *      when(item){
- *          ... return 1
- *          ... return 2
- *      }
- *  },
- *  makeView = { type, item ->
- *      when(type){
- *       1 -> {
- *          val xml = ViewXml()
- *          val view = xml.setup(dependency)
- *          view.text.bindString(item.map{it -> it.toString()})
- *          return view
- *            }
- *       2 -> {
- *          .... return view
- *            }
- *          }
- *      }
- * )
- */
-
-fun <T> RecyclerView.bindMulti(
-    data: Property<List<T>>,
-    defaultValue: T,
+fun <T: Any> RecyclerView.bindMulti(
+    data: Observable<List<T>>,
     determineType: (T)->Int,
-    makeView: (Int, Property<T>) -> View
+    makeView: (Int, Observable<T>) -> View
 ) {
     defaultLayoutManager()
+    var lastPublished: List<T> = listOf()
     adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            data.subscribeBy { _ ->
+            data.subscribeBy { it ->
+                lastPublished = it
                 this.notifyDataSetChanged()
-            }.until(this@bindMulti.removed)
+            }.addTo(this@bindMulti.removed)
         }
 
         override fun getItemViewType(position: Int): Int {
-            return determineType(data.value[position])
+            return determineType(lastPublished[position])
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val event = StandardProperty<T>(defaultValue)
+            val event = PublishSubject.create<T>()
             val subview = makeView(viewType, event)
             subview.setRemovedCondition(this@bindMulti.removed)
             subview.tag = event
@@ -218,13 +103,11 @@ fun <T> RecyclerView.bindMulti(
             return object : RecyclerView.ViewHolder(subview) {}
         }
 
-        override fun getItemCount(): Int = data.value.size
+        override fun getItemCount(): Int = lastPublished.size
 
         @Suppress("UNCHECKED_CAST")
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder.itemView.tag as? StandardProperty<T>)?.let {
-                it.value = data.value[position]
-            } ?: run {
+            (holder.itemView.tag as? PublishSubject<T>)?.onNext(lastPublished[position]) ?: run {
                 println("Failed to find property to update")
             }
         }
@@ -239,7 +122,7 @@ fun <T> RecyclerView.bindMulti(
  */
 
 fun RecyclerView.bindRefresh(
-    loading: Property<Boolean>,
+    loading: Observable<Boolean>,
     refresh: () -> Unit
 ) {
     (this.parent as? SwipeRefreshLayout)?.run {
@@ -247,7 +130,7 @@ fun RecyclerView.bindRefresh(
             this.post {
                 this.isRefreshing = value
             }
-        }.until(this@bindRefresh.removed)
+        }.addTo(this@bindRefresh.removed)
         setOnRefreshListener {
             refresh()
         }

@@ -13,9 +13,8 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import com.lightningkite.rxkotlinproperty.R
-import com.lightningkite.rxkotlinproperty.onChangeNN
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 
 /**
  * An activity that implements [ActivityAccess].
@@ -72,12 +71,12 @@ abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : Accessibl
         val keyboardHeight = resources.displayMetrics.heightPixels - rect.bottom
         if (keyboardHeight.toFloat() > resources.displayMetrics.heightPixels * 0.15f) {
             suppressKeyboardChange = true
-            ApplicationAccess.softInputActive.value = true
+            ApplicationAccess.softInputActive.onNext(true)
             suppressKeyboardChange = false
         } else {
             delay(30L) {
                 suppressKeyboardChange = true
-                ApplicationAccess.softInputActive.value = false
+                ApplicationAccess.softInputActive.onNext(false)
                 suppressKeyboardChange = false
             }
         }
@@ -101,7 +100,7 @@ abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : Accessibl
         }
 
         view.viewTreeObserver.addOnGlobalLayoutListener(keyboardTreeObs)
-        keyboardSubscriber = ApplicationAccess.softInputActive.onChangeNN.subscribe {
+        keyboardSubscriber = ApplicationAccess.softInputActive.subscribe {
             if (!suppressKeyboardChange) {
                 view.post {
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

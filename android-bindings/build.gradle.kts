@@ -62,12 +62,15 @@ android {
 }
 
 dependencies {
-    api(project(":property"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     api("com.google.android.material:material:1.4.0")
+    api("io.reactivex.rxjava3:rxandroid:3.0.0")
+    api("io.reactivex.rxjava3:rxjava:3.1.1")
+    api("io.reactivex.rxjava3:rxkotlin:3.0.1")
+    api("net.sourceforge.streamsupport:android-retrostreams:1.7.4")
     api("androidx.recyclerview:recyclerview:1.2.1")
     implementation("com.github.bumptech.glide:glide:4.12.0")
 }

@@ -390,20 +390,20 @@ private fun generateFile(
                         node.allAttributes["tools:text"]?.let {
                             if (it.startsWith("@string")) {
                                 line(
-                                    """${viewAccess}bindStringRes(ConstantProperty(R.string.${
+                                    """${viewAccess}text = dependency.getString(R.string.${
                                         it.removePrefix(
                                             "@string/"
                                         )
-                                    }))"""
+                                    }"""
                                 )
                             } else {
                                 line(
-                                    """${viewAccess}bindString(ConstantProperty("${
+                                    """${viewAccess}text = "${
                                         it.replace(
                                             "$",
                                             "\\$"
                                         )
-                                    }"))"""
+                                    }""""
                                 )
                             }
                         }
@@ -431,8 +431,7 @@ private fun generateFile(
                             val otherViewNode = viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
                             line("${viewAccess}bind(")
                             tab {
-                                line("data = ConstantProperty(listOf(1, 2, 3, 4)),")
-                                line("defaultValue = 1,")
+                                line("data = Observable.just(listOf(1, 2, 3, 4)),")
                                 line("makeView = label@ { observable ->")
                                 tab {
                                     line(

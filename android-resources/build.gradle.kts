@@ -62,7 +62,6 @@ android {
 }
 
 dependencies {
-    api(project(":property"))
     api(project(":android-bindings"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
