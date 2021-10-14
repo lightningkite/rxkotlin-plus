@@ -7,16 +7,16 @@ TODO:
 - [X] Rx-ify getting media
 - [X] Invert direction of binding to Observable.bind(View)
 - [X] Change package name
-- [ ] Date/DateAlone/TimeAlone -> Java 9
+- [X] Date/DateAlone/TimeAlone -> Java 9
   - [X] Bindings
 - [ ] Move Stuff to Khrysalis Runtime
   - [ ] Annotations
   - [ ] GFloat
   - [ ] ColorValue
   - [ ] Codable
-- [ ] Move stuff to XmlToXib runtime
-  - [ ] safePadding
-  - [ ] _Xml interface
+- [X] Move stuff to XmlToXib runtime
+  - [X] safePadding
+- [X] Use Android View Binding
 
 IOS:
 

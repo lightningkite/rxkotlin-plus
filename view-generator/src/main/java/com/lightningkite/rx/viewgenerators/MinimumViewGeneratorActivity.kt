@@ -1,18 +1,10 @@
 package com.lightningkite.rx.viewgenerators
 
-import android.animation.ValueAnimator
-import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
-import android.view.FocusFinder
 import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.view.inputmethod.InputMethodManager
-import com.lightningkite.rx.R
+import io.github.inflationx.viewpump.ViewPump
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 /**
  * An activity that implements [ActivityAccess].
@@ -29,10 +21,12 @@ abstract class MinimumViewGeneratorActivity : AccessibleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        ViewPump.init(ViewPump.builder().addInterceptor(FocusOnStartupInterceptor).build())
         view = main.generate(this)
-
         setContentView(view)
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
+    }
 }
