@@ -9,7 +9,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.lightningkite.rxkotlinproperty"
+group = "com.lightningkite.rx"
 version = "0.0.1"
 
 
@@ -57,22 +57,30 @@ android {
         versionName = "0.0.1"
     }
     compileOptions {
+        coreLibraryDesugaringEnabled = true
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
+    api(project(":rxplus"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+
+    api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
+
     api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    api("com.jakewharton.rxbinding4:swiperefreshlayout:4.0.0")
+
     api("com.google.android.material:material:1.4.0")
-    api("io.reactivex.rxjava3:rxandroid:3.0.0")
-    api("io.reactivex.rxjava3:rxjava:3.1.1")
-    api("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    api("net.sourceforge.streamsupport:android-retrostreams:1.7.4")
+    api("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
+
     api("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
+    api("com.jakewharton.rxbinding4:recyclerview:4.0.0")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+
 }
 
 tasks {
@@ -98,7 +106,7 @@ afterEvaluate {
             val release by creating(MavenPublication::class) {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                //artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -106,7 +114,7 @@ afterEvaluate {
             val debug by creating(MavenPublication::class) {
                 from(components["debug"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                //artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()

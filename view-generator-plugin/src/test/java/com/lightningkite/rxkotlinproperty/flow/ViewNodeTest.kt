@@ -1,8 +1,8 @@
-package com.lightningkite.rxkotlinproperty.flow
+package com.lightningkite.rx.flow
 
-import com.lightningkite.rxkotlinproperty.generators.ViewNode
-import com.lightningkite.rxkotlinproperty.generators.ViewStackOp
-import com.lightningkite.rxkotlinproperty.generators.ViewVar
+import com.lightningkite.rx.generators.ViewNode
+import com.lightningkite.rx.generators.ViewStackOp
+import com.lightningkite.rx.generators.ViewVar
 import org.junit.Assert.*
 import org.junit.Test
 

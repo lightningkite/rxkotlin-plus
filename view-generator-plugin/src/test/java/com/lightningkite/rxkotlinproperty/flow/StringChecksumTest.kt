@@ -1,6 +1,6 @@
-package com.lightningkite.rxkotlinproperty.flow
+package com.lightningkite.rx.flow
 
-import com.lightningkite.rxkotlinproperty.utils.checksum
+import com.lightningkite.rx.utils.checksum
 import org.junit.Test
 
 class StringChecksumTest {

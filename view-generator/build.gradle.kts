@@ -9,7 +9,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.lightningkite.rxkotlinproperty"
+group = "com.lightningkite.rx"
 version = "0.0.1"
 
 
@@ -58,6 +58,7 @@ android {
     }
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled = true
     }
 }
 
@@ -67,6 +68,7 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     api("androidx.appcompat:appcompat:1.3.1")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
 
 tasks {
@@ -92,7 +94,7 @@ afterEvaluate {
             val release by creating(MavenPublication::class) {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                //artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -100,7 +102,7 @@ afterEvaluate {
             val debug by creating(MavenPublication::class) {
                 from(components["debug"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                //artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()

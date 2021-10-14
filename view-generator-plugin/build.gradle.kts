@@ -21,7 +21,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.lightningkite.rxkotlinproperty"
+group = "com.lightningkite.rx"
 version = "0.0.1"
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -56,8 +56,8 @@ val useDeployment = deploymentUser != null || deploymentPassword != null
 gradlePlugin {
     plugins {
         val prototyperPlugin by creating() {
-            id = "com.lightningkite.rxkotlinproperty"
-            implementationClass = "com.lightningkite.rxkotlinproperty.gradle.PrototyperPlugin"
+            id = "com.lightningkite.rx"
+            implementationClass = "com.lightningkite.rx.gradle.PrototyperPlugin"
         }
     }
 }

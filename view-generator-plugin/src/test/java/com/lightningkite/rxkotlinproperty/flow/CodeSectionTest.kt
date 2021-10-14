@@ -1,8 +1,8 @@
-package com.lightningkite.rxkotlinproperty.flow
+package com.lightningkite.rx.flow
 
-import com.lightningkite.rxkotlinproperty.generators.CodeSection
-import com.lightningkite.rxkotlinproperty.generators.mergeOverride
-import com.lightningkite.rxkotlinproperty.utils.TabWriter
+import com.lightningkite.rx.generators.CodeSection
+import com.lightningkite.rx.generators.mergeOverride
+import com.lightningkite.rx.utils.TabWriter
 import org.junit.Test
 
 class CodeSectionTest {
@@ -17,9 +17,9 @@ package com.klypme.shared.vg
 //--- Imports
 import android.widget.*
 import android.view.*
-import com.lightningkite.rxkotlinproperty.*
-import com.lightningkite.rxkotlinproperty.android.*
-import com.lightningkite.rxkotlinproperty.viewgenerators.*
+import com.lightningkite.rx.*
+import com.lightningkite.rx.android.*
+import com.lightningkite.rx.viewgenerators.*
 import com.klypme.R
 import com.klypme.layouts.*
 

@@ -8,6 +8,8 @@ pluginManagement {
     }
 }
 
+include("rxplus")
+include("okhttp")
 include("android-bindings")
 include("android-resources")
 include("view-generator")
