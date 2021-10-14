@@ -8,8 +8,12 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.jakewharton.rxbinding4.internal.checkMainThread
+import com.jakewharton.rxbinding4.swiperefreshlayout.refreshes
 import com.lightningkite.rx.*
+import io.reactivex.rxjava3.android.MainThreadDisposable
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlin.reflect.KClass
@@ -29,36 +33,32 @@ private fun RecyclerView.defaultLayoutManager(){
  *
  * Example
  * val data = StandardProperty(listOf(1,2,3,4,5))
- * recycler.bind(
- *  data = data,
- *  defaultValue = 0,
- *  makeView = { property ->
+ * data.showIn(recyclerView) { property ->
  *       val xml = ViewXml()
  *       val view = xml.setup(dependency)
  *       view.text.bindString(obs.map{it -> it.toString()})
  *       return view
- *       }
- * )
+ * }
  */
 
-fun <T: Any> RecyclerView.bind(
-    data: Observable<List<T>>,
+fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+    view: RecyclerView,
     makeView: (Observable<T>) -> View
-) {
-    defaultLayoutManager()
+): SOURCE {
+    view.defaultLayoutManager()
     var lastPublished: List<T> = listOf()
-    adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    view.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            data.subscribeBy { it ->
+            subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
-            }.addTo(this@bind.removed)
+            }.addTo(view.removed)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val event = PublishSubject.create<T>()
             val subview = makeView(event)
-            subview.setRemovedCondition(this@bind.removed)
+            subview.setRemovedCondition(view.removed)
             subview.tag = event
             subview.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             return object : RecyclerView.ViewHolder(subview) {}
@@ -73,21 +73,22 @@ fun <T: Any> RecyclerView.bind(
             }
         }
     }
+    return this
 }
 
-fun <T: Any> RecyclerView.bindMulti(
-    data: Observable<List<T>>,
+fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+    view: RecyclerView,
     determineType: (T)->Int,
     makeView: (Int, Observable<T>) -> View
-) {
-    defaultLayoutManager()
+): SOURCE {
+    view.defaultLayoutManager()
     var lastPublished: List<T> = listOf()
-    adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    view.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            data.subscribeBy { it ->
+            subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
-            }.addTo(this@bindMulti.removed)
+            }.addTo(view.removed)
         }
 
         override fun getItemViewType(position: Int): Int {
@@ -97,7 +98,7 @@ fun <T: Any> RecyclerView.bindMulti(
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val event = PublishSubject.create<T>()
             val subview = makeView(viewType, event)
-            subview.setRemovedCondition(this@bindMulti.removed)
+            subview.setRemovedCondition(view.removed)
             subview.tag = event
             subview.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             return object : RecyclerView.ViewHolder(subview) {}
@@ -112,28 +113,6 @@ fun <T: Any> RecyclerView.bindMulti(
             }
         }
     }
-}
-
-
-/**
- *
- *
- *
- */
-
-fun RecyclerView.bindRefresh(
-    loading: Observable<Boolean>,
-    refresh: () -> Unit
-) {
-    (this.parent as? SwipeRefreshLayout)?.run {
-        loading.subscribeBy { value ->
-            this.post {
-                this.isRefreshing = value
-            }
-        }.addTo(this@bindRefresh.removed)
-        setOnRefreshListener {
-            refresh()
-        }
-    }
+    return this
 }
 

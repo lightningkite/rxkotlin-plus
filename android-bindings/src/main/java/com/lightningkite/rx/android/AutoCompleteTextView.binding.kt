@@ -4,25 +4,28 @@ import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.viewpager.widget.ViewPager
+import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.Subject
 
-
-fun <T> AutoCompleteTextView.bind(
-    options: Observable<List<T>>,
+fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
+    view: AutoCompleteTextView,
+    onItemSelected: (T) -> Unit = { view.setText(toString(it)) },
     toString: (T) -> String,
-    onItemSelected: (T) -> Unit
-) {
+): SOURCE {
     var lastPublishedResults: List<T> = listOf()
-    this.setAdapter(object : BaseAdapter(), Filterable {
+    view.setAdapter(object : BaseAdapter(), Filterable {
         init {
-            options.subscribeBy {
-                post {
-                    lastPublishedResults = it.toList()
+            subscribeBy {
+                val copy = it.toList()
+                view.post {
+                    lastPublishedResults = copy
                     notifyDataSetChanged()
                 }
-            }.addTo(removed)
+            }.addTo(view.removed)
         }
 
         override fun getFilter(): Filter = object : Filter() {
@@ -44,27 +47,26 @@ fun <T> AutoCompleteTextView.bind(
 
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = (convertView as? TextView) ?: TextView(context).apply {
-                setTextColor(this@bind.textColors)
-                textSize = this@bind.textSize / resources.displayMetrics.scaledDensity
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    maxLines = this@bind.maxLines
-                }
+            val v = (convertView as? TextView) ?: TextView(view.context).apply {
+                setTextColor(view.textColors)
+                textSize = view.textSize / resources.displayMetrics.scaledDensity
+                maxLines = view.maxLines
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    letterSpacing = this@bind.letterSpacing
+                    letterSpacing = view.letterSpacing
                 }
                 val size = (context.resources.displayMetrics.density * 8).toInt()
                 setPadding(size, size, size, size)
             }
-            view.text = lastPublishedResults.getOrNull(position)?.let(toString)
-            return view
+            v.text = lastPublishedResults.getOrNull(position)?.let(toString)
+            return v
         }
 
         override fun getItem(position: Int): Any? = lastPublishedResults.getOrNull(position)
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
-    this.setOnItemClickListener { adapterView, view, index, id ->
+    view.setOnItemClickListener { adapterView, v, index, id ->
         lastPublishedResults.getOrNull(index)?.let(onItemSelected)
     }
+    return this
 }

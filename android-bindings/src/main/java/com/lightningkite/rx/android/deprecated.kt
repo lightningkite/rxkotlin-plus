@@ -21,35 +21,35 @@ private fun no(): Nothing = throw NotImplementedError()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { text = it }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { text = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun TextView.bindString(observable: Observable<String>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { text = mapper(it) }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { text = mapper(it) }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun <T> TextView.bindText(observable: Observable<T>, mapper: (T)->String): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("this.bind(data, makeView)", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("data.showIn(this, makeView)", "com.lightningkite.rx.android.showIn"),
     level = DeprecationLevel.ERROR
 )
 fun <T> RecyclerView.bind(data: Observable<List<T>>, defaultValue: T, makeView: (Observable<T>) -> View): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { isEnabled = it }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { isEnabled = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun Button.bindActive(observable: Observable<Boolean>, activeBackground: Drawable, inactiveBackground: Drawable): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { isEnabled = it }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { isEnabled = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun Button.bindActive(
@@ -67,7 +67,7 @@ fun RatingBar.bind(stars: Int, observable: Subject<Int>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("run { this.numStars = stars; observable.subscribeView(this) { rating = it.toFloat() } }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("run { this.numStars = stars; observable.subscribeAutoDispose(this) { rating = it.toFloat() } }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun RatingBar.bind(stars: Int, observable: Observable<Int>): Unit = no()
@@ -81,7 +81,7 @@ fun RatingBar.bindFloat(stars: Int, observable: Observable<Float>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("run { this.numStars = stars; observable.subscribeView(this) { rating = it } }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("run { this.numStars = stars; observable.subscribeAutoDispose(this) { rating = it } }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun RatingBar.bindFloat(stars: Int, observable: Subject<Float>): Unit = no()
@@ -133,14 +133,14 @@ fun <T> RecyclerView.bindMulti(
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("this.bind(data, makeView)", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("data.showIn(this, makeView)", "com.lightningkite.rx.android.showIn"),
     level = DeprecationLevel.ERROR
 )
 fun <T> LinearLayout.bind(data: Observable<List<T>>, defaultValue: T, makeView: (Observable<T>) -> View): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("this.bind(data, makeView)", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("data.showIn(this, makeView)", "com.lightningkite.rx.android.showIn"),
     level = DeprecationLevel.ERROR
 )
 fun <T> LinearLayout.bindHorizontal(
@@ -151,14 +151,14 @@ fun <T> LinearLayout.bindHorizontal(
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { setText(it) }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { setText(it) }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun TextView.bindStringRes(observable: Observable<StringResource>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("bindObservable", "com.lightningkite.rx.android.bindObservable"),
+    replaceWith = ReplaceWith("options.showIn(this, selected, toString)", "com.lightningkite.rx.android.showIn"),
     level = DeprecationLevel.ERROR
 )
 fun <T> Spinner.bindString(
@@ -222,21 +222,21 @@ fun <T> AutoCompleteTextView.bindList(
 
 @Deprecated(
     "Use bindDate directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("this.bindDate(date)", "com.lightningkite.rx.android.bindDate"),
+    replaceWith = ReplaceWith("date.bind(this)", "com.lightningkite.rx.android.bind"),
     level = DeprecationLevel.ERROR
 )
 fun Button.bind(date: Subject<LocalDate>): Unit = no()
 
 @Deprecated(
     "Use bindTime directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("bindTime(date)", "com.lightningkite.rx.android.bindTime"),
+    replaceWith = ReplaceWith("date.bind(this)", "com.lightningkite.rx.android.bind"),
     level = DeprecationLevel.ERROR
 )
 fun Button.bind(date: Subject<LocalTime>, minuteInterval: Int = 1): Unit = no()
 
 @Deprecated(
     "Use bindTime directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("bindDateTime(date)", "com.lightningkite.rx.android.bindTime"),
+    replaceWith = ReplaceWith("date.bind(this)", "com.lightningkite.rx.android.bind"),
     level = DeprecationLevel.ERROR
 )
 @JvmName("bindLocalDateTime")
@@ -244,14 +244,14 @@ fun Button.bind(date: Subject<LocalDateTime>, minuteInterval: Int = 1): Unit = n
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("run { this.max = 10000; observable.subscribeView(this) { progress = (it * 10000).toInt() } }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("run { this.max = 10000; observable.subscribeAutoDispose(this) { progress = (it * 10000).toInt() } }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun ProgressBar.bindFloat(observable: Observable<Float>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { progress = it }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { progress = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun ProgressBar.bindInt(observable: Observable<Int>): Unit = no()
@@ -259,9 +259,37 @@ fun ProgressBar.bindInt(observable: Observable<Int>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeView(this) { progress = it.toInt() }", "com.lightningkite.rx.android.bind"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { progress = it.toInt() }", "com.lightningkite.rx.android.subscribeAutoDispose"),
     level = DeprecationLevel.ERROR
 )
 fun ProgressBar.bindLong(observable: Observable<Long>): Unit = no()
 
 
+@Deprecated("Use new convention", ReplaceWith("options.showIn(this, onItemSelected, toString)", "com.lightningkite.rx.android.showIn"), DeprecationLevel.ERROR)
+fun <T> AutoCompleteTextView.bind(
+    options: Observable<List<T>>,
+    toString: (T) -> String,
+    onItemSelected: (T) -> Unit
+): Unit = throw NotImplementedError()
+
+@Deprecated("Use new convention", ReplaceWith("items.showIn(this, showIndex, makeView)", "com.lightningkite.rx.android.showIn"), DeprecationLevel.ERROR)
+fun <T> ViewPager.bind(
+    items: List<T>,
+    showIndex: Subject<Int> = ValueSubject(0),
+    makeView: (T)->View
+): Unit = throw NotImplementedError()
+
+@Deprecated("Use new convention", ReplaceWith("options.showIn(this, selected, toString)", "com.lightningkite.rx.android.showIn"), DeprecationLevel.ERROR)
+fun <T> Spinner.bind(
+    options: Observable<List<T>>,
+    selected: Subject<T>,
+    toString: (T) -> String = { it.toString() }
+): Unit = throw NotImplementedError()
+
+
+@Deprecated("Use new convention", ReplaceWith("options.showInObservable(this, selected, toString)", "com.lightningkite.rx.android.showInObservable"), DeprecationLevel.ERROR)
+fun <T> Spinner.bindObservable(
+    options: Observable<List<T>>,
+    selected: Subject<T>,
+    toString: (T) -> Observable<String>
+): Unit = throw NotImplementedError()

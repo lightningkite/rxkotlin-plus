@@ -23,7 +23,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
-fun <SOURCE: Subject<LocalDate>> SOURCE.bindDate(
+@JvmName("bindDate")
+fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
     view: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 ): SOURCE {
@@ -40,7 +41,8 @@ fun <SOURCE: Subject<LocalDate>> SOURCE.bindDate(
     return this
 }
 
-fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bindDate(
+@JvmName("bindDate")
+fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bind(
     view: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT),
     nullText: String
@@ -63,7 +65,8 @@ fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bindDate(
     return this
 }
 
-fun <SOURCE: Subject<LocalTime>> SOURCE.bindTime(
+@JvmName("bindTime")
+fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
     view: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 ): SOURCE {
@@ -80,7 +83,8 @@ fun <SOURCE: Subject<LocalTime>> SOURCE.bindTime(
     return this
 }
 
-fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bindTime(
+@JvmName("bindTime")
+fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bind(
     view: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT),
     nullText: String
@@ -104,7 +108,8 @@ fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bindTime(
 }
 
 
-fun <SOURCE: Subject<LocalDateTime>> SOURCE.bindDateTime(
+@JvmName("bindDateTime")
+fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
     view: Button,
     formatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
 ): SOURCE {
@@ -124,7 +129,8 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bindDateTime(
     return this
 }
 
-fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bindDateTime(
+@JvmName("bindDateTime")
+fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
     view: Button,
     formatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
     nullText: String

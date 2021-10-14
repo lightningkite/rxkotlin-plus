@@ -32,30 +32,30 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: PublishS
  * )
  */
 
-fun <T : Any> LinearLayout.bind(
-    data: Observable<List<T>>,
+fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
+    view: LinearLayout,
     makeView: (Observable<T>) -> View
-) {
+): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
-    data.subscribeBy { value ->
+    subscribeBy { value ->
         //Fix view count
         val excessViews = existingViews.size - value.size
         if (excessViews > 0) {
             //remove views
             for (iter in 1..excessViews) {
                 val old = existingViews.removeAt(existingViews.lastIndex)
-                this.removeView(old.view)
+                view.removeView(old.view)
             }
         } else if (existingViews.size < value.size) {
             //add views
             for (iter in 1..(-excessViews)) {
                 val prop = PublishSubject.create<T>()
-                val view = makeView(prop)
-                if (orientation == LinearLayout.VERTICAL)
-                    this.addView(view, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+                val v = makeView(prop)
+                if (view.orientation == LinearLayout.VERTICAL)
+                    view.addView(v, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
                 else
-                    this.addView(view, LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
-                existingViews.add(LinearLayoutBoundSubview(view, prop))
+                    view.addView(v, LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
+                existingViews.add(LinearLayoutBoundSubview(v, prop))
             }
         }
 
@@ -63,6 +63,7 @@ fun <T : Any> LinearLayout.bind(
         for (index in value.indices) {
             existingViews[index].property.onNext(value[index])
         }
-    }.addTo(this.removed)
+    }.addTo(view.removed)
+    return this
 }
 

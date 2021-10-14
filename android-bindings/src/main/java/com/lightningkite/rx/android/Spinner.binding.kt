@@ -16,32 +16,33 @@ import io.reactivex.rxjava3.subjects.Subject
 
 var butterflySpinnerRow: Int = android.R.layout.simple_spinner_item
 
-fun <T> Spinner.bind(
-    options: Observable<List<T>>,
+fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
+    view: Spinner,
     selected: Subject<T>,
     toString: (T) -> String = { it.toString() }
-) {
+): SOURCE {
     var lastPublishedResults: List<T> = listOf()
-    this.setAdapter(object : BaseAdapter() {
+    view.setAdapter(object : BaseAdapter() {
         init {
-            options.subscribeBy {
-                post {
-                    lastPublishedResults = it.toList()
+            subscribeBy {
+                val copy = it.toList()
+                view.post {
+                    lastPublishedResults = copy
                     notifyDataSetChanged()
                 }
-            }.addTo(removed)
+            }.addTo(view.removed)
         }
 
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = (convertView as? TextView) ?: TextView(context).apply {
-                val subview = LayoutInflater.from(this@bind.context).inflate(butterflySpinnerRow, parent, false)
+            val view = (convertView as? TextView) ?: TextView(view.context).apply {
+                val subview = LayoutInflater.from(view.context).inflate(butterflySpinnerRow, parent, false)
                 val padding = (context.resources.displayMetrics.density * 8).toInt()
                 subview.setPadding(padding,padding,padding,padding)
                 val textView = subview.findViewById<TextView>(android.R.id.text1)
-                textView.setTextColor(this@bind.spinnerTextColor)
-                textView.textSize = this@bind.spinnerTextSize.toFloat()
-                subview.setRemovedCondition(this@bind.removed)
+                textView.setTextColor(view.spinnerTextColor)
+                textView.textSize = view.spinnerTextSize.toFloat()
+                subview.setRemovedCondition(view.removed)
                 return subview
             }
             view.text = lastPublishedResults.getOrNull(position)?.let(toString)
@@ -52,7 +53,7 @@ fun <T> Spinner.bind(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
-    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    view.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -60,38 +61,40 @@ fun <T> Spinner.bind(
             selected.onNext(newValue)
         }
     }
+    return this
 }
 
-fun <T: Any> Spinner.bindObservable(
-    options: Observable<List<T>>,
+fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
+    view: Spinner,
     selected: Subject<T>,
     toString: (T) -> Observable<String>
-) {
+): SOURCE {
     var lastPublishedResults: List<T> = listOf()
-    this.setAdapter(object : BaseAdapter() {
+    view.setAdapter(object : BaseAdapter() {
         init {
-            options.subscribeBy {
-                post {
-                    lastPublishedResults = it.toList()
+            subscribeBy {
+                val copy = it.toList()
+                view.post {
+                    lastPublishedResults = copy
                     notifyDataSetChanged()
                 }
-            }.addTo(removed)
+            }.addTo(view.removed)
         }
 
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = (convertView as? TextView) ?: TextView(context).apply {
+            val view = (convertView as? TextView) ?: TextView(view.context).apply {
                 val event = PublishSubject.create<T>()
-                val subview = LayoutInflater.from(this@bindObservable.context).inflate(butterflySpinnerRow, parent, false)
+                val subview = LayoutInflater.from(view.context).inflate(butterflySpinnerRow, parent, false)
                 val padding = (context.resources.displayMetrics.density * 8).toInt()
                 subview.setPadding(padding,padding,padding,padding)
                 val textView = subview.findViewById<TextView>(android.R.id.text1)
-                textView.setTextColor(this@bindObservable.spinnerTextColor)
-                textView.textSize = this@bindObservable.spinnerTextSize.toFloat()
+                textView.setTextColor(view.spinnerTextColor)
+                textView.textSize = view.spinnerTextSize.toFloat()
                 event.flatMap(toString).subscribeBy {
                     textView.text = it
                 }.addTo(removed)
-                subview.setRemovedCondition(this@bindObservable.removed)
+                subview.setRemovedCondition(view.removed)
                 subview.tag = event
                 return subview
             }
@@ -105,7 +108,7 @@ fun <T: Any> Spinner.bindObservable(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
-    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    view.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
 
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -113,4 +116,5 @@ fun <T: Any> Spinner.bindObservable(
             selected.onNext(newValue)
         }
     }
+    return this
 }
