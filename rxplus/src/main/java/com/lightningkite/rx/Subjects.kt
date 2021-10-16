@@ -7,9 +7,13 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.util.Optional
 
-class ValueSubject<T: Any>(value: T): Subject<T>() {
+abstract class HasValueSubject<T>: Subject<T>() {
+    abstract var value: T
+}
+
+class ValueSubject<T: Any>(value: T): HasValueSubject<T>() {
     val underlying = BehaviorSubject.createDefault(value)
-    var value: T
+    override var value: T
         get() = underlying.value!!
         set(value) { underlying.onNext(value) }
     override fun subscribeActual(observer: Observer<in T>) { underlying.subscribe(observer) }
@@ -60,8 +64,8 @@ fun <A : Any, B : Any> Subject<A>.map(read: (A) -> B, write: (B) -> A?): Subject
     this.observerMapNotNull(write)
 )
 
-fun <A : Any, B : Any> ValueSubject<A>.mapWithExisting(read: (A) -> B, write: (A, B) -> A): Subject<B> {
-    return object : Subject<B>() {
+fun <A : Any, B : Any> HasValueSubject<A>.mapWithExisting(read: (A) -> B, write: (A, B) -> A): HasValueSubject<B> {
+    return object : HasValueSubject<B>() {
         override fun subscribeActual(observer: Observer<in B>) = this@mapWithExisting.map(read).subscribe(observer)
         override fun onSubscribe(d: Disposable) = this@mapWithExisting.onSubscribe(d)
         override fun onNext(t: B) = this@mapWithExisting.onNext(write(this@mapWithExisting.value, t))
@@ -71,6 +75,9 @@ fun <A : Any, B : Any> ValueSubject<A>.mapWithExisting(read: (A) -> B, write: (A
         override fun hasThrowable(): Boolean = this@mapWithExisting.hasThrowable()
         override fun hasComplete(): Boolean = this@mapWithExisting.hasComplete()
         override fun getThrowable(): Throwable? = this@mapWithExisting.throwable
+        override var value: B
+            get() = read(this@mapWithExisting.value)
+            set(value) { this@mapWithExisting.onNext(write(this@mapWithExisting.value, value)) }
     }
 }
 

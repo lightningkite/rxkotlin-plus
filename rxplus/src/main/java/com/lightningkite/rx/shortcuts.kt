@@ -101,13 +101,13 @@ fun Subject<Int>.toSubjectFloat(): Subject<Float> {
     )
 }
 
-fun ValueSubject<ZonedDateTime>.toSubjectLocalDate(): Subject<LocalDate> {
+fun HasValueSubject<ZonedDateTime>.toSubjectLocalDate(): HasValueSubject<LocalDate> {
     return mapWithExisting(
         read = { it.toLocalDate() },
         write = { existing, it -> existing.with(it) }
     )
 }
-fun ValueSubject<ZonedDateTime>.toSubjectLocalTime(): Subject<LocalTime> {
+fun HasValueSubject<ZonedDateTime>.toSubjectLocalTime(): HasValueSubject<LocalTime> {
     return mapWithExisting(
         read = { it.toLocalTime() },
         write = { existing, it -> existing.with(it) }
