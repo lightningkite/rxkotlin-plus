@@ -47,11 +47,11 @@ infix fun <T: Any> Observable<T>.isEqualTo(other: Observable<Optional<T>>): Obse
         = Observable.combineLatest(this, other) { left, right -> left == right.kotlin }
 
 @JvmName("isEqualTo")
-infix fun <T: Any> Subject<T>.isEqualTo(constant: T): Observable<Boolean>
+infix fun <T: Any> Subject<T>.isEqualTo(constant: T): Subject<Boolean>
         = this.map { it == constant }.withWrite { if(it) onNext(constant) }
 
 @JvmName("isEqualToN1")
-infix fun <T: Any> Subject<Optional<T>>.isEqualTo(constant: T): Observable<Boolean>
+infix fun <T: Any> Subject<Optional<T>>.isEqualTo(constant: T): Subject<Boolean>
         = this.map { it.kotlin == constant }.withWrite { if(it) onNext(constant.optional) }
 
 @JvmName("isEqualToOrNullN1")
@@ -65,10 +65,10 @@ infix fun <T: Any> Observable<T>.isEqualToOrNull(other: Observable<Optional<T>>)
 infix fun <T: Any> Observable<T>.isIn(other: Observable<Collection<T>>): Observable<Boolean>
         = Observable.combineLatest(this, other) { left, right -> left in right }
 
-infix fun <T: Any> Subject<Optional<T>>.isEqualToOrNull(constant: T): Observable<Boolean>
+infix fun <T: Any> Subject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean>
         = this.map { it.isEmpty || it.get() == constant }.withWrite { if(it) onNext(constant.optional) }
 
-infix fun <T: Any> ValueSubject<Collection<T>>.contains(constant: T): Observable<Boolean>
+infix fun <T: Any> ValueSubject<Collection<T>>.contains(constant: T): Subject<Boolean>
         = this.map { it.contains(constant) }.withWrite {
     if(it) onNext(value + constant)
     else onNext(value - constant)
