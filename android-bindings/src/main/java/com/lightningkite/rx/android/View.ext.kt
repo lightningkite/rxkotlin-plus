@@ -75,6 +75,11 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribe
     return this
 }
 
+
+fun <T: Any> View.onClick(observable:Observable<T>, action: (T)->Unit) {
+    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)
+}
+
 fun View.onClick(action: ()->Unit) {
     clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
 }
