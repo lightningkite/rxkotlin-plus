@@ -36,6 +36,7 @@ fun <T> StackSubject<T>.pop(): Boolean {
     })
     return true
 }
+
 fun <T> StackSubject<T>.dismiss(): Boolean {
     if (value.isEmpty()) {
         return false
@@ -45,6 +46,7 @@ fun <T> StackSubject<T>.dismiss(): Boolean {
     })
     return true
 }
+
 fun <T> StackSubject<T>.popTo(t: T) {
     val stack = value.toMutableList()
     var found = false
@@ -57,6 +59,7 @@ fun <T> StackSubject<T>.popTo(t: T) {
     }
     onNext(stack)
 }
+
 fun <T> StackSubject<T>.popTo(predicate: (T) -> Boolean) {
     val stack = value.toMutableList()
     var found = false
@@ -69,9 +72,11 @@ fun <T> StackSubject<T>.popTo(predicate: (T) -> Boolean) {
     }
     onNext(stack)
 }
+
 fun <T> StackSubject<T>.root() {
     onNext(listOf(value.first()))
 }
+
 fun <T> StackSubject<T>.reset(t: T) {
     onNext(listOf(t))
 }

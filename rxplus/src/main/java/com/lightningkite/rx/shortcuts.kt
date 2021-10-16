@@ -1,14 +1,39 @@
 package com.lightningkite.rx
 
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.kotlin.Observables
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Action
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.internal.functions.Functions
+import io.reactivex.rxjava3.internal.observers.LambdaObserver
+import io.reactivex.rxjava3.kotlin.*
 import io.reactivex.rxjava3.subjects.Subject
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZonedDateTime
-import java.util.Optional
+import java.util.*
+
+fun <T: Any> Observable<Optional<T>>.subscribeByNullable(
+    onError: (Throwable) -> Unit = {  },
+    onComplete: () -> Unit = {  },
+    onNext: (T?) -> Unit = {  }
+): Disposable
+    = this.subscribeBy(onError, onComplete) { onNext(it.kotlin) }
+
+fun <T: Any> Single<Optional<T>>.subscribeByNullable(
+    onError: (Throwable) -> Unit = { },
+    onSuccess: (T?) -> Unit = {  }
+): Disposable
+    = this.subscribeBy(onError) { onSuccess(it.kotlin) }
+
+fun <T: Any> Maybe<Optional<T>>.subscribeByNullable(
+    onError: (Throwable) -> Unit = {},
+    onComplete: () -> Unit = {},
+    onSuccess: (T?) -> Unit = {}
+): Disposable
+    = this.subscribeBy(onError, onComplete) { onSuccess(it.kotlin) }
 
 infix fun <T: Any> Observable<T>.isEqualTo(other: Observable<T>): Observable<Boolean>
     = Observable.combineLatest(this, other) { left, right -> left == right }
