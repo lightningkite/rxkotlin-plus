@@ -28,10 +28,8 @@ class SwapView @JvmOverloads constructor(
         return newInsets
     }
 
-    var currentView: View = View(context)
-    init {
-        addView(currentView)
-    }
+    private var starting = true
+    var currentView: View? = null
 
     fun swap(to: View?, transition: ViewTransitionUnidirectional) {
         val oldView = currentView
@@ -52,9 +50,15 @@ class SwapView @JvmOverloads constructor(
                 )
             )
 
-            transition.enter.invoke(newView).start()
-            transition.exit.invoke(oldView).withEndAction {
-                removeView(oldView)
+            if(starting) {
+                starting = false
+            } else {
+                transition.enter.invoke(newView).start()
+                if (oldView != null){
+                    transition.exit.invoke(oldView).withEndAction {
+                        removeView(oldView)
+                    }
+                }
             }
             currentView = newView
         }

@@ -5,6 +5,9 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.kotlin.Observables
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZonedDateTime
 import java.util.Optional
 
 infix fun <T: Any> Observable<T>.isEqualTo(other: Observable<T>): Observable<Boolean>
@@ -98,6 +101,19 @@ fun Subject<Int>.toSubjectFloat(): Subject<Float> {
     )
 }
 
+fun ValueSubject<ZonedDateTime>.toSubjectLocalDate(): Subject<LocalDate> {
+    return mapWithExisting(
+        read = { it.toLocalDate() },
+        write = { existing, it -> existing.with(it) }
+    )
+}
+fun ValueSubject<ZonedDateTime>.toSubjectLocalTime(): Subject<LocalTime> {
+    return mapWithExisting(
+        read = { it.toLocalTime() },
+        write = { existing, it -> existing.with(it) }
+    )
+}
+
 operator fun Subject<Int>.plus(amount: Int): Subject<Int> {
     return map(
         read = { it + amount },
@@ -126,26 +142,27 @@ operator fun Subject<Float>.times(amount: Float): Subject<Float> {
 infix fun <T: Any, B: Any> Observable<T>.mapNotNull(mapper: (T)->B?): Observable<B>
         = this.switchMap { mapper(it)?.let{ Observable.just(it) } ?: Observable.empty() }
 
-@JvmName("mapNullable")
-infix fun <T: Any, B: Any> Observable<Optional<T>>.mapNullable(mapper: (T)->B?): Observable<Optional<B>>
-        = this.map { it.kotlin?.let(mapper).optional }
+infix fun <T: Any, B: Any> Observable<Optional<T>>.mapFromNullable(mapper: (T?)->B): Observable<B>
+        = this.map { it.kotlin.let(mapper) }
 
-@JvmName("mapNullable2")
-infix fun <T: Any, B: Any> Observable<T>.mapNullable(mapper: (T)->B?): Observable<Optional<B>>
+infix fun <T: Any, B: Any> Observable<Optional<T>>.mapNullable(mapper: (T?)->B?): Observable<Optional<B>>
+        = this.map { it.kotlin.let(mapper).optional }
+
+infix fun <T: Any, B: Any> Observable<T>.mapToNullable(mapper: (T)->B?): Observable<Optional<B>>
         = this.map { it.let(mapper).optional }
 
-infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNullable(mapper: (T)->Observable<B>?): Observable<Optional<B>>
+infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T)->Observable<B>?): Observable<Optional<B>>
         = this.flatMap { it.kotlin?.let(mapper)?.map { it.optional } ?: Observable.just(Optional.empty<B>()) }
 
-infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNullable(mapper: (T)->Observable<B>?): Observable<Optional<B>>
+infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T)->Observable<B>?): Observable<Optional<B>>
         = this.switchMap { it.kotlin?.let(mapper)?.map { it.optional } ?: Observable.just(Optional.empty<B>()) }
 
-@JvmName("flatMapNullable2")
-infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNullable(mapper: (T)->Observable<Optional<B>>?): Observable<Optional<B>>
+@JvmName("flatMapNotNull2")
+infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T)->Observable<Optional<B>>?): Observable<Optional<B>>
         = this.flatMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
 
-@JvmName("switchMapNullable2")
-infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNullable(mapper: (T)->Observable<Optional<B>>?): Observable<Optional<B>>
+@JvmName("switchMapNotNull2")
+infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T)->Observable<Optional<B>>?): Observable<Optional<B>>
         = this.switchMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
 
 fun <Element : Any, R : Any, OUT : Any> Observable<Element>.combineLatest(

@@ -19,8 +19,6 @@ fun runKeyboardUpdate(access: ActivityAccess, root: View? = null, discardingRoot
     val currentFocus = access.activity?.currentFocus
     var dismissOld = false
     if (currentFocus != null) {
-        Log.d("keyboardMagic.kt", "Current focus is on ${currentFocus.id.takeUnless { it == View.NO_ID }?.let { access.context.resources.getResourceEntryName(it)}}")
-        Log.d("keyboardMagic.kt", "Considering dismissal of keyboard - attach: ${currentFocus.isAttachedToWindow}, discarding: ${discardingRoot?.contains(currentFocus)}, usesKeyboard ${currentFocus::class.java.simpleName}")
         if (!currentFocus.isAttachedToWindow || discardingRoot?.contains(currentFocus) == true || !usesKeyboard(currentFocus)) {
             //dismiss keyboard if the view's gone
             dismissOld = true
@@ -44,7 +42,6 @@ fun runKeyboardUpdate(access: ActivityAccess, root: View? = null, discardingRoot
         return@let null
     }
     if (keyboardView != null) {
-        Log.d("keyboardMagic.kt", "Found next focus, ${keyboardView}")
         if (usesKeyboard(keyboardView)) {
             keyboardView.requestFocus()
             val imm = access.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -53,7 +50,6 @@ fun runKeyboardUpdate(access: ActivityAccess, root: View? = null, discardingRoot
         }
     }
     if (dismissOld) {
-        Log.d("keyboardMagic.kt", "Dismissing the keyboard")
         val imm = access.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         currentFocus?.windowToken?.let {
             imm.hideSoftInputFromWindow(it, 0)

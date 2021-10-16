@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.jakewharton.rxbinding4.internal.checkMainThread
-import com.jakewharton.rxbinding4.swiperefreshlayout.refreshes
 import com.lightningkite.rx.*
 import io.reactivex.rxjava3.android.MainThreadDisposable
 import io.reactivex.rxjava3.core.Observable
@@ -18,6 +17,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlin.reflect.KClass
 import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 
 private fun RecyclerView.defaultLayoutManager(){
@@ -56,7 +56,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val event = PublishSubject.create<T>()
+            val event = BehaviorSubject.create<T>()
             val subview = makeView(event)
             subview.setRemovedCondition(view.removed)
             subview.tag = event
@@ -68,7 +68,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
 
         @Suppress("UNCHECKED_CAST")
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder.itemView.tag as? PublishSubject<T>)?.onNext(lastPublished[position]) ?: run {
+            (holder.itemView.tag as? BehaviorSubject<T>)?.onNext(lastPublished[position]) ?: run {
                 println("Failed to find property to update")
             }
         }
@@ -96,7 +96,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val event = PublishSubject.create<T>()
+            val event = BehaviorSubject.create<T>()
             val subview = makeView(viewType, event)
             subview.setRemovedCondition(view.removed)
             subview.tag = event
@@ -108,7 +108,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
 
         @Suppress("UNCHECKED_CAST")
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder.itemView.tag as? PublishSubject<T>)?.onNext(lastPublished[position]) ?: run {
+            (holder.itemView.tag as? BehaviorSubject<T>)?.onNext(lastPublished[position]) ?: run {
                 println("Failed to find property to update")
             }
         }

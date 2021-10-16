@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
-import com.lightningkite.rx.R
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
@@ -158,28 +157,28 @@ abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : Accessibl
     }
 
     override fun onBackPressed() {
-        val toClose = view.findCloseOrBack()
-        if (toClose != null) {
-            toClose.performClick()
-        } else {
+//        val toClose = view.findCloseOrBack()
+//        if (toClose != null) {
+//            toClose.performClick()
+//        } else {
             val main = main
             if (main !is HasBackAction || !main.onBackPressed()) {
                 super.onBackPressed()
             }
-        }
+//        }
     }
 
-    private val backIds = setOf(R.id.close, R.id.closeButton, R.id.back, R.id.backButton, R.id.backArrow)
-    private fun View.findCloseOrBack(): View? {
-        if (this.id in backIds) return this
-        else if (this is ViewGroup) {
-            for (i in this.childCount - 1 downTo 0) {
-                val result = getChildAt(i).findCloseOrBack()
-                if (result != null) {
-                    return result
-                }
-            }
-        }
-        return null
-    }
+//    private val backIds = setOf(R.id.close, R.id.closeButton, R.id.back, R.id.backButton, R.id.backArrow)
+//    private fun View.findCloseOrBack(): View? {
+//        if (this.id in backIds) return this
+//        else if (this is ViewGroup) {
+//            for (i in this.childCount - 1 downTo 0) {
+//                val result = getChildAt(i).findCloseOrBack()
+//                if (result != null) {
+//                    return result
+//                }
+//            }
+//        }
+//        return null
+//    }
 }

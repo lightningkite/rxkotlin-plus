@@ -10,6 +10,7 @@ import com.lightningkite.rx.android.resources.Image
 import com.lightningkite.rx.android.resources.ImageReference
 import com.lightningkite.rx.android.resources.ImageRemoteUrl
 import com.lightningkite.rx.viewgenerators.ActivityAccess
+import java.time.ZonedDateTime
 import java.util.*
 
 /**
@@ -93,14 +94,14 @@ fun ActivityAccess.openMap(latitude: Double, longitude: Double, label: String? =
     )
 }
 
-fun ActivityAccess.openEvent(title: String, description: String, location: String, start: Date, end: Date) {
+fun ActivityAccess.openEvent(title: String, description: String, location: String, start: ZonedDateTime, end: ZonedDateTime) {
     startIntent(
         intent = Intent(Intent.ACTION_INSERT).apply {
             data = CalendarContract.Events.CONTENT_URI
             putExtra(CalendarContract.Events.TITLE, title)
             putExtra(CalendarContract.Events.DESCRIPTION, description)
-            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start.time)
-            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.time)
+            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start.toInstant().toEpochMilli())
+            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.toInstant().toEpochMilli())
             putExtra(CalendarContract.Events.EVENT_LOCATION, location)
         }
     )

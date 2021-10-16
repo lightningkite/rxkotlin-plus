@@ -1,4 +1,4 @@
-package com.lightningkite.rx
+package com.lightningkite.rx.okhttp
 
 import okhttp3.Response
 

@@ -7,14 +7,22 @@ import android.widget.*
 import androidx.viewpager.widget.ViewPager
 import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
 
+@JvmName("showInWithObserver")
+fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+    view: AutoCompleteTextView,
+    onItemSelected: Observer<T>,
+    toString: (T) -> String = { it.toString() }
+): SOURCE = showIn(view, { onItemSelected.onNext(it) }, toString)
+
 fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     view: AutoCompleteTextView,
     onItemSelected: (T) -> Unit = { view.setText(toString(it)) },
-    toString: (T) -> String,
+    toString: (T) -> String = { it.toString() }
 ): SOURCE {
     var lastPublishedResults: List<T> = listOf()
     view.setAdapter(object : BaseAdapter(), Filterable {

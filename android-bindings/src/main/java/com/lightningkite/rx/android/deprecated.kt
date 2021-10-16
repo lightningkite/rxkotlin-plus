@@ -21,14 +21,28 @@ private fun no(): Nothing = throw NotImplementedError()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { text = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, View::visible)", "com.lightningkite.rx.android.subscribeAutoDispose", "com.lightningkite.rx.android.visible"),
+    level = DeprecationLevel.ERROR
+)
+fun View.bindVisible(observable: Observable<Boolean>): Unit = no()
+
+@Deprecated(
+    "Use directly from RxKotlin Properties",
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, View::exists)", "com.lightningkite.rx.android.subscribeAutoDispose", "com.lightningkite.rx.android.exists"),
+    level = DeprecationLevel.ERROR
+)
+fun View.bindExists(observable: Observable<Boolean>): Unit = no()
+
+@Deprecated(
+    "Use directly from RxKotlin Properties",
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, TextView::setText)", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.TextView"),
     level = DeprecationLevel.ERROR
 )
 fun TextView.bindString(observable: Observable<String>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { text = mapper(it) }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { setText(mapper(it)) }", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.TextView"),
     level = DeprecationLevel.ERROR
 )
 fun <T> TextView.bindText(observable: Observable<T>, mapper: (T)->String): Unit = no()
@@ -42,14 +56,14 @@ fun <T> RecyclerView.bind(data: Observable<List<T>>, defaultValue: T, makeView: 
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { isEnabled = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, Button::isEnabled)", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.Button"),
     level = DeprecationLevel.ERROR
 )
 fun Button.bindActive(observable: Observable<Boolean>, activeBackground: Drawable, inactiveBackground: Drawable): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { isEnabled = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, Button::isEnabled)", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.Button"),
     level = DeprecationLevel.ERROR
 )
 fun Button.bindActive(
@@ -81,7 +95,7 @@ fun RatingBar.bindFloat(stars: Int, observable: Observable<Float>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("run { this.numStars = stars; observable.subscribeAutoDispose(this) { rating = it } }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("run { this.numStars = stars; observable.subscribeAutoDispose(this, RatingBar::rating) }", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.RatingBar"),
     level = DeprecationLevel.ERROR
 )
 fun RatingBar.bindFloat(stars: Int, observable: Subject<Float>): Unit = no()
@@ -151,7 +165,7 @@ fun <T> LinearLayout.bindHorizontal(
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { setText(it) }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, TextView::setText) ", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.TextView"),
     level = DeprecationLevel.ERROR
 )
 fun TextView.bindStringRes(observable: Observable<StringResource>): Unit = no()
@@ -251,7 +265,7 @@ fun ProgressBar.bindFloat(observable: Observable<Float>): Unit = no()
 
 @Deprecated(
     "Use directly from RxKotlin Properties",
-    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this) { progress = it }", "com.lightningkite.rx.android.subscribeAutoDispose"),
+    replaceWith = ReplaceWith("observable.subscribeAutoDispose(this, ProgressBar::progress)", "com.lightningkite.rx.android.subscribeAutoDispose", "android.widget.ProgressBar"),
     level = DeprecationLevel.ERROR
 )
 fun ProgressBar.bindInt(observable: Observable<Int>): Unit = no()

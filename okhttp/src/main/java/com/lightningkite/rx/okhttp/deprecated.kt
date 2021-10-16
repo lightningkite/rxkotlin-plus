@@ -1,4 +1,4 @@
-package com.lightningkite.rx
+package com.lightningkite.rx.okhttp
 
 import io.reactivex.rxjava3.core.Single
 import okhttp3.MediaType
@@ -16,14 +16,14 @@ typealias HttpMediaType = MediaType
 @Deprecated("Use it directly instead.", ReplaceWith("Response", "okhttp3.Response"))
 typealias HttpResponse = Response
 
-@Deprecated("Use new naming convention", ReplaceWith("this.toJsonRequestBody()", "com.lightningkite.rx.toJsonRequestBody"), DeprecationLevel.ERROR)
+@Deprecated("Use new naming convention", ReplaceWith("this.toJsonRequestBody()", "com.lightningkite.rx.okhttp.toJsonRequestBody"), DeprecationLevel.ERROR)
 fun Any?.toJsonHttpBody(): RequestBody = throw NotImplementedError()
 @Deprecated("Use new naming convention", ReplaceWith("this.toRequestBody(mediaType)", "okhttp3.RequestBody.Companion.toRequestBody"), DeprecationLevel.ERROR)
 fun ByteArray.toHttpBody(mediaType: MediaType): RequestBody = throw NotImplementedError()
 @Deprecated("Use new naming convention", ReplaceWith("this.toRequestBody(mediaType)", "okhttp3.RequestBody.Companion.toRequestBody"), DeprecationLevel.ERROR)
 fun String.toHttpBody(mediaType: MediaType = MediaType.TEXT): RequestBody = throw NotImplementedError()
 
-@Deprecated("Use new naming convention", ReplaceWith("MultipartBody.from(*parts)", "okhttp3.MultipartBody", "com.lightningkite.rx.from"), DeprecationLevel.ERROR)
+@Deprecated("Use new naming convention", ReplaceWith("MultipartBody.from(*parts)", "okhttp3.MultipartBody", "com.lightningkite.rx.okhttp.from"), DeprecationLevel.ERROR)
 fun multipartFormBody(vararg parts: MultipartBody.Part): RequestBody {
     return MultipartBody.Builder().setType(MultipartBody.FORM).also {
         for (part in parts) {
@@ -32,7 +32,7 @@ fun multipartFormBody(vararg parts: MultipartBody.Part): RequestBody {
     }.build()
 }
 
-@Deprecated("Use new naming convention", ReplaceWith("MultipartBody.from(parts)", "okhttp3.MultipartBody", "com.lightningkite.rx.from"), DeprecationLevel.ERROR)
+@Deprecated("Use new naming convention", ReplaceWith("MultipartBody.from(parts)", "okhttp3.MultipartBody", "com.lightningkite.rx.okhttp.from"), DeprecationLevel.ERROR)
 fun multipartFormBody(parts: List<MultipartBody.Part>): RequestBody {
     return MultipartBody.Builder().setType(MultipartBody.FORM).also {
         for (part in parts) {
@@ -52,8 +52,8 @@ fun multipartFormFilePart(name: String, filename: String? = null, body: RequestB
 object HttpMediaTypes
 
 
-@Deprecated("Use new naming convention", ReplaceWith("this.readByteArray()", "com.lightningkite.rx.readByteArray"), DeprecationLevel.ERROR)
+@Deprecated("Use new naming convention", ReplaceWith("this.readByteArray()", "com.lightningkite.rx.okhttp.readByteArray"), DeprecationLevel.ERROR)
 fun Response.readData(): Single<ByteArray> = throw NotImplementedError()
 
-@Deprecated("Use new naming convention", ReplaceWith("this.readByteArray()", "com.lightningkite.rx.readByteArray"), DeprecationLevel.ERROR)
+@Deprecated("Use new naming convention", ReplaceWith("this.readByteArray()", "com.lightningkite.rx.okhttp.readByteArray"), DeprecationLevel.ERROR)
 fun Single<Response>.readData(): Single<ByteArray> = throw NotImplementedError()

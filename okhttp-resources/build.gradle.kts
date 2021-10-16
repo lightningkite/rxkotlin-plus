@@ -57,31 +57,19 @@ android {
         versionName = "0.0.1"
     }
     compileOptions {
-        coreLibraryDesugaringEnabled = true
         targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled = true
     }
 }
 
 dependencies {
-    api(project(":rxplus"))
+    api(project(":android-resources"))
+    api(project(":okhttp"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-
-    api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
-
-    api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    api("com.google.android.material:material:1.4.0")
-    api("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
-
-    api("androidx.recyclerview:recyclerview:1.2.1")
-
-    api("androidx.core:core-ktx:1.6.0")
-
-
+    implementation("com.github.bumptech.glide:glide:4.12.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-
 }
 
 tasks {

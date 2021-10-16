@@ -189,8 +189,8 @@ fun ActivityAccess.requestVideoCamera(front: Boolean = false): Maybe<Uri> = Mayb
                 intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true)
             }
             startIntent(intent) { code, result ->
-                val uri = result?.data
-                if (code == Activity.RESULT_OK && uri != null) {
+                val uri = result?.data ?: file
+                if (code == Activity.RESULT_OK ) {
                     em.onSuccess(uri)
                 } else if(code == Activity.RESULT_CANCELED) {
                     em.onComplete()

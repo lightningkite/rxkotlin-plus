@@ -9,11 +9,11 @@ TODO:
 - [X] Change package name
 - [X] Date/DateAlone/TimeAlone -> Java 9
   - [X] Bindings
-- [ ] Move Stuff to Khrysalis Runtime
-  - [ ] Annotations
-  - [ ] GFloat
-  - [ ] ColorValue
-  - [ ] Codable
+- [X] Move Stuff to Khrysalis Runtime
+  - [X] Annotations
+  - [X] GFloat
+  - [X] ColorValue
+  - [X] Codable
 - [X] Move stuff to XmlToXib runtime
   - [X] safePadding
 - [X] Use Android View Binding

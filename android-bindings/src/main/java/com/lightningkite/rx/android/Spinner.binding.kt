@@ -91,7 +91,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
                 val textView = subview.findViewById<TextView>(android.R.id.text1)
                 textView.setTextColor(view.spinnerTextColor)
                 textView.textSize = view.spinnerTextSize.toFloat()
-                event.flatMap(toString).subscribeBy {
+                event.switchMap(toString).subscribeBy {
                     textView.text = it
                 }.addTo(removed)
                 subview.setRemovedCondition(view.removed)

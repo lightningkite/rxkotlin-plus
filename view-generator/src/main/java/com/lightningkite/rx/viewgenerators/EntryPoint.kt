@@ -7,4 +7,5 @@ interface EntryPoint: HasBackAction {
         println("Empty handler; $schema://$host/$path/$params")
     }
     val mainStack: ViewGeneratorStack? get() = null
+    override fun onBackPressed(): Boolean = mainStack?.backPressPop() ?: false
 }

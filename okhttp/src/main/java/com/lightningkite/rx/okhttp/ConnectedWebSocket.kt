@@ -1,4 +1,4 @@
-package com.lightningkite.rx
+package com.lightningkite.rx.okhttp
 
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer

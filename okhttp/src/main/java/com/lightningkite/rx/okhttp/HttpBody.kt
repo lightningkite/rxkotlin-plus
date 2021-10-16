@@ -1,6 +1,5 @@
-package com.lightningkite.rx
+package com.lightningkite.rx.okhttp
 
-import com.lightningkite.rx.android.resources.*
 import io.reactivex.rxjava3.core.Single
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -18,9 +17,9 @@ fun Any?.toJsonRequestBody(): RequestBody {
     return sending.toRequestBody(MediaType.JSON)
 }
 
-fun MultipartBody.from(vararg parts: MultipartBody.Part): RequestBody = from(parts.toList())
+fun MultipartBody.Companion.from(vararg parts: MultipartBody.Part): RequestBody = from(parts.toList())
 
-fun MultipartBody.from(parts: List<MultipartBody.Part>): RequestBody {
+fun MultipartBody.Companion.from(parts: List<MultipartBody.Part>): RequestBody {
     return MultipartBody.Builder().setType(MultipartBody.FORM).also {
         for (part in parts) {
             it.addPart(part)

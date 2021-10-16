@@ -10,6 +10,7 @@ pluginManagement {
 
 include("rxplus")
 include("okhttp")
+include("okhttp-resources")
 include("android-bindings")
 include("android-resources")
 include("view-generator")

@@ -1,4 +1,4 @@
-package com.lightningkite.rx
+package com.lightningkite.rx.okhttp
 
 
 class WebSocketFrame(val binary: ByteArray? = null, val text: String? = null) {

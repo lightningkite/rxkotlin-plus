@@ -1,4 +1,4 @@
-package com.lightningkite.rx
+package com.lightningkite.rx.okhttp
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef

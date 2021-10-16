@@ -4,6 +4,7 @@ import android.view.View
 import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.kotlin.addTo
 import com.lightningkite.rx.android.removed
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 
@@ -15,70 +16,73 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
  *
  */
 
-fun <T : ViewGenerator> SwapView.bindStack(dependency: ActivityAccess, obs: StackSubject<T>) {
-    var currentData = obs.value.lastOrNull()
-    var currentStackSize = obs.value.size
-    obs.subscribeBy { datas ->
-        visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
-        post {
-            val newData = datas.lastOrNull()
-            val newStackSize = datas.size
-            if (currentData == newData) return@post
-            swap(newData?.generate(dependency), when {
-                newStackSize > currentStackSize -> ViewTransitionUnidirectional.PUSH
-                newStackSize < currentStackSize -> ViewTransitionUnidirectional.POP
-                else -> ViewTransitionUnidirectional.FADE
-            })
-            currentData = newData
-            currentStackSize = newStackSize
-        }
-    }.addTo(this.removed)
-}
-
-fun <T : ViewGenerator> SwapView.bindStackWithAnimation(
+fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
+    view: SwapView,
     dependency: ActivityAccess,
-    obs: StackSubject<Pair<T, ViewTransition>>
-) {
-    var currentData = obs.value.lastOrNull()
-    var currentStackSize = obs.value.size
-    obs.subscribeBy { datas ->
-        visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
+    transition: ViewTransitionUnidirectional = ViewTransitionUnidirectional.FADE
+): SOURCE {
+    var currentData: ViewGenerator? = null
+    this.subscribeBy { datas ->
+        post {
+            val newData = datas
+            if (currentData == newData) return@post
+            view.swap(newData.generate(dependency), transition)
+            currentData = newData
+        }
+    }.addTo(view.removed)
+    return this
+}
+
+@JvmName("showStackIn")
+fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
+    view: SwapView,
+    dependency: ActivityAccess
+): SOURCE {
+    var currentData: ViewGenerator? = null
+    var currentStackSize = 0
+    this.subscribeBy { datas ->
+        view.visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
         post {
             val newData = datas.lastOrNull()
             val newStackSize = datas.size
             if (currentData == newData) return@post
-            swap(newData?.first?.generate(dependency), when {
-                newStackSize > currentStackSize -> newData?.second?.push ?: ViewTransitionUnidirectional.NONE
-                newStackSize < currentStackSize -> newData?.second?.pop ?: ViewTransitionUnidirectional.NONE
-                else -> newData?.second?.neutral ?: ViewTransitionUnidirectional.FADE
-            })
+            view.swap(
+                newData?.generate(dependency), when {
+                    newStackSize > currentStackSize -> ViewTransitionUnidirectional.PUSH
+                    newStackSize < currentStackSize -> ViewTransitionUnidirectional.POP
+                    else -> ViewTransitionUnidirectional.FADE
+                }
+            )
             currentData = newData
             currentStackSize = newStackSize
         }
-    }.addTo(this.removed)
+    }.addTo(view.removed)
+    return this
 }
 
-/**
- *
- * Binds the view in the swap view to the top ViewGenerator in the PropertyStack.
- * Any changes to the top of the stack will manifest in the swap view.
- *
- */
-
-fun SwapView.bindList(dependency: ActivityAccess, vgs: List<ViewGenerator>, index: ValueSubject<Int>) {
-    var currentData = vgs.getOrNull(index.value)
-    var currentIndex = index.value
-    index.subscribeBy { newIndex ->
+@JvmName("showWithTransitionIn")
+fun <T : ViewGenerator, SOURCE : Observable<List<Pair<T, ViewTransition>>>> SOURCE.showIn(
+    view: SwapView,
+    dependency: ActivityAccess
+): SOURCE {
+    var currentData: Pair<T, ViewTransition>? = null
+    var currentStackSize = 0
+    this.subscribeBy { datas ->
+        view.visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
         post {
-            val newData = vgs.getOrNull(newIndex)
+            val newData = datas.lastOrNull()
+            val newStackSize = datas.size
             if (currentData == newData) return@post
-            swap(newData?.generate(dependency), when {
-                newIndex > currentIndex -> ViewTransitionUnidirectional.PUSH
-                newIndex < currentIndex -> ViewTransitionUnidirectional.POP
-                else -> ViewTransitionUnidirectional.FADE
-            })
+            view.swap(
+                newData?.first?.generate(dependency), when {
+                    newStackSize > currentStackSize -> newData?.second?.push ?: ViewTransitionUnidirectional.PUSH
+                    newStackSize < currentStackSize -> newData?.second?.pop ?: ViewTransitionUnidirectional.POP
+                    else -> newData?.second?.neutral ?: ViewTransitionUnidirectional.FADE
+                }
+            )
             currentData = newData
-            currentIndex = newIndex
+            currentStackSize = newStackSize
         }
-    }.addTo(this.removed)
+    }.addTo(view.removed)
+    return this
 }
