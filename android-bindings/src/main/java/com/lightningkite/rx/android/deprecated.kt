@@ -307,3 +307,18 @@ fun <T> Spinner.bindObservable(
     selected: Subject<T>,
     toString: (T) -> Observable<String>
 ): Unit = throw NotImplementedError()
+
+
+@Deprecated(
+    "Use directly from RxKotlin Properties",
+    replaceWith = ReplaceWith("observable.showLoading(this, color)", "com.lightningkite.rx.android.showLoading"),
+    level = DeprecationLevel.ERROR
+)
+fun ViewFlipper.bindLoading(observable:Observable<Boolean>, color: Int):Unit = throw NotImplementedError()
+
+@Deprecated(
+    "Use directly from RxKotlin Properties",
+    replaceWith = ReplaceWith("observable.showLoading(this, null)", "com.lightningkite.rx.android.showLoading"),
+    level = DeprecationLevel.ERROR
+)
+fun ViewFlipper.bindLoading(observable:Observable<Boolean>):Unit = throw NotImplementedError()

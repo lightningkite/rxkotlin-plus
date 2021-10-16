@@ -1,4 +1,4 @@
-package com.lightningkite.rx.android
+    package com.lightningkite.rx.android
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog

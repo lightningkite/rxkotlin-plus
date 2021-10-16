@@ -66,8 +66,10 @@ var ViewFlipper.loadCount: Int
     }
 
 fun <T: Any> Single<T>.showLoading(view: ViewFlipper, color: ColorResource? = null): Single<T> {
+    defaults(view, color)
     return this.doOnSubscribe { view.loadCount++ }.doOnTerminate { view.loadCount-- }
 }
 fun <T: Any> Maybe<T>.showLoading(view: ViewFlipper, color: ColorResource? = null): Maybe<T> {
+    defaults(view, color)
     return this.doOnSubscribe { view.loadCount++ }.doOnTerminate { view.loadCount-- }
 }
