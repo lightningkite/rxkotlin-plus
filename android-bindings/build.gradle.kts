@@ -79,6 +79,7 @@ dependencies {
 
     api("androidx.core:core-ktx:1.6.0")
 
+    api("io.github.inflationx:viewpump:2.0.3")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 

@@ -21,12 +21,8 @@ abstract class MinimumViewGeneratorActivity : AccessibleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ViewPump.init(ViewPump.builder().addInterceptor(FocusOnStartupInterceptor).build())
         view = main.generate(this)
         setContentView(view)
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
-    }
 }
