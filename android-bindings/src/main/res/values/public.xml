@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <public name="entryTextSize" type="attr"/>
+    <public name="entryFontFamily" type="attr"/>
+    <public name="entryTypeface" type="attr"/>
+    <public name="entryTextStyle" type="attr"/>
+    <public name="entryTextColor" type="attr"/>
+    <public name="entryPaddingLeft" type="attr"/>
+    <public name="entryPaddingStart" type="attr"/>
+    <public name="entryPaddingRight" type="attr"/>
+    <public name="entryPaddingEnd" type="attr"/>
+    <public name="entryPaddingTop" type="attr"/>
+    <public name="entryPaddingBottom" type="attr"/>
+    <public name="entryPaddingHorizontal" type="attr"/>
+    <public name="entryPaddingVertical" type="attr"/>
+    <public name="entryPadding" type="attr"/>
+</resources>

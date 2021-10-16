@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Spinner">
+        <attr name="entryTextSize" format="dimension"/>
+        <attr name="entryFontFamily" format="string" />
+        <attr name="entryTypeface">
+            <enum name="normal" value="0" />
+            <enum name="sans" value="1" />
+            <enum name="serif" value="2" />
+            <enum name="monospace" value="3" />
+        </attr>
+        <attr name="entryTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="entryTextFontWeight" format="integer"/>
+        <attr name="entryTextColor" format="color"/>
+        <attr name="entryPaddingLeft" format="dimension"/>
+        <attr name="entryPaddingStart" format="dimension"/>
+        <attr name="entryPaddingRight" format="dimension"/>
+        <attr name="entryPaddingEnd" format="dimension"/>
+        <attr name="entryPaddingTop" format="dimension"/>
+        <attr name="entryPaddingBottom" format="dimension"/>
+        <attr name="entryPaddingHorizontal" format="dimension"/>
+        <attr name="entryPaddingVertical" format="dimension"/>
+        <attr name="entryPadding" format="dimension"/>
+        <attr name="entryLetterSpacing" format="dimension"/>
+        <attr name="entryLineSpacingMultiplier" format="dimension"/>
+    </declare-styleable>
+<!--    <declare-styleable name="View">-->
+<!--        <attr name="systemEdges">-->
+<!--            <flag name="none" value="0" />-->
+<!--            <flag name="top" value="1" />-->
+<!--            <flag name="right" value="2" />-->
+<!--            <flag name="bottom" value="4" />-->
+<!--            <flag name="left" value="8" />-->
+<!--            <flag name="vertical" value="5" />-->
+<!--            <flag name="horizontal" value="10" />-->
+<!--            <flag name="all" value="15" />-->
+<!--        </attr>-->
+<!--        <attr name="systemEdgesSizing">-->
+<!--            <flag name="none" value="0" />-->
+<!--            <flag name="top" value="1" />-->
+<!--            <flag name="right" value="2" />-->
+<!--            <flag name="bottom" value="4" />-->
+<!--            <flag name="left" value="8" />-->
+<!--            <flag name="vertical" value="5" />-->
+<!--            <flag name="horizontal" value="10" />-->
+<!--            <flag name="all" value="15" />-->
+<!--        </attr>-->
+<!--        <attr name="systemEdgesBoth">-->
+<!--            <flag name="none" value="0" />-->
+<!--            <flag name="top" value="1" />-->
+<!--            <flag name="right" value="2" />-->
+<!--            <flag name="bottom" value="4" />-->
+<!--            <flag name="left" value="8" />-->
+<!--            <flag name="vertical" value="5" />-->
+<!--            <flag name="horizontal" value="10" />-->
+<!--            <flag name="all" value="15" />-->
+<!--        </attr>-->
+<!--    </declare-styleable>-->
+</resources>

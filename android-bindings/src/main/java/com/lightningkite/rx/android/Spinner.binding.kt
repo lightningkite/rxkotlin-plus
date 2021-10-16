@@ -35,18 +35,12 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
 
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = (convertView as? TextView) ?: TextView(view.context).apply {
-                val subview = LayoutInflater.from(view.context).inflate(butterflySpinnerRow, parent, false)
-                val padding = (context.resources.displayMetrics.density * 8).toInt()
-                subview.setPadding(padding,padding,padding,padding)
-                val textView = subview.findViewById<TextView>(android.R.id.text1)
-                textView.setTextColor(view.spinnerTextColor)
-                textView.textSize = view.spinnerTextSize.toFloat()
-                subview.setRemovedCondition(view.removed)
-                return subview
+            val v = (convertView as? TextView) ?: TextView(view.context).apply {
+                view.spinnerTextStyle?.apply(this)
+                setRemovedCondition(view.removed)
             }
-            view.text = lastPublishedResults.getOrNull(position)?.let(toString)
-            return view
+            v.text = lastPublishedResults.getOrNull(position)?.let(toString)
+            return v
         }
 
         override fun getItem(position: Int): Any? = lastPublishedResults.getOrNull(position)
@@ -83,25 +77,19 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
 
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = (convertView as? TextView) ?: TextView(view.context).apply {
+            val v = (convertView as? TextView) ?: TextView(view.context).apply {
                 val event = PublishSubject.create<T>()
-                val subview = LayoutInflater.from(view.context).inflate(butterflySpinnerRow, parent, false)
-                val padding = (context.resources.displayMetrics.density * 8).toInt()
-                subview.setPadding(padding,padding,padding,padding)
-                val textView = subview.findViewById<TextView>(android.R.id.text1)
-                textView.setTextColor(view.spinnerTextColor)
-                textView.textSize = view.spinnerTextSize.toFloat()
+                view.spinnerTextStyle?.apply(this)
                 event.switchMap(toString).subscribeBy {
-                    textView.text = it
+                    text = it
                 }.addTo(removed)
-                subview.setRemovedCondition(view.removed)
-                subview.tag = event
-                return subview
+                setRemovedCondition(view.removed)
+                tag = event
             }
             lastPublishedResults.getOrNull(position)?.let {
-                (view.tag as PublishSubject<T>).onNext(it)
+                (v.tag as PublishSubject<T>).onNext(it)
             }
-            return view
+            return v
         }
 
         override fun getItem(position: Int): Any? = lastPublishedResults.getOrNull(position)
