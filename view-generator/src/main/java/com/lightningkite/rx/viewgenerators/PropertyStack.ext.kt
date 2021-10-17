@@ -60,7 +60,7 @@ fun <T> StackSubject<T>.popTo(t: T) {
     onNext(stack)
 }
 
-fun <T> StackSubject<T>.popTo(predicate: (T) -> Boolean) {
+fun <T> StackSubject<T>.popToPredicate(predicate: (T) -> Boolean) {
     val stack = value.toMutableList()
     var found = false
     for (i in 0..stack.lastIndex) {

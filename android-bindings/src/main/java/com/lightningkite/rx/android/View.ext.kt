@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.longClicks
+import com.lightningkite.rx.kotlin
 import com.lightningkite.rx.subscribeByNullable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
@@ -76,13 +77,26 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribe
 }
 
 
+fun View.onClick(action: ()->Unit) {
+    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+}
+
 fun <T: Any> View.onClick(observable:Observable<T>, action: (T)->Unit) {
     clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)
 }
 
-fun View.onClick(action: ()->Unit) {
-    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, action: (T?)->Unit) {
+    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)
 }
+
 fun View.onLongClick(action: ()->Unit) {
     longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+}
+
+fun <T: Any> View.onLongClick(observable:Observable<T>, action: (T)->Unit){
+    longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)
+}
+
+fun <T: Any> View.onLongClickNullable(observable:Observable<Optional<T>>, action: (T?)->Unit){
+    longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)
 }
