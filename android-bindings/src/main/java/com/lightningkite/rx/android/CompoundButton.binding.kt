@@ -18,14 +18,38 @@ import io.reactivex.rxjava3.subjects.Subject
  * If selected is true the button is checked, otherwise it is unchecked.
  *
  */
-fun <SOURCE: Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
+fun <SOURCE : Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
+    var lastKnownValue: Boolean = false
     subscribeBy { it ->
+        lastKnownValue = it
         if (it != view.isChecked) {
             view.isChecked = it
         }
     }.addTo(view.removed)
     view.setOnCheckedChangeListener { buttonView, isChecked ->
-        onNext(isChecked)
+        if (lastKnownValue != isChecked) {
+            onNext(isChecked)
+        }
+    }
+    return this
+}
+
+fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(view: CompoundButton): SOURCE {
+    var lastKnownValue: Boolean = false
+    subscribeBy { it ->
+        lastKnownValue = it
+        if (it != view.isChecked) {
+            view.isChecked = it
+        }
+    }.addTo(view.removed)
+    view.setOnCheckedChangeListener { buttonView, isChecked ->
+        if (lastKnownValue != isChecked) {
+            if (isChecked) {
+                onNext(isChecked)
+            } else {
+                view.isChecked = true
+            }
+        }
     }
     return this
 }

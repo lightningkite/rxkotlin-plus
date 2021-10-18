@@ -57,11 +57,9 @@ infix fun <T: Any> Observable<T>.isEqualTo(other: Observable<Optional<T>>): Obse
 infix fun <T: Any> Observable<T>.notEqualTo(other: Observable<Optional<T>>): Observable<Boolean>
         = Observable.combineLatest(this, other){ left, right -> left != right.kotlin }
 
-@JvmName("isEqualTo")
 infix fun <T: Any> Subject<T>.isEqualTo(constant: T): Subject<Boolean>
         = this.map { it == constant }.withWrite { if(it) onNext(constant) }
 
-@JvmName("notEqualTo")
 infix fun <T: Any> Subject<T>.notEqualTo(constant: T): Subject<Boolean>
         = this.map { it != constant }.withWrite { if(it) onNext(constant) }
 
@@ -89,8 +87,20 @@ infix fun <T: Any> Observable<T>.isEqualToOrNull(other: Observable<Optional<T>>)
 infix fun <T: Any> Observable<T>.notEqualToOrNull(other: Observable<Optional<T>>): Observable<Boolean>
         = Observable.combineLatest(this, other) { left, right -> right.isEmpty || left != right.kotlin }
 
-infix fun <T: Any> Subject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean>
-        = this.map { it.isEmpty || it.kotlin != constant }.withWrite { if(it) onNext(constant.optional) }
+// These can't work as two way binds. If value is null all buttons are on. Tapping a button sets it to off, but
+// it doesn't update the value, so it requires two clicks. That is not the desired behaviour.
+//infix fun <T: Any> Subject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean>
+//        = this.map { it.isEmpty || it.kotlin == constant }.withWrite { if(it) onNext(constant.optional) }
+//
+//infix fun <T: Any> Subject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean>
+//        = this.map { it.isEmpty || it.kotlin != constant }.withWrite { if(it) onNext(constant.optional) }
+
+infix fun <T: Any> HasValueSubject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean>
+        = this.map { it.isEmpty || it.kotlin == constant }.withWrite { if(it || (!it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
+
+infix fun <T: Any> HasValueSubject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean>
+        = this.map { it.isEmpty || it.kotlin != constant }.withWrite { if(it || (!it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
+
 
 infix fun <T: Any> Observable<T>.isIn(other: Observable<Collection<T>>): Observable<Boolean>
         = Observable.combineLatest(this, other) { left, right -> left in right }
