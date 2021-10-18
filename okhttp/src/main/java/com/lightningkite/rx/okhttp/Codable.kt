@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.util.StdDateFormat
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 
 val defaultJsonMapper = ObjectMapper()
     .registerModule(KotlinModule())
+    .registerModule(JavaTimeModule())
     .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
     .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)

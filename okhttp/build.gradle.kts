@@ -54,6 +54,7 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-annotations:2.12.5")
     api("com.fasterxml.jackson.core:jackson-databind:2.12.5")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
     api("com.squareup.okhttp3:okhttp:4.9.2")
 }
 
