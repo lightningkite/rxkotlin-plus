@@ -10,9 +10,7 @@ import io.reactivex.rxjava3.internal.functions.Functions
 import io.reactivex.rxjava3.internal.observers.LambdaObserver
 import io.reactivex.rxjava3.kotlin.*
 import io.reactivex.rxjava3.subjects.Subject
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZonedDateTime
+import java.time.*
 import java.util.*
 
 fun <T: Any> Observable<Optional<T>>.subscribeByNullable(
@@ -173,6 +171,21 @@ fun HasValueSubject<ZonedDateTime>.toSubjectLocalTime(): HasValueSubject<LocalTi
     return mapWithExisting(
         read = { it.toLocalTime() },
         write = { existing, it -> existing.with(it) }
+    )
+}
+
+@JvmName("Instant_toSubjectLocalDate")
+fun HasValueSubject<Instant>.toSubjectLocalDate(): HasValueSubject<LocalDate> {
+    return mapWithExisting(
+        read = { it.atZone(ZoneId.systemDefault()).toLocalDate() },
+        write = { existing, it -> existing.atZone(ZoneId.systemDefault()).with(it).toInstant() }
+    )
+}
+@JvmName("Instant_toSubjectLocalTime")
+fun HasValueSubject<Instant>.toSubjectLocalTime(): HasValueSubject<LocalTime> {
+    return mapWithExisting(
+        read = { it.atZone(ZoneId.systemDefault()).toLocalTime() },
+        write = { existing, it -> existing.atZone(ZoneId.systemDefault()).with(it).toInstant() }
     )
 }
 

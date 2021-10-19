@@ -27,6 +27,7 @@ object SpinnerStyleInterceptor : Interceptor {
             android.R.attr.textColor,
             android.R.attr.letterSpacing,
             android.R.attr.lineSpacingMultiplier,
+            android.R.attr.gravity,
             R.attr.entryTextSize,
             R.attr.entryFontFamily,
             R.attr.entryTypeface,
@@ -44,6 +45,7 @@ object SpinnerStyleInterceptor : Interceptor {
             R.attr.entryPadding,
             R.attr.entryLetterSpacing,
             R.attr.entryLineSpacingMultiplier,
+            R.attr.entryGravity,
         ).toIntArray()
     )
 
@@ -67,6 +69,7 @@ object SpinnerStyleInterceptor : Interceptor {
                 ),
                 letterSpacing = t.getFloat(R.attr.entryLetterSpacing, t.getFloat(android.R.attr.letterSpacing, -1f)).takeUnless { it == -1f },
                 lineSpacingMultiplier = t.getFloat(R.attr.entryLineSpacingMultiplier, t.getFloat(android.R.attr.lineSpacingMultiplier, -1f)).takeUnless { it == -1f },
+                gravity = t.getInt(R.attr.entryGravity, t.getInt(android.R.attr.gravity, 0))
             )
             t.recycle()
         }

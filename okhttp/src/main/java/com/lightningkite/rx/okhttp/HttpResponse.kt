@@ -32,5 +32,5 @@ fun <T : Any> Response.readJson(typeToken: TypeReference<T>): Single<T> = Single
     }
 }.let { HttpClient.threadCorrectly<T>(it) }
 
-inline fun <reified T : Any> Response.readJsonDebug(): Single<T> = readJson(jacksonTypeRef())
+inline fun <reified T : Any> Response.readJsonDebug(): Single<T> = readJsonDebug(jacksonTypeRef())
 fun <T : Any> Response.readJsonDebug(typeToken: TypeReference<T>): Single<T> = readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(typeToken) }

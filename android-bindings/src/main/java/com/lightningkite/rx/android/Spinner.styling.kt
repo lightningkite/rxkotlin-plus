@@ -17,8 +17,10 @@ data class SpinnerTextStyle(
     val typeface: Typeface?,
     val letterSpacing: Float?,
     val lineSpacingMultiplier: Float?,
+    val gravity: Int,
 ) {
     fun apply(to: TextView) {
+        to.gravity = gravity
         to.setTextColor(textColor)
         to.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
         to.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
