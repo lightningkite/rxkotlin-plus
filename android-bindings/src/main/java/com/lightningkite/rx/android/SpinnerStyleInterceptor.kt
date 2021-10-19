@@ -12,8 +12,8 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.util.set
-import io.github.inflationx.viewpump.InflateResult
-import io.github.inflationx.viewpump.Interceptor
+import dev.b3nedikt.viewpump.InflateResult
+import dev.b3nedikt.viewpump.Interceptor
 
 object SpinnerStyleInterceptor : Interceptor {
 

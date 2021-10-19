@@ -3,8 +3,6 @@ package com.lightningkite.rx.viewgenerators
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import io.github.inflationx.viewpump.ViewPump
-import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 /**
  * An activity that implements [ActivityAccess].

@@ -1,7 +1,7 @@
 package com.lightningkite.rx.viewgenerators
 
-import io.github.inflationx.viewpump.InflateResult
-import io.github.inflationx.viewpump.Interceptor
+import dev.b3nedikt.viewpump.InflateResult
+import dev.b3nedikt.viewpump.Interceptor
 
 object FocusOnStartupInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): InflateResult {
