@@ -56,7 +56,7 @@ infix fun <T: Any> Subject<T>.isEqualTo(constant: T): Subject<Boolean>
         = this.map { it == constant }.withWrite { if(it) onNext(constant) }
 
 infix fun <T: Any> Subject<T>.notEqualTo(constant: T): Subject<Boolean>
-        = this.map { it != constant }.withWrite { if(it) onNext(constant) }
+        = this.map { it != constant }.withWrite { if(!it) onNext(constant) }
 
 @JvmName("isEqualToN1")
 infix fun <T: Any> Subject<Optional<T>>.isEqualTo(constant: T): Subject<Boolean>
@@ -121,7 +121,7 @@ operator fun Subject<Boolean>.not(): Subject<Boolean>
 
 @JvmName("toSubjectStringFromInt")
 fun Subject<Int>.toSubjectString(): Subject<String> {
-    return map(
+    return mapMaybeWrite(
         read = { it.toString() },
         write = { it.toIntOrNull() }
     )
@@ -129,7 +129,7 @@ fun Subject<Int>.toSubjectString(): Subject<String> {
 
 @JvmName("toSubjectStringFromDouble")
 fun Subject<Double>.toSubjectString(): Subject<String> {
-    return map(
+    return mapMaybeWrite(
         read = { it.toString() },
         write = { it.toDoubleOrNull() }
     )
@@ -261,6 +261,11 @@ fun <IN : Any> List<Single<IN>>.zip(): Single<List<IN>> =
     Single.zip(this) { stupidArray: Array<Any?> -> stupidArray.toList() as List<IN> }
 
 fun <Element : Any> Single<Element>.working(property: Subject<Boolean>): Single<Element> {
+    return this
+        .doOnSubscribe { it -> property.onNext(true) }
+        .doFinally { property.onNext(false) }
+}
+fun <Element : Any> Maybe<Element>.working(property: Subject<Boolean>): Maybe<Element> {
     return this
         .doOnSubscribe { it -> property.onNext(true) }
         .doFinally { property.onNext(false) }

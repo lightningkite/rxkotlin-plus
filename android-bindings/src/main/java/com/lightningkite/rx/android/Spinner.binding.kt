@@ -22,17 +22,8 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     toString: (T) -> String = { it.toString() }
 ): SOURCE {
     var lastPublishedResults: List<T> = listOf()
-    view.setAdapter(object : BaseAdapter() {
-        init {
-            subscribeBy {
-                val copy = it.toList()
-                view.post {
-                    lastPublishedResults = copy
-                    notifyDataSetChanged()
-                }
-            }.addTo(view.removed)
-        }
-
+    var suppressChange = false
+    val adapter = (object : BaseAdapter() {
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val v = (convertView as? TextView) ?: TextView(view.context).apply {
@@ -47,16 +38,30 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
+    view.adapter = adapter
     Observable
-        .combineLatest(selected, this) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .subscribeBy { index -> if (index != -1 && index != view.selectedItemPosition) view.setSelection(index) }
+        .combineLatest(selected, this@showIn.doOnNext {
+            val copy = it.toList()
+            lastPublishedResults = copy
+            adapter.notifyDataSetChanged()
+        }) { sel: T, list: List<T> -> list.indexOf(sel) }
+        .subscribeBy { index ->
+            if (index != -1 && index != view.selectedItemPosition && !suppressChange) {
+                suppressChange = true
+                view.setSelection(index)
+                suppressChange = false
+            }
+        }
         .addTo(view.removed)
     view.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
-
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            val newValue = lastPublishedResults.getOrNull(position) ?: return
-            selected.onNext(newValue)
+            if(!suppressChange) {
+                suppressChange = true
+                val newValue = lastPublishedResults.getOrNull(position) ?: return
+                selected.onNext(newValue)
+                suppressChange = false
+            }
         }
     }
     return this
@@ -68,17 +73,8 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
     toString: (T) -> Observable<String>
 ): SOURCE {
     var lastPublishedResults: List<T> = listOf()
-    view.setAdapter(object : BaseAdapter() {
-        init {
-            subscribeBy {
-                val copy = it.toList()
-                view.post {
-                    lastPublishedResults = copy
-                    notifyDataSetChanged()
-                }
-            }.addTo(view.removed)
-        }
-
+    var suppressChange = false
+    val adapter = (object : BaseAdapter() {
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val v = (convertView as? TextView) ?: TextView(view.context).apply {
@@ -100,16 +96,30 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
+    view.adapter = adapter
     Observable
-        .combineLatest(selected, this) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .subscribeBy { index -> if (index != -1 && index != view.selectedItemPosition) view.setSelection(index) }
+        .combineLatest(selected, this@showInObservable.doOnNext {
+            val copy = it.toList()
+            lastPublishedResults = copy
+            adapter.notifyDataSetChanged()
+        }) { sel: T, list: List<T> -> list.indexOf(sel) }
+        .subscribeBy { index ->
+            if (index != -1 && index != view.selectedItemPosition && !suppressChange) {
+                suppressChange = true
+                view.setSelection(index)
+                suppressChange = false
+            }
+        }
         .addTo(view.removed)
     view.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
-
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            val newValue = lastPublishedResults.getOrNull(position) ?: return
-            selected.onNext(newValue)
+            if(!suppressChange) {
+                suppressChange = true
+                val newValue = lastPublishedResults.getOrNull(position) ?: return
+                selected.onNext(newValue)
+                suppressChange = false
+            }
         }
     }
     return this

@@ -59,7 +59,12 @@ fun <T : Any> makeSubject(
     override fun getThrowable(): Throwable? = error
 }
 
-fun <A : Any, B : Any> Subject<A>.map(read: (A) -> B, write: (B) -> A?): Subject<B> = makeSubject(
+fun <A : Any, B : Any> Subject<A>.map(read: (A) -> B, write: (B) -> A): Subject<B> = makeSubject<B>(
+    this.map(read),
+    this.observerMap(write)
+)
+
+fun <A : Any, B : Any> Subject<A>.mapMaybeWrite(read: (A) -> B, write: (B) -> A?): Subject<B> = makeSubject<B>(
     this.map(read),
     this.observerMapNotNull(write)
 )
@@ -86,14 +91,13 @@ fun <T : Any> Observable<Optional<T>>.notNull(): Observable<T> = this.filter { i
 val <T> Optional<T>.kotlin: T? get() = if (isPresent) this.get() else null
 val <T : Any> T?.optional: Optional<T> get() = Optional.ofNullable(this)
 
-fun <T : Any, B : Any> Observer<T>.observerMap(mapper: (B) -> T): Observer<B> = object : Observer<B> {
+private fun <T : Any, B : Any> Observer<T>.observerMap(mapper: (B) -> T): Observer<B> = object : Observer<B> {
     override fun onSubscribe(d: Disposable) = this@observerMap.onSubscribe(d)
     override fun onNext(t: B) = this@observerMap.onNext(mapper(t))
     override fun onError(e: Throwable) = this@observerMap.onError(e)
     override fun onComplete() = this@observerMap.onComplete()
 }
-
-fun <T : Any, B : Any> Observer<T>.observerMapNotNull(mapper: (B) -> T?): Observer<B> = object : Observer<B> {
+private fun <T : Any, B : Any> Observer<T>.observerMapNotNull(mapper: (B) -> T?): Observer<B> = object : Observer<B> {
     override fun onSubscribe(d: Disposable) = this@observerMapNotNull.onSubscribe(d)
     override fun onNext(t: B) {
         mapper(t)?.let { this@observerMapNotNull.onNext(it) }

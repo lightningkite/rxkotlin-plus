@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -25,7 +26,7 @@ fun Image.load(context: Context): Single<Bitmap> {
             is ImageBitmap -> Single.just(this.bitmap)
             is ImageRemoteUrl -> load(context = context)
             is ImageResource -> {
-                val drawable = context.resources.getDrawable(resource, null)
+                val drawable = ResourcesCompat.getDrawable(context.resources, resource, null)!!
                 if (drawable is BitmapDrawable) {
                     Single.just(drawable.bitmap)
                 } else {
