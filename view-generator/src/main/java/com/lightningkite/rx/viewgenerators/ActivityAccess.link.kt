@@ -27,7 +27,7 @@ fun ActivityAccess.startIntent(
 fun ActivityAccess.share(shareTitle: String, message: String? = null, url: String? = null, image: Image? = null) {
     val i = Intent(Intent.ACTION_SEND)
     i.type = "text/plain"
-    listOfNotNull(message, url).joinToString("\n").takeUnless { it == null }?.let { i.putExtra(Intent.EXTRA_TEXT, it) }
+    listOfNotNull(message, url).joinToString("\n").let { i.putExtra(Intent.EXTRA_TEXT, it) }
     if (image != null) {
         when (image) {
             is ImageReference -> {
@@ -38,7 +38,6 @@ fun ActivityAccess.share(shareTitle: String, message: String? = null, url: Strin
                 i.setType("image/jpeg")
                 i.putExtra(Intent.EXTRA_STREAM, Uri.parse(image.url))
             }
-
         }
     }
     context.startActivity(Intent.createChooser(i, shareTitle))

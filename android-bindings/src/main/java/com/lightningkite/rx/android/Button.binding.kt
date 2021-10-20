@@ -140,8 +140,8 @@ fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
     }.addTo(view.removed)
 
     view.setOnClickListener {
-        this.firstElement().subscribeBy { it ->
-            val start: LocalDateTime = it.kotlin ?: LocalDateTime.now()
+        this.firstElement().subscribeBy {  element ->
+            val start: LocalDateTime = element.kotlin ?: LocalDateTime.now()
             view.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 view.context.timeSelectorDialog(start.toLocalTime()) { t ->
                     this.onNext(LocalDateTime.of(d, t).optional)
@@ -160,7 +160,7 @@ fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
 fun Context.dateSelectorDialog(start: LocalDate, onResult: (LocalDate) -> Unit) {
     DatePickerDialog(
         this,
-        { view, year, month, dayOfMonth ->
+        { _, year, month, dayOfMonth ->
             onResult(LocalDate.of(year, month, dayOfMonth))
         },
         start.year,
@@ -172,7 +172,7 @@ fun Context.dateSelectorDialog(start: LocalDate, onResult: (LocalDate) -> Unit) 
 fun Context.timeSelectorDialog(start: LocalTime, onResult: (LocalTime) -> Unit) {
     TimePickerDialog(
         this,
-        { view, hour, minute ->
+        { _, hour, minute ->
             onResult(LocalTime.of(hour, minute))
         },
         start.hour,

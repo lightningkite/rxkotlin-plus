@@ -19,7 +19,6 @@ data class CodeSection(
             var currentSectionOverwrite: Boolean = false
             var currentStartLineSpaces: Int = 0
             var currentWrites = ArrayList<TabWriter.() -> Unit>()
-            var currentSpaces = 0
 
             fun finishSection() {
                 val writes = currentWrites
@@ -47,7 +46,6 @@ data class CodeSection(
                         line(currentLine.trim())
                     }
                 }
-                currentSpaces = spaces
             }
             finishSection()
 

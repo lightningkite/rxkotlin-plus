@@ -1,10 +1,6 @@
 package com.lightningkite.rx.android
 
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.longClicks
 import com.lightningkite.rx.kotlin
@@ -18,7 +14,6 @@ import io.reactivex.rxjava3.kotlin.addTo
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
 
 fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
     subscribeBy {

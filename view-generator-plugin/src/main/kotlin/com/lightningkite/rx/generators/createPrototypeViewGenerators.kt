@@ -1,11 +1,17 @@
 package com.lightningkite.rx.generators
 
-import com.lightningkite.rx.xml.readLayoutInfo
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.lightningkite.rx.log
 import com.lightningkite.rx.utils.XmlNode
 import com.lightningkite.rx.utils.camelCase
 import com.lightningkite.rx.utils.readXMLStyles
+import com.lightningkite.rx.xml.AndroidLayoutFile
 import java.io.File
+
+
+fun readLayoutInfo(buildFolder: File): Map<String, AndroidLayoutFile> =
+    jacksonObjectMapper().readValue(buildFolder.resolve("layout/summary.json"))
 
 
 fun createPrototypeViewGenerators(androidFolder: File, applicationPackage: String) =

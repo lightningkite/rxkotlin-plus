@@ -50,11 +50,11 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.0.0")
     api("io.reactivex.rxjava3:rxjava:3.1.1")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    api("com.fasterxml.jackson.core:jackson-core:2.12.5")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.12.5")
-    api("com.fasterxml.jackson.core:jackson-databind:2.12.5")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
+    api("com.fasterxml.jackson.core:jackson-core:2.13.0")
+    api("com.fasterxml.jackson.core:jackson-annotations:2.13.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
     api("com.squareup.okhttp3:okhttp:4.9.2")
 }
 
@@ -82,7 +82,7 @@ afterEvaluate {
             val java by creating(MavenPublication::class) {
                 from(components["java"])
                 artifact(tasks.getByName("sourceJar"))
-                //artifact(tasks.getByName("javadocJar"))
+                artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -131,21 +131,21 @@ if (useDeployment) {
                 }
                 "pom" {
                     "project" {
-                        setProperty("name", "RxKotlin-Property")
-                        setProperty("packaging", "aar")
+                        setProperty("name", "HttpClient")
+                        setProperty("packaging", "jar")
                         setProperty(
                             "description",
-                            "An observable library for kotlin based on rxkotlin."
+                            "An OkHttp Wrapper based on RxJava"
                         )
-                        setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                        setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
 
                         "scm" {
-                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-property.git")
+                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
                             setProperty(
                                 "developerConnection",
-                                "scm:git:https://github.com/lightningkite/rxkotlin-property.git"
+                                "scm:git:https://github.com/lightningkite/rxkotlin-plus.git"
                             )
-                            setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                            setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
                         }
 
                         "licenses" {
@@ -162,6 +162,11 @@ if (useDeployment) {
                                 setProperty("name", "Brady Svedin")
                                 setProperty("email", "brady@lightningkite.com")
                             }
+                        }
+                        "developer"{
+                            setProperty("id", "LightningKiteJoseph")
+                            setProperty("name", "Joseph Ivie")
+                            setProperty("email", "joseph@lightningkite.com")
                         }
                     }
                 }

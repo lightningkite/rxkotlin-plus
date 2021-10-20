@@ -22,7 +22,6 @@ class HttpProgress<T>(
         HttpPhase.Waiting -> 0.65f
         HttpPhase.Read -> 0.7f + 0.3f * ratio
         HttpPhase.Done -> 1f
-        else -> 0f
     }
 }
 

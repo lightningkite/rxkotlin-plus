@@ -33,14 +33,16 @@ fun PlayerView.setVideo(video: Video?, playWhenReady: Boolean = false) {
             val agent = Util.getUserAgent(context, context.getString(R.string.app_name))
             val factory = DefaultDataSourceFactory(context, agent)
             val source = ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(video.uri))
-            player.prepare(source)
+            player.setMediaSource(source)
+            player.prepare()
             player.playWhenReady = playWhenReady
         }
         is VideoRemoteUrl -> {
             val agent = Util.getUserAgent(context, context.getString(R.string.app_name))
             val factory = DefaultDataSourceFactory(context, agent)
             val source = ProgressiveMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(video.url))
-            player.prepare(source)
+            player.setMediaSource(source)
+            player.prepare()
             player.playWhenReady = playWhenReady
         }
         else -> {

@@ -4,13 +4,10 @@ import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.viewpager.widget.ViewPager
-import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
 
 @JvmName("showInWithObserver")
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
@@ -73,7 +70,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
-    view.setOnItemClickListener { adapterView, v, index, id ->
+    view.setOnItemClickListener { _, _, index, _ ->
         lastPublishedResults.getOrNull(index)?.let(onItemSelected)
     }
     return this

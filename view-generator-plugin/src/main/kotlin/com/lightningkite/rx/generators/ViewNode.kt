@@ -47,11 +47,6 @@ class ViewNode(
     }
 
     companion object {
-        val stack = ViewVar(
-            "stack",
-            "ViewGeneratorStack",
-            null
-        )
 
         const val attributePush = "tools:goTo"
         const val attributeSwap = "tools:swap"
@@ -125,25 +120,7 @@ class ViewNode(
 
     fun totalRequires(map: Map<String, ViewNode>, seen: Set<String> = setOf()): Collection<ViewVar> = totalRequiresBetter(map, seen).map { it.viewVar }
     fun totalRequiresBetter(map: Map<String, ViewNode>, seen: Set<String> = setOf()): Collection<ViewVar.Requirement> {
-//        val totalSet = MergableCollection<ViewVar.Requirement>()
-//        if (name in seen) return totalSet
-//        for(direct in requires){
-//            totalSet.add(direct.requiredByMe(this.name))
-//        }
-//        for(inst in instantiates){
-//            val subnode = map[inst] ?: continue
-//            for(x in subnode.totalRequiresBetter(map, seen + name)){
-//                if(x.viewVar.name == "stack") continue
-//                if(x.viewVar.default != null) continue
-//                totalSet.add(x.requiredBy(inst))
-//            }
-//        }
-//        for(provided in provides){
-//            totalSet.items.removeAll {
-//                provided.satisfies(it.viewVar)
-//            }
-//        }
-//        return totalSet
+
         if(name in seen) return listOf()
 
         val directRequirements = requires.map { it.requiredByMe(this.name) }
@@ -191,7 +168,7 @@ class ViewNode(
     fun gather(node: XmlNode, xml: File, styles: Styles, parentPath: String? = "xml") {
         val path = parentPath?.let { parentPath ->
             node.allAttributes["android:id"]?.removePrefix("@+id/")?.camelCase()?.let {
-                parentPath + "." + it
+                "$parentPath.$it"
             }
         }
         node.allAttributes[attributePush]?.let {
@@ -291,7 +268,7 @@ class ViewNode(
             )
         }
         node.allAttributes[attributeStackId]?.let { stackId ->
-            provides.add(ViewVar(stackId, "ViewGeneratorStack", "PropertyStack()"))
+            provides.add(ViewVar(stackId, "ViewGeneratorStack", "ValueSubject(listOf())"))
             node.allAttributes[attributeStackDefault]?.let {
                 operations.add(
                     ViewStackOp.StartWith(

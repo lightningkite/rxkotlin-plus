@@ -48,7 +48,6 @@ repositories {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.0.0")
-    api("io.reactivex.rxjava3:rxandroid:3.0.0")
     api("io.reactivex.rxjava3:rxjava:3.1.1")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
 }
@@ -77,7 +76,6 @@ afterEvaluate {
             val java by creating(MavenPublication::class) {
                 from(components["java"])
                 artifact(tasks.getByName("sourceJar"))
-                //artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -126,21 +124,21 @@ if (useDeployment) {
                 }
                 "pom" {
                     "project" {
-                        setProperty("name", "RxKotlin-Property")
-                        setProperty("packaging", "aar")
+                        setProperty("name", "RxPlus")
+                        setProperty("packaging", "jar")
                         setProperty(
                             "description",
-                            "An observable library for kotlin based on rxkotlin."
+                            "A kotlin library that extends off of RxJava3."
                         )
-                        setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                        setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
 
                         "scm" {
-                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-property.git")
+                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
                             setProperty(
                                 "developerConnection",
-                                "scm:git:https://github.com/lightningkite/rxkotlin-property.git"
+                                "scm:git:https://github.com/lightningkite/rxkotlin-plus.git"
                             )
-                            setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                            setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
                         }
 
                         "licenses" {
@@ -156,6 +154,11 @@ if (useDeployment) {
                                 setProperty("id", "bjsvedin")
                                 setProperty("name", "Brady Svedin")
                                 setProperty("email", "brady@lightningkite.com")
+                            }
+                            "developer"{
+                                setProperty("id", "LightningKiteJoseph")
+                                setProperty("name", "Joseph Ivie")
+                                setProperty("email", "joseph@lightningkite.com")
                             }
                         }
                     }

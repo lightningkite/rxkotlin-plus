@@ -26,7 +26,7 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
             view.isChecked = it
         }
     }.addTo(view.removed)
-    view.setOnCheckedChangeListener { buttonView, isChecked ->
+    view.setOnCheckedChangeListener { _, isChecked ->
         if (lastKnownValue != isChecked) {
             onNext(isChecked)
         }
@@ -42,7 +42,7 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(view: CompoundButton): SOUR
             view.isChecked = it
         }
     }.addTo(view.removed)
-    view.setOnCheckedChangeListener { buttonView, isChecked ->
+    view.setOnCheckedChangeListener { _, isChecked ->
         if (lastKnownValue != isChecked) {
             if (isChecked) {
                 onNext(isChecked)

@@ -17,13 +17,13 @@ data class ViewVar(val name: String, val type: String, val default: String? = nu
         val constructors = HashMap<String, (viewNode: ViewNode, viewNodeMap: Map<String, ViewNode>) -> String>()
 
         init {
-            constructors["ViewGeneratorStack"] = { node, nodeMap -> "PropertyStack()" }
-            constructors["Int"] = { node, nodeMap -> "0" }
-            constructors["Long"] = { node, nodeMap -> "0L" }
-            constructors["String"] = { node, nodeMap -> "\"\"" }
-            constructors["Float"] = { node, nodeMap -> "0f" }
-            constructors["Double"] = { node, nodeMap -> "0.0" }
-            constructors["Boolean"] = { node, nodeMap -> "false" }
+            constructors["ViewGeneratorStack"] = { _, _ -> "ValueSubject(listOf())" }
+            constructors["Int"] = { _, _ -> "0" }
+            constructors["Long"] = { _, _ -> "0L" }
+            constructors["String"] = { _, _ -> "\"\"" }
+            constructors["Float"] = { _, _ -> "0f" }
+            constructors["Double"] = { _, _ -> "0.0" }
+            constructors["Boolean"] = { _, _ -> "false" }
         }
     }
 

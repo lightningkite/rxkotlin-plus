@@ -127,7 +127,7 @@ object HttpClient {
         }.cache().let { threadCorrectly(it) }
     }
 
-    fun <T> callWithProgress(
+    fun <T: Any> callWithProgress(
         url: String,
         method: String = HttpClient.GET,
         headers: Map<String, String> = mapOf(),

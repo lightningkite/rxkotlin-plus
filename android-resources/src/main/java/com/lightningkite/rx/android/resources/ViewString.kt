@@ -19,7 +19,7 @@ class ViewStringResource(val resource: Int) : ViewString {
 class ViewStringTemplate(val template: ViewString, val arguments: List<Any>) : ViewString {
     override fun get(context: Context): String {
         val templateResolved = template.get(context)
-        val fixedArguments = arguments.map { it -> (it as? ViewString)?.get(context) ?: it }
+        val fixedArguments = arguments.map { (it as? ViewString)?.get(context) ?: it }
         return templateResolved.format(*fixedArguments.toTypedArray())
     }
 }
@@ -30,7 +30,7 @@ class ViewStringComplex(val getter: (Context) -> String) : ViewString {
 
 class ViewStringList(val parts: List<ViewString>, val separator: String = "\n"): ViewString {
     override fun get(context: Context): String {
-        return parts.joinToString(separator) { it -> it.get(context) }
+        return parts.joinToString(separator) { it.get(context) }
     }
 }
 

@@ -82,14 +82,6 @@ infix fun <T: Any> Observable<T>.isEqualToOrNull(other: Observable<Optional<T>>)
 infix fun <T: Any> Observable<T>.notEqualToOrNull(other: Observable<Optional<T>>): Observable<Boolean>
         = Observable.combineLatest(this, other) { left, right -> right.isEmpty || left != right.kotlin }
 
-// These can't work as two way binds. If value is null all buttons are on. Tapping a button sets it to off, but
-// it doesn't update the value, so it requires two clicks. That is not the desired behaviour.
-//infix fun <T: Any> Subject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean>
-//        = this.map { it.isEmpty || it.kotlin == constant }.withWrite { if(it) onNext(constant.optional) }
-//
-//infix fun <T: Any> Subject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean>
-//        = this.map { it.isEmpty || it.kotlin != constant }.withWrite { if(it) onNext(constant.optional) }
-
 infix fun <T: Any> HasValueSubject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean>
         = this.map { it.isEmpty || it.kotlin == constant }.withWrite { if(it || (!it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
 
@@ -249,24 +241,27 @@ fun <Element : Any, R : Any, OUT : Any> Observable<Element>.combineLatest(
     function: (Element, R) -> OUT
 ): Observable<OUT> = Observable.combineLatest(this, observable, function)
 
+@Suppress("UNCHECKED_CAST")
 fun <IN : Any, OUT : Any> List<Observable<IN>>.combineLatest(combine: (List<IN>) -> OUT): Observable<OUT> =
     Observable.combineLatest(this) { stupidArray: Array<Any?> ->
         combine(stupidArray.toList() as List<IN>)
     }
 
+@Suppress("UNCHECKED_CAST")
 fun <IN : Any> List<Observable<IN>>.combineLatest(): Observable<List<IN>> =
     Observable.combineLatest(this) { stupidArray: Array<Any?> -> stupidArray.toList() as List<IN> }
 
+@Suppress("UNCHECKED_CAST")
 fun <IN : Any> List<Single<IN>>.zip(): Single<List<IN>> =
     Single.zip(this) { stupidArray: Array<Any?> -> stupidArray.toList() as List<IN> }
 
 fun <Element : Any> Single<Element>.working(property: Subject<Boolean>): Single<Element> {
     return this
-        .doOnSubscribe { it -> property.onNext(true) }
+        .doOnSubscribe { property.onNext(true) }
         .doFinally { property.onNext(false) }
 }
 fun <Element : Any> Maybe<Element>.working(property: Subject<Boolean>): Maybe<Element> {
     return this
-        .doOnSubscribe { it -> property.onNext(true) }
+        .doOnSubscribe { property.onNext(true) }
         .doFinally { property.onNext(false) }
 }

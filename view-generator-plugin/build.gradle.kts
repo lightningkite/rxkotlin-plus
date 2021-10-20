@@ -87,10 +87,10 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
-    api("org.apache.commons:commons-lang3:3.10")
-    api("com.fasterxml.jackson.core:jackson-databind:2.9.+")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+")
+    api("org.apache.commons:commons-lang3:3.12.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
     api("net.jodah:xsylum:0.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder
@@ -185,32 +185,27 @@ if(useDeployment){
                 }
                 "pom" {
                     "project" {
-                        setProperty("name", "Khrysalis-Plugin")
+                        setProperty("name", "View-Generator-Prototyper")
                         setProperty("packaging", "jar")
                         setProperty(
                             "description",
-                            "Khrysalis is a low-commitment multiplatform application development system based on converting Android apps into iOS and Web apps."
+                            "A gradle plugin to help generate Android View Generator files based on the layout xmls in the project."
                         )
-                        setProperty("url", "https://github.com/lightningkite/khrysalis")
+                        setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
 
                         "scm" {
-                            setProperty("connection", "scm:git:https://github.com/lightningkite/khrysalis.git")
+                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
                             setProperty(
                                 "developerConnection",
-                                "scm:git:https://github.com/lightningkite/khrysalis.git"
+                                "scm:git:https://github.com/lightningkite/rxkotlin-plus.git"
                             )
-                            setProperty("url", "https://github.com/lightningkite/khrysalis")
+                            setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
                         }
 
                         "licenses" {
                             "license"{
-                                setProperty("name", "GNU General Public License v3.0")
-                                setProperty("url", "https://www.gnu.org/licenses/gpl-3.0.en.html")
-                                setProperty("distribution", "repo")
-                            }
-                            "license"{
-                                setProperty("name", "Commercial License")
-                                setProperty("url", "https://www.lightningkite.com")
+                                setProperty("name", "The MIT License (MIT)")
+                                setProperty("url", "https://www.mit.edu/~amini/LICENSE.md")
                                 setProperty("distribution", "repo")
                             }
                         }
@@ -219,6 +214,11 @@ if(useDeployment){
                                 setProperty("id", "bjsvedin")
                                 setProperty("name", "Brady Svedin")
                                 setProperty("email", "brady@lightningkite.com")
+                            }
+                            "developer"{
+                                setProperty("id", "LightningKiteJoseph")
+                                setProperty("name", "Joseph Ivie")
+                                setProperty("email", "joseph@lightningkite.com")
                             }
                         }
                     }

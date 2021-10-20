@@ -138,6 +138,7 @@ private fun generateFile(
                         action()
                     }
                     line("}")
+                    line()
                 }
             }
         ) {
@@ -218,13 +219,13 @@ private fun generateFile(
 
         line("//")
         line("// ${viewName}VG.swift")
-        line("// Created by RxKotlinProperty Prototype Generator")
+        line("// Created by RxKotlin-Plus Prototype Generator")
         line("// Sections of this file will be replaced if the marker, '${CodeSection.overwriteMarker}', is left in place.")
         line("//")
         line("package $packageName")
-        line("")
+        line()
         line("${CodeSection.sectionMarker} Imports")
-        line("")
+        line()
         line("import android.widget.*")
         line("import android.view.*")
         line("import com.lightningkite.rx.*")
@@ -232,15 +233,16 @@ private fun generateFile(
         line("import com.lightningkite.rx.android.resources.*")
         line("import com.lightningkite.rx.viewgenerators.*")
         line("import $applicationPackage.R")
-        line("import $applicationPackage.layouts.*")
-        line("")
+        line("import $applicationPackage.databinding.*")
+        line("import io.reactivex.rxjava3.core.Observable")
+        line()
         line("${CodeSection.sectionMarker} Name ${CodeSection.overwriteMarker}")
         line("""@Suppress("NAME_SHADOWING")""")
         line("class ${viewName}VG(")
         tab {
             line("${CodeSection.sectionMarker} Dependencies ${CodeSection.overwriteMarker}")
             val things = (viewNode.totalRequires(viewNodeMap).sortedBy { it.name })
-            things.forEachIndexed { index, it ->
+            things.forEachIndexed { _, it ->
                 if ((it.type.contains("->") || it.type.contains("-]")) && !it.type.endsWith('?')) {
                     line("val ${it.name}: ${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
                 } else {
@@ -249,10 +251,10 @@ private fun generateFile(
             }
             line("${CodeSection.sectionMarker} Extends ${CodeSection.overwriteMarker}")
         }
-        line(") : ViewGenerator() {")
+        line(") : ViewGenerator {")
         tab {
-            line()
             viewNode.provides.sortedBy { it.name }.filter { it.onPath == null }.forEach {
+                line()
                 line("${CodeSection.sectionMarker} Provides ${it.name} ${CodeSection.overwriteMarker}")
                 line(
                     """val ${it.name}: ${it.kotlinType} = ${
@@ -265,26 +267,27 @@ private fun generateFile(
             }
             if (viewNode.operations.any { it is ViewStackOp.Embed }) {
                 for (op in viewNode.operations.mapNotNull { it as? ViewStackOp.Embed }) {
-                    line("")
+                    line()
                     line("${CodeSection.sectionMarker} Embedded ${op.replaceId.camelCase()}Vg ${CodeSection.overwriteMarker}")
                     val otherViewNode =
                         viewNodeMap[op.viewName.removePrefix("@layout/").camelCase().capitalize()] ?: break
                     line("val ${op.replaceId.camelCase()}Vg = ${makeView(otherViewNode, null, op.replaceId)}")
                 }
             }
-            line("")
+            line()
             line("${CodeSection.sectionMarker} Title ${CodeSection.overwriteMarker}")
             line(
                 """override val titleString: ViewString = ViewStringRaw("${
                     viewName.replace(Regex("[A-Z]")) { " " + it.value }
                         .trim()
                 }")""")
-            line("")
+            line()
             line("${CodeSection.sectionMarker} Generate Start ${CodeSection.overwriteMarker}")
             line("""override fun generate(dependency: ActivityAccess): View {""")
+            line()
             tab {
-                line("val xml = ${viewName}Xml()")
-                line("val view = xml.setup(dependency)")
+                line("val xml = ${viewName}Binding.inflate(dependency.layoutInflater)")
+                line("val view = xml.root")
 
                 fun handleNode(inside: String, node: XmlNode, prefix: String) {
 
@@ -297,9 +300,9 @@ private fun generateFile(
                     val view = viewIdentifier?.let {
                         if (node.name == "include") {
                             if (isOptional)
-                                "$it?.xmlRoot"
+                                "$it?.root"
                             else
-                                "$it.xmlRoot"
+                                "$it.root"
                         } else it
                     }?.let { prefix + it }
                     val viewAccess = if (isOptional) "$view?." else "$view."
@@ -427,13 +430,13 @@ private fun generateFile(
                         }
                         node.allAttributes["tools:listitem"]?.let {
                             val subName = it.removePrefix("@layout/").camelCase().capitalize()
-                            val xmlName = subName.plus("Xml")
+                            val xmlName = subName.plus("Binding")
                             val otherViewNode = viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
-                            line("${viewAccess}bind(")
+                            line("Observable.just(listOf(1, 2, 3, 4))")
                             tab {
-                                line("data = Observable.just(listOf(1, 2, 3, 4)),")
-                                line("makeView = label@ { observable ->")
-                                tab {
+                                line(".showIn($view) label@ { obs ->")
+                                line()
+                                tab{
                                     line(
                                         "${CodeSection.sectionMarker} Make Subview For ${
                                             view.replace(
@@ -448,12 +451,13 @@ private fun generateFile(
                                         line("val cellView = cellVg.generate(dependency)")
                                         handleNodeClick(node, "cellView", "cellView.")
                                     } else {
-                                        line("val cellXml = $xmlName() ")
-                                        line("val cellView = cellXml.setup(dependency)")
+                                        line("val cellXml = $xmlName.inflate(dependency.layoutInflater) ")
+                                        line("val cellView = cellXml.root")
                                         val file = xml.parentFile.resolve(it.removePrefix("@layout/").plus(".xml"))
                                         handleNode(subName, XmlNode.read(file, styles), "cellXml.")
-                                        handleNodeClick(node, "cellXml.xmlRoot", "cellXml.xmlRoot.")
+                                        handleNodeClick(node, "cellXml.root", "cellXml.root.")
                                     }
+                                    line()
                                     line(
                                         "${CodeSection.sectionMarker} End Make Subview For ${
                                             view.replace(
@@ -466,7 +470,6 @@ private fun generateFile(
                                 }
                                 line("}")
                             }
-                            line(")")
                         }
                         handleNodeClick(node, view, viewAccess)
                         node.allAttributes[ViewNode.attributeStackId]?.let { stackName ->
@@ -485,9 +488,10 @@ private fun generateFile(
                                 inits.add {
                                     line("${CodeSection.sectionMarker} Set Initial View for ${stackName} ${CodeSection.overwriteMarker}")
                                     line("this.$stackName.reset($makeView)")
+                                    line()
                                 }
                             }
-                            line("${viewAccess}bindStack(dependency, ${stackName})")
+                            line("$stackName.showIn($view, dependency)")
                         }
                     } else {
                         if (node.allAttributes.keys.any { it.startsWith("tools:") }) {
@@ -518,26 +522,26 @@ private fun generateFile(
                     }
                 }
                 handleNode(viewName, node, "xml.")
-                line("")
+                line()
                 line("${CodeSection.sectionMarker} Generate End ${CodeSection.overwriteMarker}")
-                line("")
+                line()
                 line("return view")
             }
             line("}")
-            line("")
+            line()
             line("${CodeSection.sectionMarker} Init")
-            line("")
             line("init {")
+            line()
             tab {
                 inits.forEach { it() }
             }
             line("${CodeSection.sectionMarker} Init End")
             line("}")
-            line("")
+            line()
             line("${CodeSection.sectionMarker} Actions")
-            line("")
+            line()
             actions.forEach { it() }
-            line("")
+            line()
             line("${CodeSection.sectionMarker} Body End")
         }
         line("}")
