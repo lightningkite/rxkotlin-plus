@@ -397,7 +397,7 @@ private fun generateFile(
                                         it.removePrefix(
                                             "@string/"
                                         )
-                                    }"""
+                                    })"""
                                 )
                             } else {
                                 line(
