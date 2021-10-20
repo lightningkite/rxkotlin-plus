@@ -7,6 +7,9 @@ import io.reactivex.rxjava3.core.Single
 import okhttp3.Response
 import java.lang.reflect.ParameterizedType
 
+/**
+ * Changes unsuccessful responses into [HttpResponseException].
+ */
 fun Single<Response>.unsuccessfulAsError(): Single<Response> {
     return this.map { it ->
         if (it.isSuccessful) {
@@ -17,7 +20,9 @@ fun Single<Response>.unsuccessfulAsError(): Single<Response> {
     }
 }
 
-
+/**
+ * Properly discards the response.
+ */
 fun Single<Response>.discard(): Single<Unit> {
     return this.flatMap {
         if (it.isSuccessful) {
@@ -28,6 +33,9 @@ fun Single<Response>.discard(): Single<Unit> {
     }
 }
 
+/**
+ * Reads the response into JSON using the [defaultJsonMapper].
+ */
 inline fun <reified T: Any> Single<Response>.readJson(): Single<T> {
     val type = jacksonTypeRef<T>()
     return this.flatMap { it ->
@@ -39,6 +47,9 @@ inline fun <reified T: Any> Single<Response>.readJson(): Single<T> {
     }
 }
 
+/**
+ * Reads the response into JSON using the [defaultJsonMapper], but prints the raw value to [System.out].
+ */
 inline fun <reified T: Any> Single<Response>.readJsonDebug(): Single<T> {
     val type = jacksonTypeRef<T>()
     return this.flatMap { it ->
@@ -50,11 +61,9 @@ inline fun <reified T: Any> Single<Response>.readJsonDebug(): Single<T> {
     }
 }
 
-inline fun <reified T: Any> Single<String>.fromJsonString(): Single<T> {
-    val type = jacksonTypeRef<T>()
-    return this.map { it -> it.fromJsonString<T>(type) }
-}
-
+/**
+ * Reads the text from the [Response].
+ */
 fun Single<Response>.readText(): Single<String> {
     return this.flatMap { it ->
         if (it.isSuccessful) {
@@ -65,6 +74,9 @@ fun Single<Response>.readText(): Single<String> {
     }
 }
 
+/**
+ * Reads the binary data from the [Response].
+ */
 fun Single<Response>.readByteArray(): Single<ByteArray> {
     return this.flatMap { it ->
         if (it.isSuccessful) {

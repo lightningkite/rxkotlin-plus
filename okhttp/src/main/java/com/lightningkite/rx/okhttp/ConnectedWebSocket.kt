@@ -10,20 +10,27 @@ import okhttp3.WebSocketListener
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 
-class ConnectedWebSocket(val url: String) : WebSocketListener(),
-    Observer<WebSocketFrame> {
+/**
+ * A live web socket connection.
+ */
+class ConnectedWebSocket(val url: String) : WebSocketListener(), Observer<WebSocketFrame> {
     internal var underlyingSocket: WebSocket? = null
     private val _read =
         PublishSubject.create<WebSocketFrame>()
-    val _ownConnection = PublishSubject.create<ConnectedWebSocket>()
+    private val _ownConnection = PublishSubject.create<ConnectedWebSocket>()
+
+    /**
+     * An observable representing the socket's connection.  Will emit once it is fully connected.
+     */
     val ownConnection: Observable<ConnectedWebSocket> get() = _ownConnection.let { HttpClient.threadCorrectly(it) }
+
+    /**
+     * Messages that come through the websocket.
+     */
     val read: Observable<WebSocketFrame> get() = _read.let { HttpClient.threadCorrectly(it) }
-    var justStarted = false
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        justStarted = true
         _ownConnection.onNext(this)
-        justStarted = false
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {

@@ -14,12 +14,22 @@ import java.util.concurrent.TimeUnit
 object ApplicationAccess {
 
     private val applicationIsActiveEvent = ValueSubject<Boolean>(true)
+
+    /**
+     * Whether the application is in the foreground.
+     */
     val foreground: Observable<Boolean> = applicationIsActiveEvent
         .debounce(100L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
         .distinctUntilChanged()
 
+    /**
+     * Whether the soft input (a.k.a. software keyboard) is up
+     */
     val softInputActive = ValueSubject<Boolean>(false)
 
+    /**
+     * Sets up the [application] to report visibility events to [applicationIsActiveEvent]
+     */
     fun applicationIsActiveStartup(application: Application){
         var activeCount = 0
         application.registerActivityLifecycleCallbacks(object: Application.ActivityLifecycleCallbacks {

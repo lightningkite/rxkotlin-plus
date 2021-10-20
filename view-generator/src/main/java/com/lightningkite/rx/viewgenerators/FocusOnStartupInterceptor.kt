@@ -3,6 +3,9 @@ package com.lightningkite.rx.viewgenerators
 import dev.b3nedikt.viewpump.InflateResult
 import dev.b3nedikt.viewpump.Interceptor
 
+/**
+ * An [Interceptor] that handles the "focusOnStartup" attribute.
+ */
 object FocusOnStartupInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): InflateResult {
         val result = chain.proceed(chain.request())

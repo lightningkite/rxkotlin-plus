@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
 
+/**
+ * Shows a single view with animated transitions to other views.
+ */
 class SwapView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    var windowInsetsListenerCopy: OnApplyWindowInsetsListener? = null
+    private var windowInsetsListenerCopy: OnApplyWindowInsetsListener? = null
     override fun setOnApplyWindowInsetsListener(listener: OnApplyWindowInsetsListener?) {
         this.windowInsetsListenerCopy = listener
         super.setOnApplyWindowInsetsListener(listener)
@@ -28,8 +31,11 @@ class SwapView @JvmOverloads constructor(
         return newInsets
     }
 
-    var currentView: View? = null
+    private var currentView: View? = null
 
+    /**
+     * Swaps from the current view to another one with the given [transition].
+     */
     fun swap(to: View?, transition: ViewTransitionUnidirectional) {
         val oldView = currentView
         var newView = to
@@ -58,6 +64,9 @@ class SwapView @JvmOverloads constructor(
                 }
             }
             currentView = newView
+            post {
+                runKeyboardUpdate(newView, oldView)
+            }
         }
     }
 }

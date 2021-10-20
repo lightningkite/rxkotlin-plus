@@ -10,15 +10,22 @@ import okio.Okio
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-
-
+/**
+ * Transforms a given object into a JSON request body using the [defaultJsonMapper].
+ */
 fun Any?.toJsonRequestBody(): RequestBody {
     val sending = defaultJsonMapper.writeValueAsString(this)
     return sending.toRequestBody(MediaType.JSON)
 }
 
+/**
+ * A shortcut for using the [MultipartBody.Builder].
+ */
 fun MultipartBody.Companion.from(vararg parts: MultipartBody.Part): RequestBody = from(parts.toList())
 
+/**
+ * A shortcut for using the [MultipartBody.Builder].
+ */
 fun MultipartBody.Companion.from(parts: List<MultipartBody.Part>): RequestBody {
     return MultipartBody.Builder().setType(MultipartBody.FORM).also {
         for (part in parts) {

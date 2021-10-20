@@ -24,6 +24,9 @@ fun ActivityAccess.startIntent(
     activity.startActivityForResult(intent, prepareOnResult(onResult = onResult), options)
 }
 
+/**
+ * Open a sharing dialog.
+ */
 fun ActivityAccess.share(shareTitle: String, message: String? = null, url: String? = null, image: Image? = null) {
     val i = Intent(Intent.ACTION_SEND)
     i.type = "text/plain"
@@ -43,6 +46,9 @@ fun ActivityAccess.share(shareTitle: String, message: String? = null, url: Strin
     context.startActivity(Intent.createChooser(i, shareTitle))
 }
 
+/**
+ * Open a URL
+ */
 fun ActivityAccess.openUrl(url: String, newWindow: Boolean = true): Boolean {
     val mgr = context.packageManager
     val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
@@ -58,6 +64,9 @@ fun ActivityAccess.openUrl(url: String, newWindow: Boolean = true): Boolean {
     }
 }
 
+/**
+ * Open a particular app by package name, or the app store if it is not present.
+ */
 fun ActivityAccess.openAndroidAppOrStore(packageName: String) {
     val mgr = context.packageManager
     val intent = mgr.getLaunchIntentForPackage(packageName)
@@ -68,10 +77,9 @@ fun ActivityAccess.openAndroidAppOrStore(packageName: String) {
     }
 }
 
-fun ActivityAccess.openIosStore(numberId: String) {
-    openUrl("https://apps.apple.com/us/app/taxbot/id$numberId")
-}
-
+/**
+ * Shortcut to open the map to a particular location.
+ */
 fun ActivityAccess.openMap(latitude: Double, longitude: Double, label: String? = null, zoom: Float? = null) {
     startIntent(
         intent = Intent(Intent.ACTION_VIEW).apply {
@@ -93,6 +101,9 @@ fun ActivityAccess.openMap(latitude: Double, longitude: Double, label: String? =
     )
 }
 
+/**
+ * Shortcut to open an event form in your calendar, prepopulated.
+ */
 fun ActivityAccess.openEvent(title: String, description: String, location: String, start: ZonedDateTime, end: ZonedDateTime) {
     startIntent(
         intent = Intent(Intent.ACTION_INSERT).apply {

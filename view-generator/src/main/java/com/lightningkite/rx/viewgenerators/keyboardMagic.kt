@@ -1,6 +1,8 @@
 package com.lightningkite.rx.viewgenerators
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.view.FocusFinder
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +17,15 @@ private operator fun View.contains(other: View?): Boolean {
 
 private fun usesKeyboard(view: View) = view is EditText
 
-fun runKeyboardUpdate(access: ActivityAccess, root: View? = null, discardingRoot: View? = null) {
-    val currentFocus = access.activity.currentFocus
+private fun Context.activity(): Activity? = when(this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.activity()
+    else -> null
+}
+
+internal fun runKeyboardUpdate(root: View? = null, discardingRoot: View? = null) {
+    val context = root?.context ?: discardingRoot?.context ?: return
+    val currentFocus = context.activity()?.currentFocus
     var dismissOld = false
     if (currentFocus != null) {
         if (!currentFocus.isAttachedToWindow || discardingRoot?.contains(currentFocus) == true || !usesKeyboard(currentFocus)) {
@@ -44,13 +53,13 @@ fun runKeyboardUpdate(access: ActivityAccess, root: View? = null, discardingRoot
     if (keyboardView != null) {
         if (usesKeyboard(keyboardView)) {
             keyboardView.requestFocus()
-            val imm = access.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(keyboardView, 0)
             dismissOld = false
         }
     }
     if (dismissOld) {
-        val imm = access.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         currentFocus?.windowToken?.let {
             imm.hideSoftInputFromWindow(it, 0)
         }

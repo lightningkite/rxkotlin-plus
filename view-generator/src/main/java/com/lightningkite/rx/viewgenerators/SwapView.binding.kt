@@ -10,12 +10,9 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 
 /**
- *
- * Binds the view in the swap view to the top ViewGenerator in the PropertyStack.
- * Any changes to the top of the stack will manifest in the swap view.
- *
+ * Displays the Observable's view generator as the content of this view.
+ * Uses a single animation.
  */
-
 fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     view: SwapView,
     dependency: ActivityAccess,
@@ -33,10 +30,15 @@ fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     return this
 }
 
+/**
+ * Displays the view generator at the top of the stack in the observable as the content of this view
+ * Picks a default animation based on the change in stack size.
+ */
 @JvmName("showStackIn")
 fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
     view: SwapView,
-    dependency: ActivityAccess
+    dependency: ActivityAccess,
+    viewTransition: ViewTransition = ViewTransition.PUSH_POP
 ): SOURCE {
     var currentData: ViewGenerator? = null
     var currentStackSize = 0
@@ -47,37 +49,10 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
             if (currentData == newData) return@post
             view.swap(
                 newData?.generate(dependency), when {
-                    currentStackSize == 0 || newStackSize == 0 -> ViewTransitionUnidirectional.FADE
-                    newStackSize > currentStackSize -> ViewTransitionUnidirectional.PUSH
-                    newStackSize < currentStackSize -> ViewTransitionUnidirectional.POP
-                    else -> ViewTransitionUnidirectional.FADE
-                }
-            )
-            currentData = newData
-            currentStackSize = newStackSize
-        }
-    }.addTo(view.removed)
-    return this
-}
-
-@JvmName("showWithTransitionIn")
-fun <T : ViewGenerator, SOURCE : Observable<List<Pair<T, ViewTransition>>>> SOURCE.showIn(
-    view: SwapView,
-    dependency: ActivityAccess
-): SOURCE {
-    var currentData: Pair<T, ViewTransition>? = null
-    var currentStackSize = 0
-    this.subscribeBy { datas ->
-        post {
-            val newData = datas.lastOrNull()
-            val newStackSize = datas.size
-            if (currentData == newData) return@post
-            view.swap(
-                newData?.first?.generate(dependency), when {
-                    currentStackSize == 0 || newStackSize == 0 -> newData?.second?.neutral ?: ViewTransitionUnidirectional.FADE
-                    newStackSize > currentStackSize -> newData?.second?.push ?: ViewTransitionUnidirectional.PUSH
-                    newStackSize < currentStackSize -> newData?.second?.pop ?: ViewTransitionUnidirectional.POP
-                    else -> newData?.second?.neutral ?: ViewTransitionUnidirectional.FADE
+                    currentStackSize == 0 || newStackSize == 0 -> viewTransition.neutral
+                    newStackSize > currentStackSize -> viewTransition.push
+                    newStackSize < currentStackSize -> viewTransition.pop
+                    else -> viewTransition.neutral
                 }
             )
             currentData = newData

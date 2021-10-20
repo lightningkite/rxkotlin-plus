@@ -13,6 +13,10 @@ import io.reactivex.rxjava3.core.Single
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * Gets a single location update from the users.
+ * Handles permissions by itself.
+ */
 @SuppressLint("MissingPermission")
 fun ActivityAccess.requestLocation(
     accuracyBetterThanMeters: Double = 10.0

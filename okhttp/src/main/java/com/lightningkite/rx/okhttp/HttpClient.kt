@@ -25,10 +25,24 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * Makes HTTP requests easy!
+ */
 object HttpClient {
 
+    /**
+     * The scheduler to do the work on.
+     */
     var ioScheduler: Scheduler? = null
+
+    /**
+     * The scheduler to report the result on.
+     */
     var responseScheduler: Scheduler? = null
+
+    /**
+     * Schedules [single] to occur based on [HttpClient]'s schedulers.
+     */
     fun <T: Any> threadCorrectly(single: Single<T>): Single<T> {
         var current = single
         ioScheduler?.let { current = current.subscribeOn(it) }
@@ -36,6 +50,9 @@ object HttpClient {
         return current
     }
 
+    /**
+     * Schedules [observable] to occur based on [HttpClient]'s schedulers.
+     */
     fun <T: Any> threadCorrectly(observable: Observable<T>): Observable<T> {
         var current = observable
         ioScheduler?.let { current = current.subscribeOn(it) }
@@ -43,16 +60,43 @@ object HttpClient {
         return current
     }
 
+    /**
+     * Constant for HTTP request type "GET"
+     */
     const val GET = "GET"
+
+    /**
+     * Constant for HTTP request type "POST"
+     */
     const val POST = "POST"
+
+    /**
+     * Constant for HTTP request type "PUT"
+     */
     const val PUT = "PUT"
+
+    /**
+     * Constant for HTTP request type "PATCH"
+     */
     const val PATCH = "PATCH"
+
+    /**
+     * Constant for HTTP request type "DELETE"
+     */
     const val DELETE = "DELETE"
 
+    /**
+     * The [OkHttpClient] to use.
+     * Safe to modify.
+     */
     var client = OkHttpClient.Builder().build()
 
+    /**
+     * A set of default options for making requests.
+     */
     val defaultOptions = HttpOptions()
-    fun getCacheControl(cacheMode: HttpCacheMode): CacheControl = when (cacheMode) {
+
+    private fun getCacheControl(cacheMode: HttpCacheMode): CacheControl = when (cacheMode) {
         HttpCacheMode.Default -> CacheControl.Builder().build()
         HttpCacheMode.NoStore -> CacheControl.Builder().noCache().noStore().build()
         HttpCacheMode.Reload -> CacheControl.Builder().noCache().build()
@@ -103,6 +147,15 @@ object HttpClient {
         return this
     }
 
+    /**
+     * Makes an HTTP call.
+     * @param url The URL to make the request to.
+     * @param method The method to use.  It is a string because non-standard method types do exist.
+     * @param headers Headers to use in the request.
+     * @param body The body to send.
+     * @param options The caching and timeout options to use.
+     * @return A [Single] of the response.
+     */
     fun call(
         url: String,
         method: String = HttpClient.GET,
@@ -127,6 +180,15 @@ object HttpClient {
         }.cache().let { threadCorrectly(it) }
     }
 
+    /**
+     * Makes an HTTP call that tracks the progress of the request.
+     * @param url The URL to make the request to.
+     * @param method The method to use.  It is a string because non-standard method types do exist.
+     * @param headers Headers to use in the request.
+     * @param body The body to send.
+     * @param options The caching and timeout options to use.
+     * @return An [Observable] of the ongoing progress of the request.
+     */
     fun <T: Any> callWithProgress(
         url: String,
         method: String = HttpClient.GET,
@@ -276,31 +338,10 @@ object HttpClient {
 
     }
 
-    @Deprecated("Just use plain call with options")
-    fun call(
-        url: String,
-        method: String = HttpClient.GET,
-        headers: Map<String, String> = mapOf(),
-        body: RequestBody? = null,
-        callTimeout: Long? = null,
-        writeTimeout: Long? = null,
-        readTimeout: Long? = null,
-        connectTimeout: Long? = null
-    ): Single<Response> {
-        return call(
-            url = url,
-            method = method,
-            headers = headers,
-            body = body,
-            options = HttpOptions(
-                callTimeout = callTimeout,
-                writeTimeout = writeTimeout,
-                readTimeout = readTimeout,
-                connectTimeout = connectTimeout
-            )
-        )
-    }
-
+    /**
+     * Opens a web socket to the given URL.
+     * If the URL uses the
+     */
     fun webSocket(
         url: String
     ): Observable<ConnectedWebSocket> {
@@ -309,7 +350,7 @@ object HttpClient {
                 val out = ConnectedWebSocket(url)
                 out.underlyingSocket = client.newWebSocket(
                     Request.Builder()
-                        .url(url.replace("http", "ws"))
+                        .url(if(url.startsWith("http")) "ws" + url.substring(4) else url)
                         .addHeader("Accept-Language", Locale.getDefault().language)
                         .build(),
                     out

@@ -5,6 +5,9 @@ import android.location.Geocoder
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 
+/**
+ * Returns a list of [Address]s matching the given [latitude] and [longitude].
+ */
 fun ActivityAccess.geocode(
     address: String,
     maxResults: Int = 1
@@ -24,6 +27,9 @@ fun ActivityAccess.geocode(
     }.observeOn(AndroidSchedulers.mainThread())
 }
 
+/**
+ * Returns a list of [Address]s matching the given [latitude] and [longitude].
+ */
 fun ActivityAccess.geocode(
     latitude: Double,
     longitude: Double,

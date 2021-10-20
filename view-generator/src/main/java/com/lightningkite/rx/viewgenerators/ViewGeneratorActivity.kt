@@ -16,19 +16,23 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
 /**
- * An activity that implements [ActivityAccess].
- *
- * Created by jivie on 10/12/15.
+ * An [AccessibleActivity] that is structured to contain a single [ViewGenerator].
+ * In addition,
+ *  - Watches the keyboard going in and out
+ *  - Passes deep links to the [ViewGenerator]
  */
 abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : AccessibleActivity() {
 
+    /**
+     * The main ViewGenerator to render.  You probably want to store it statically rather than directly in here.
+     */
     abstract val main: ViewGenerator
+
     lateinit var view: View
     private var showDialogEventCloser: Disposable? = null
     private var animator: ValueAnimator? = null
 
     open fun handleDeepLink(schema: String, host: String, path: String, params: Map<String, String>) {
-        println("Got deep link: $schema://$host$path?${params.entries.joinToString("&") { it.key + "=" + it.value }}")
         (main as? EntryPoint)?.handleDeepLink(schema, host, path, params)
     }
 
@@ -128,10 +132,6 @@ abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : Accessibl
     }
 
     protected open fun handleNewIntent(intent: Intent) {
-        println(
-            "Got new intent with extras: ${intent.extras?.keySet()
-                ?.associate { key -> key to intent.extras?.get(key) }}"
-        )
         intent.data?.let { uri ->
             handleDeepLink(uri)
         }

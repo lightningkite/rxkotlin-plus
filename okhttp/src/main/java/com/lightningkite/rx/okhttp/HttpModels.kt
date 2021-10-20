@@ -4,6 +4,9 @@ package com.lightningkite.rx.okhttp
 import okhttp3.CacheControl
 import java.util.concurrent.TimeUnit
 
+/**
+ * The current phase of the request.
+ */
 enum class HttpPhase {
     Connect,
     Write,
@@ -11,6 +14,10 @@ enum class HttpPhase {
     Read,
     Done
 }
+
+/**
+ * The current progress of a request.
+ */
 class HttpProgress<T>(
     val phase: HttpPhase,
     val ratio: Float = 0.5f,
@@ -25,6 +32,9 @@ class HttpProgress<T>(
     }
 }
 
+/**
+ * Timeout and cache options for a request.
+ */
 data class HttpOptions(
     val callTimeout: Long? = null,
     val writeTimeout: Long? = 10_000L,

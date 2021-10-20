@@ -25,6 +25,10 @@ import okio.Okio
 import okio.source
 import java.io.ByteArrayOutputStream
 
+/**
+ * Makes a [RequestBody] out of an [Image].
+ * You can set maximum dimension and file size limits for upload.
+ */
 fun Image.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000): Single<RequestBody> = Single.create { em ->
     val glide = Glide.with(staticApplicationContext).asBitmap()
     val task = when (this) {
@@ -69,6 +73,10 @@ fun Image.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000): 
         })
 }
 
+/**
+ * Makes a [RequestBody] out of an [Bitmap].
+ * You can set maximum dimension and file size limits for upload.
+ */
 fun Bitmap.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000): RequestBody {
     var qualityToTry = 100
     val ratio = this.width.toFloat()/this.height.toFloat()
@@ -87,6 +95,9 @@ fun Bitmap.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000):
     return data.toRequestBody(MediaType.JPEG, 0, data.size)
 }
 
+/**
+ * Makes a [RequestBody] out of a [Uri].
+ */
 fun Uri.toRequestBody(): Single<RequestBody> {
     val type = (staticApplicationContext.contentResolver.getType(this) ?: "application/octet-stream").toMediaType()
     return Single.just<RequestBody>(object : RequestBody() {

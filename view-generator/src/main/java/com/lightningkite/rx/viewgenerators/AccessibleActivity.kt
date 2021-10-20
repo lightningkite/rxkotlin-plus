@@ -15,8 +15,6 @@ import java.util.*
 
 /**
  * An activity that implements [ActivityAccess].
- *
- * Created by jivie on 10/12/15.
  */
 abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
 

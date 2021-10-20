@@ -23,6 +23,10 @@ import io.reactivex.rxjava3.core.Single
 import java.io.*
 import java.util.*
 
+/**
+ * Starts a new activity to get images from the gallery.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestImagesGallery(): Maybe<List<Uri>> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) { hasPermission ->
         if (hasPermission) {
@@ -53,6 +57,10 @@ fun ActivityAccess.requestImagesGallery(): Maybe<List<Uri>> = Maybe.create { em 
     }
 }
 
+/**
+ * Starts a new activity to get an image from the gallery.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestImageGallery(): Maybe<Uri> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -81,6 +89,10 @@ fun ActivityAccess.requestImageGallery(): Maybe<Uri> = Maybe.create { em ->
     }
 }
 
+/**
+ * Starts a new activity to get an image form the camera.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestImageCamera(
     front: Boolean = false
 ): Maybe<Uri> = Maybe.create { em ->
@@ -114,6 +126,10 @@ fun ActivityAccess.requestImageCamera(
 }
 
 
+/**
+ * Starts a new activity to get a video from the gallery.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestVideoGallery(): Maybe<Uri> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -142,6 +158,10 @@ fun ActivityAccess.requestVideoGallery(): Maybe<Uri> = Maybe.create { em ->
     }
 }
 
+/**
+ * Starts a new activity to get videos from the gallery.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestVideosGallery(): Maybe<List<Uri>> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -173,6 +193,10 @@ fun ActivityAccess.requestVideosGallery(): Maybe<List<Uri>> = Maybe.create { em 
 }
 
 
+/**
+ * Starts a new activity to get a video from the camera.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestVideoCamera(front: Boolean = false): Maybe<Uri> = Maybe.create { em ->
     val fileProviderAuthority = context.packageName + ".fileprovider"
     val file = File(context.cacheDir, "videos").also { it.mkdirs() }
@@ -205,6 +229,10 @@ fun ActivityAccess.requestVideoCamera(front: Boolean = false): Maybe<Uri> = Mayb
 }
 
 
+/**
+ * Starts a new activity to get images and videos from the gallery.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestMediasGallery(): Maybe<List<Uri>> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -235,6 +263,10 @@ fun ActivityAccess.requestMediasGallery(): Maybe<List<Uri>> = Maybe.create { em 
     }
 }
 
+/**
+ * Starts a new activity to get an image or video from the gallery.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestMediaGallery(): Maybe<Uri> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -263,6 +295,10 @@ fun ActivityAccess.requestMediaGallery(): Maybe<Uri> = Maybe.create { em ->
     }
 }
 
+/**
+ * Starts a new activity to get a file.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestFile(): Maybe<Uri> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -291,6 +327,10 @@ fun ActivityAccess.requestFile(): Maybe<Uri> = Maybe.create { em ->
     }
 }
 
+/**
+ * Starts a new activity to get files.
+ * Handles permissions by itself.
+ */
 fun ActivityAccess.requestFiles(): Maybe<List<Uri>> = Maybe.create { em ->
     requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
         if (it) {
@@ -321,6 +361,9 @@ fun ActivityAccess.requestFiles(): Maybe<List<Uri>> = Maybe.create { em ->
     }
 }
 
+/**
+ * Shortcut to get the MIME type of the given [uri].
+ */
 fun ActivityAccess.getMimeType(
     uri: Uri
 ): String? {
@@ -328,6 +371,9 @@ fun ActivityAccess.getMimeType(
     return cr.getType(uri)
 }
 
+/**
+ * Shortcut to get the file name of the given [uri].
+ */
 @SuppressLint("Range")
 fun ActivityAccess.getFileName(uri: Uri): String? {
     if (uri.scheme.equals("content")) {

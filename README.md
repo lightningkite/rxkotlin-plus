@@ -1,6 +1,6 @@
 # RxKotlin Plus
 
-A set of libraries to use RxKotlin in your Android projects effectively.
+A set of libraries to use RxKotlin in your Android projects effectively, mostly extenstion functions.
 
 Uses Jake Wharton's RxBinding and ViewPump.
 
@@ -133,6 +133,14 @@ We have been using this pattern for Android apps for a long time at Lightning Ki
 
 A Gradle plugin that will read your Android layout XML files and automatically generate `ViewGenerator` classes for you, creating a full click-through design of your app that can be edited into a full app.
 
+# Philosophy
+
+The entire goal of this repository is to make Android programming more convenient while keeping the code understandable to an outsider.  As such, we:
+
+- Avoid making our own, unfamiliar interfaces where possible
+- Use independent extension functions where possible
+- "Glass Pool" philosophy - you should be able to see through the top layer that you use down to the bottom with ease
+
 # Status
 
 This is a very actively-maintained project as we use this for many production projects at Lightning Kite.  It is rapidly stabilizing as we finish moving our existing projects over to it, but it is all based on past libraries we've had.  This is simply the consolodation and clean up of such libraries. 
@@ -150,3 +158,12 @@ This repository follows semantic versioning after version `0.1.0`.  Deprecations
 ## Connection to Khrysalis
 
 Khrysalis is a tool that transpiles Android Kotlin code into iOS Swift and web Typescript code.  This library is the Kotlin side of similar libraries in iOS and Web.  This set of libraries, however, is fully intended to be used both with and without Khrysalis.
+
+## Roadmap
+
+While the library has all the intended functionality at the moment, there is always more room for documentation, growth, and testing.
+
+- [ ] Additional documentation on existing classes
+- [ ] Instrumented tests for bindable components
+- [ ] Additional Tutorials
+  - [ ] Convenient unit testing using ViewGenerators
