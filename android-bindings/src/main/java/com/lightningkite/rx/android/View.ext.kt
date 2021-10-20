@@ -39,7 +39,7 @@ fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vi
  * The setter provided is meant to manage changes to the view according to the value of this.
  *
  * Example:
- * val value = Maybe<String>()
+ * val value: Maybe<String> ...
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
@@ -107,7 +107,7 @@ fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAuto
  * The setter provided is meant to manage changes to the view according to the value of this.
  *
  * Example:
- * val value = Maybe<Optional<String>>()
+ * val value: Maybe<Optional<String>> ...
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
