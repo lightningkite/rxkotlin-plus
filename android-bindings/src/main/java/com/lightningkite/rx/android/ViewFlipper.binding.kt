@@ -21,14 +21,14 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.*
 
 /**
+ * Flips between views 0 and 1 in the ViewFlipper based on the value of this.
+ * If the ViewFlipper only has one view a ProgressBar will automatically
+ * be created and displayed as view 1.
  *
- * bindLoading will flip the view between any built in views, and the native android loading animation.
- * If the value in loading is false it will display whatever view it normally holds.
- * If the value in loading is true it will hide any views it holds and display the loading animation.
- * Color will set the color of the loading animation to whatever resource is provided.
- *
+ * Example:
+ * val value = ValueSubject<Boolean>(false)
+ * value.showLoading(viewFlipper)
  */
-
 fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(view: ViewFlipper, color: ColorResource? = null): SOURCE {
     defaults(view, color)
     subscribeBy { it ->
@@ -65,10 +65,30 @@ var ViewFlipper.loadCount: Int
         displayedChild = if (value > 0) 1 else 0
     }
 
+
+/**
+ * Flips between views 1 and 0 in the ViewFlipper when this is subscribed to and on termination respectively
+ * If the ViewFlipper only has one view a ProgressBar will automatically
+ * be created and displayed as view 1.
+ *
+ * Example:
+ * val value = Single.just<Boolean>(false)
+ * value.showLoading(viewFlipper)
+ */
 fun <T: Any> Single<T>.showLoading(view: ViewFlipper, color: ColorResource? = null): Single<T> {
     defaults(view, color)
     return this.doOnSubscribe { view.loadCount++ }.doOnTerminate { view.loadCount-- }
 }
+
+/**
+ * Flips between views 1 and 0 in the ViewFlipper when this is subscribed to and on termination respectively
+ * If the ViewFlipper only has one view a ProgressBar will automatically
+ * be created and displayed as view 1.
+ *
+ * Example:
+ * val value: Maybe<Boolean> ...
+ * value.showLoading(viewFlipper)
+ */
 fun <T: Any> Maybe<T>.showLoading(view: ViewFlipper, color: ColorResource? = null): Maybe<T> {
     defaults(view, color)
     return this.doOnSubscribe { view.loadCount++ }.doOnTerminate { view.loadCount-- }

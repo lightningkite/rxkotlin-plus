@@ -15,11 +15,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.util.Optional
 
 /**
- *
- * Loads the image into the imageview the function is called on.
- * An image can be from multiple sources, such as the web, an android image reference,
- * and a direct bitmap. It will handle all cases and load the image.
- *
+ * Loads and sets the image into the ImageView.
  */
 fun ImageView.setImage(image: Image?) {
     post {
@@ -44,10 +40,7 @@ fun ImageView.setImage(image: Image?) {
 
 
 /**
- *
- * Loads a thumbnail from the video into the imageview the function is called on.
- * Video can be from a local reference or a URL.
- *
+ * Loads a thumbnail from the video into the ImageView
  */
 fun ImageView.setFromVideoThumbnail(video: Video?) {
     setImage(null)

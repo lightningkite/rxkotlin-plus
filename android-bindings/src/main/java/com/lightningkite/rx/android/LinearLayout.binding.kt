@@ -16,23 +16,11 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 private class LinearLayoutBoundSubview<T>(val view: View, val property: BehaviorSubject<T>)
 
 /**
+ * Will display the contents of this in the LinearLayout using the makeView provided for each item.
  *
- * Binds all the subviews in the linear layout to the list of data in the property.
- * makeView is the lambda that will return the view linked to an individual item in the
- * list.
- *
- * Example
- * val data = StandardProperty(listOf(1,2,3,4,5))
- * layout.bind(
- *  data = data,
- *  defaultValue = 0,
- *  makeView = { property ->
- *       val xml = ViewXml()
- *       val view = xml.setup(dependency)
- *       view.text.bindString(obs.map{it -> it.toString()})
- *       return view
- *       }
- * )
+ * Example:
+ * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
+ * data.showIn(linearLayoutView) { obs -> ... return view }
  */
 
 fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(

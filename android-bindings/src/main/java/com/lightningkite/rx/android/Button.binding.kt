@@ -23,6 +23,16 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
+
+/**
+ * Displays this on the buttons text using the formatter.
+ * Pressing the button will launch the Android DatePickerDialog
+ * and the results will be pass to this.
+ *
+ * Example:
+ * val value = ValueSubject<LocalDate>(LocalDate.of(1,1,1))
+ * value.bind(buttonView)
+ */
 @JvmName("bindDate")
 fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
     view: Button,
@@ -41,6 +51,16 @@ fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
     return this
 }
 
+/**
+ * Displays this on the buttons text using the formatter.
+ * Pressing the button will launch the Android DatePickerDialog
+ * and the results will be pass to this. If this is an empty Optional
+ * the null text is used instead for the button.
+ *
+ * Example:
+ * val value = ValueSubject<Optional<LocalDate>>(Optional.empty())
+ * value.bind(buttonView, nullText = "Select Date")
+ */
 @JvmName("bindDate")
 fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bind(
     view: Button,
@@ -65,6 +85,16 @@ fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bind(
     return this
 }
 
+
+/**
+ * Displays this on the buttons text using the formatter.
+ * Pressing the button will launch the Android TimePickerDialog
+ * and the results will be pass to this.
+ *
+ * Example:
+ * val value = ValueSubject<LocalTime>(LocalTime.of(1,1,1))
+ * value.bind(buttonView)
+ */
 @JvmName("bindTime")
 fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
     view: Button,
@@ -83,6 +113,16 @@ fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
     return this
 }
 
+/**
+ * Displays this on the buttons text using the formatter.
+ * Pressing the button will launch the Android TimePickerDialog
+ * and the results will be pass to this. If this is an empty Optional
+ * the null text is used instead for the button.
+ *
+ * Example:
+ * val value = ValueSubject<Optional<LocalTime>>(Optional.empty())
+ * value.bind(buttonView, nullText = "Select Time")
+ */
 @JvmName("bindTime")
 fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bind(
     view: Button,
@@ -108,6 +148,15 @@ fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bind(
 }
 
 
+/**
+ * Displays this on the buttons text using the formatter.
+ * Pressing the button will launch the Android TimePickerDialog
+ * and DatePickerDialog and the results will be pass to this.
+ *
+ * Example:
+ * val value = ValueSubject<LocalDateTime>(LocalDateTime.now())
+ * value.bind(buttonView)
+ */
 @JvmName("bindDateTime")
 fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
     view: Button,
@@ -129,6 +178,17 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
     return this
 }
 
+/**
+ * Displays this on the buttons text using the formatter.
+ * Pressing the button will launch the Android TimePickerDialog
+ * and DatePickerDialog and the results will be pass to this.
+ * If this is an empty Optional the null text is used instead
+ * for the button.
+ *
+ * Example:
+ * val value = ValueSubject<Optional<LocalDateTime>>(Optional.empty())
+ * value.bind(buttonView, nullText = "Select DateTime")
+ */
 @JvmName("bindDateTime")
 fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
     view: Button,

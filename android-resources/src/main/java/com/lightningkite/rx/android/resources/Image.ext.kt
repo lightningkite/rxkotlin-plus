@@ -14,9 +14,7 @@ import io.reactivex.rxjava3.core.Single
 
 
 /**
- *
  * Loads the image and return a Single<Bitmap>. This works for all the types of Images available.
- *
  */
 fun Image.load(context: Context): Single<Bitmap> {
     return try {
@@ -47,11 +45,6 @@ fun Image.load(context: Context): Single<Bitmap> {
     }
 }
 
-/**
- *
- * Loads the image and return a Single<Bitmap> from an ImageReference
- *
- */
 private fun ImageReference.load(maxDimension: Int = 2048, context: Context): Single<Bitmap> {
     return Single.create { emitter ->
         var emitted = false
@@ -83,11 +76,6 @@ private fun ImageReference.load(maxDimension: Int = 2048, context: Context): Sin
     }
 }
 
-/**
- *
- * Loads the image and return a Single<Bitmap> from an ImageRemoteUrl
- *
- */
 private fun ImageRemoteUrl.load(context: Context): Single<Bitmap> {
     return Single.create { emitter ->
         var emitted = false
@@ -118,22 +106,3 @@ private fun ImageRemoteUrl.load(context: Context): Single<Bitmap> {
             })
     }
 }
-
-//fun Image.shrink(maxDimension: Int = 800): Single<ImageBitmap> {
-//    if(this is ImageBitmap && this.bitmap.width <= maxDimension && this.bitmap.height <= maxDimension) {
-//        return Single.just(this)
-//    }
-//    return load()
-//        .map {
-//            if(it.width <= maxDimension && it.height <= maxDimension){
-//                return@map it
-//            }
-//            val originalAspectRatio = it.width.toFloat() / it.height.toFloat()
-//            val newWidth = if(it.width > it.height) maxDimension else (maxDimension * originalAspectRatio).toInt()
-//            val newHeight = if(it.width <= it.height) maxDimension else (maxDimension / originalAspectRatio).toInt()
-//            return@map Bitmap.createScaledBitmap(it, newWidth, newHeight, true)
-//        }
-//        .map { ImageBitmap(it) }
-//        .subscribeOn(Schedulers.computation())
-//        .observeOn(AndroidSchedulers.mainThread())
-//}

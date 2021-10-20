@@ -18,19 +18,13 @@ private fun RecyclerView.defaultLayoutManager(){
     }
 }
 
+
 /**
+ * Will display the contents of this in the RecyclerView using the makeView provided for each item.
  *
- * Binds the data in the RecyclerView to the data provided by the property.
- * makeView is the lambda that creates the view tied to each item in the list of data.
- *
- * Example
- * val data = StandardProperty(listOf(1,2,3,4,5))
- * data.showIn(recyclerView) { property ->
- *       val xml = ViewXml()
- *       val view = xml.setup(dependency)
- *       view.text.bindString(obs.map{it -> it.toString()})
- *       return view
- * }
+ * Example:
+ * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
+ * data.showIn(recyclerView) { obs -> ... return view }
  */
 
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
@@ -68,6 +62,16 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     return this
 }
 
+
+/**
+ * Will display the contents of this in the RecyclerView.
+ * determineType is meant to map the object to an Int, which is passed into the makeView.
+ * makeView is meant to create different views for the item based on the int provided.
+ *
+ * Example:
+ * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
+ * data.showIn(recyclerView, {item -> if(item < 5) 0 else 1 } ) { type, obs -> ... return view }
+ */
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     view: RecyclerView,
     determineType: (T)->Int,

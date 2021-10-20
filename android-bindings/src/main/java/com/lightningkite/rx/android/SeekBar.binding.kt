@@ -6,13 +6,12 @@ import io.reactivex.rxjava3.subjects.Subject
 import io.reactivex.rxjava3.kotlin.addTo
 
 /**
+ * Binds the value of this to the seekbars internal value. Changes will propagate both directions
  *
- * Binds the value of the seek bar to the property. You can also state what you want the
- * low and high values the seek bar can have. Any change to the seek bar will set the property
- * as well any changes in the property will manifest in the seek bar.
- *
+ * Example:
+ * val value = ValueSubject<Int>(10)
+ * value.bind(seekBarView)
  */
-
 fun <SOURCE: Subject<Int>> SOURCE.bind(
     view: SeekBar
 ): SOURCE {

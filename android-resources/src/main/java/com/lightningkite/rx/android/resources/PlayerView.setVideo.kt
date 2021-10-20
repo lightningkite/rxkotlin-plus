@@ -18,6 +18,9 @@ import java.util.*
 
 private var PlayerView_player = WeakHashMap<PlayerView, SimpleExoPlayer>()
 
+/**
+ * Sets the video up in the Player view.
+ */
 fun PlayerView.setVideo(video: Video?, playWhenReady: Boolean = false) {
     val player = PlayerView_player.getOrPut(this) {
         val p = SimpleExoPlayer.Builder(context).build()

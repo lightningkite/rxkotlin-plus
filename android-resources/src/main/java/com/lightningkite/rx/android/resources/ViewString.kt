@@ -3,7 +3,11 @@ package com.lightningkite.rx.android.resources
 
 import android.content.Context
 
-
+/**
+ * ViewString is a way to consolidate all the ways a String is described, handled, or created in the app.
+ * ViewStrings can be a raw String from a literal or variable, an Android String resource, or a method to retrieve a String.
+ * There are also ways to handle formatting ViewStrings, or list of ViewStrings
+ */
 interface ViewString {
     fun get(context: Context): String
 }

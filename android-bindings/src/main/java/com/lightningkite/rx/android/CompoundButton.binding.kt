@@ -6,17 +6,12 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
 
 /**
+ * Binds the value of this to the checked state of the view. Changes will propagate both directions
  *
- * Binds the checked state of the compound button to the property value.
- * If the button is tapped, it will change the property value.
- * If the property value is changed the button check state will update to match.
- *
- *
- * Example
- * val selected = StandardProperty<Boolean>(false)
+ * Example:
+ * val selected = PublishSubject(false)
+ * selected.bind(compoundButtonView)
  * button.bindSelect(selected)
- * If selected is true the button is checked, otherwise it is unchecked.
- *
  */
 fun <SOURCE : Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
@@ -34,6 +29,15 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
     return this
 }
 
+/**
+ * Binds the value of this to the checked state of the view, however this will prevent the
+ * button from unchecking itself. Changes will propagate both directions.
+ *
+ * Example:
+ * val selected = ValueSubject(false)
+ * selected.bindNoUncheck(compoundButtonView)
+ * button.bindSelect(selected)
+ */
 fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(view: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
     subscribeBy { it ->

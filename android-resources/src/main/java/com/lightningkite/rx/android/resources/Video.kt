@@ -4,12 +4,9 @@ package com.lightningkite.rx.android.resources
 import android.net.Uri
 
 /**
- *
- * Image is a way to consolidate all the ways an image is described, handled, or created in the app.
- * These are Uri references, a remote URL, a bitmap and a Raw Byte Array.
- *
+ * Video is a way to consolidate all the ways a Video is described, handled, or created in the app.
+ * These are Uri references, or a remote Url.
  */
-
 sealed class Video
 data class VideoReference(val uri: Uri): Video()
 //data class VideoRaw(val raw: Data): Video()
