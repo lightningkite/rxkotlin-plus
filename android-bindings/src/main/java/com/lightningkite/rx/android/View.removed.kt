@@ -7,7 +7,7 @@ import java.util.*
 
 val View.removed: CompositeDisposable
     get() {
-        return View_lifecycleDeferTo.getOrPut(this) {
+        return View_lifecycle.getOrPut(this) {
             val composite = CompositeDisposable()
             this.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
                 override fun onViewDetachedFromWindow(v: View) {
@@ -26,6 +26,7 @@ val View.removed: CompositeDisposable
         }
     }
 
+private val View_lifecycle = WeakHashMap<View, CompositeDisposable>()
 private val View_lifecycleDeferTo = WeakHashMap<View, CompositeDisposable>()
 fun View.setRemovedCondition(condition: CompositeDisposable) {
     View_lifecycleDeferTo[this] = condition

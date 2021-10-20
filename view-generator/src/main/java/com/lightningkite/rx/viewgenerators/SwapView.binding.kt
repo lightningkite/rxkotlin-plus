@@ -48,6 +48,7 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
             if (currentData == newData) return@post
             view.swap(
                 newData?.generate(dependency), when {
+                    currentStackSize == 0 || newStackSize == 0 -> ViewTransitionUnidirectional.FADE
                     newStackSize > currentStackSize -> ViewTransitionUnidirectional.PUSH
                     newStackSize < currentStackSize -> ViewTransitionUnidirectional.POP
                     else -> ViewTransitionUnidirectional.FADE
@@ -75,6 +76,7 @@ fun <T : ViewGenerator, SOURCE : Observable<List<Pair<T, ViewTransition>>>> SOUR
             if (currentData == newData) return@post
             view.swap(
                 newData?.first?.generate(dependency), when {
+                    currentStackSize == 0 || newStackSize == 0 -> newData?.second?.neutral ?: ViewTransitionUnidirectional.FADE
                     newStackSize > currentStackSize -> newData?.second?.push ?: ViewTransitionUnidirectional.PUSH
                     newStackSize < currentStackSize -> newData?.second?.pop ?: ViewTransitionUnidirectional.POP
                     else -> newData?.second?.neutral ?: ViewTransitionUnidirectional.FADE
