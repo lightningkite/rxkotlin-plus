@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+        <TextView
+                style="@style/Header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/welcome_to_switch_town"/>
+
+        <EditText
+                style="@style/Body"
+                android:id="@+id/username"
+                android:hint="@string/username"
+                android:inputType="textEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:minHeight="40dp"
+                android:padding="8dp"
+                android:background="@drawable/border"/>
+
+        <EditText
+                style="@style/Body"
+                android:id="@+id/password"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:minHeight="40dp"
+                android:padding="8dp"
+                android:background="@drawable/border"/>
+
+        <EditText
+                style="@style/Body"
+                android:hint="@string/verify_password"
+                android:inputType="textPassword"
+                android:id="@+id/verifyPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:minHeight="40dp"
+                android:padding="8dp"
+                android:background="@drawable/border"/>
+
+        <CheckBox
+                android:id="@+id/agree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/i_agree"/>
+
+        <ViewFlipper
+                android:id="@+id/submitLoading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <Button
+                    style="@style/ButtonPrimary"
+                    android:id="@+id/submit"
+                    android:text="@string/submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </ViewFlipper>
+
+    </LinearLayout>
+</ScrollView>

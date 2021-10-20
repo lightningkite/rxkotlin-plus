@@ -1,0 +1,41 @@
+<resources>
+    <string name="empty" translatable="false"/>
+    <string name="app_name">Lightning Kite Rx Example</string>
+    <string name="back">Back</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="welcome_to_switch_town">Welcome to Switch Town!</string>
+    <string name="i_m_a_switch">I\'m a switch!</string>
+    <string name="go_to_another_screen">Go to Another Screen</string>
+    <string name="you_made_it_to_another_screen">You made it to another screen!</string>
+    <string name="welcome">Welcome!</string>
+    <string name="welcome_message">This an example for LK Rx. This screen exists to help you figure out stuff about it.</string>
+    <string name="increment_the_number">Increment the Number</string>
+    <string name="text_field">Text Field</string>
+    <string name="select_demo">Select Demo</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="i_agree">I Agree to the Terms of Service</string>
+    <string name="submit">Submit</string>
+    <string name="mustAgree">You must agree to the terms of service.</string>
+    <string name="verify_password">Verify Password</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="get_location">Get Location</string>
+    <string name="check_out_my_multiple_rows">Check out my multiple rows</string>
+    <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+        has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+        and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
+        electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of
+        Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
+        PageMaker including versions of Lorem Ipsum.
+    </string>
+    <string name="lorem_pixel">Lorem Pixel</string>
+    <string name="connect">Connect</string>
+    <string name="this_data_is_loaded_from_json_placeholder_typicode">This data is loaded from JSON Placeholder
+        Typicode.
+    </string>
+    <string name="play_video">Play video</string>
+    <string name="gallery_multi">Gallery Multiple</string>
+    <string name="camera_multi">Camera Multiple</string>
+</resources>

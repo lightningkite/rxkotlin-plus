@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:padding="8dp"
+              android:layout_height="match_parent"
+        >
+
+    <Button
+            android:id="@+id/gallery"
+            style="@style/ButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/gallery"
+            />
+
+    <Button
+            android:id="@+id/galleryMultiple"
+            style="@style/ButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Multiple Gallery"
+            />
+
+    <Button
+            android:id="@+id/camera"
+            style="@style/ButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/camera"
+            />
+
+    <Button
+            android:id="@+id/lorem_pixel"
+            style="@style/ButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/lorem_pixel"
+            />
+
+    <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_margin="8dp"
+            android:scaleType="centerInside"
+            android:background="#888"
+            android:layout_height="200dp"
+            />
+
+    <Button
+            android:id="@+id/checkCanUpload"
+            style="@style/ButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Check if it can upload"
+            />
+
+    <TextView
+            android:id="@+id/canUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't know"
+            />
+
+</LinearLayout>

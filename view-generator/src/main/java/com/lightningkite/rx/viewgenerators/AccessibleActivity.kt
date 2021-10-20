@@ -20,7 +20,7 @@ import java.util.*
  */
 abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
 
-    override val activity: Activity?
+    override val activity: Activity
         get() = this
     override val context: Context
         get() = this

@@ -21,7 +21,7 @@ fun ActivityAccess.startIntent(
     options: Bundle = android.os.Bundle(),
     onResult: (Int, Intent?) -> Unit = { _, _ -> }
 ) {
-    activity?.startActivityForResult(intent, prepareOnResult(onResult = onResult), options)
+    activity.startActivityForResult(intent, prepareOnResult(onResult = onResult), options)
 }
 
 fun ActivityAccess.share(shareTitle: String, message: String? = null, url: String? = null, image: Image? = null) {

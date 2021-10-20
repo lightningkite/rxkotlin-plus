@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#10769c</color>
+    <color name="colorPrimaryDark">#0e6484</color>
+    <color name="colorPrimaryDarker">#0a465c</color>
+    <color name="colorAccent">#f5952e</color>
+    <color name="colorAccentDark">#ae6a21</color>
+    <color name="disabled">#ADADAD</color>
+
+    <color name="calendar_selected_day_bg">#F00</color>
+    <color name="calendar_selected_range_bg">#F00</color>
+
+    //this is for HighLighted dates
+    <color name="calendar_unavailable_bg">#FF0</color>
+    <color name="calendar_range_middle_unavailable_bg">#FF0</color>
+
+    // this is for Deactivated dates
+    <color name="calendar_range_middle_deactivated_bg">#CCC</color>
+</resources>

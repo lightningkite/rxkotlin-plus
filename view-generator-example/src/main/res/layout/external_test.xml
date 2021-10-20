@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:id="@+id/scrollView"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+        <Button
+                style="@style/ButtonPrimary"
+                android:id="@+id/openMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Show me Lightning Kite's Location"
+        />
+        <Button
+                style="@style/ButtonPrimary"
+                android:id="@+id/openWeb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Show me Lightning Kite's Website"
+        />
+        <Button
+                style="@style/ButtonPrimary"
+                android:id="@+id/openEvent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Show me a future event"
+        />
+    </LinearLayout>
+
+</ScrollView>

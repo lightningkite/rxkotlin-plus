@@ -14,7 +14,7 @@ import io.reactivex.rxjava3.subjects.Subject
  * Created by joseph on 6/9/17.
  */
 interface ActivityAccess {
-    val activity: Activity?
+    val activity: Activity
     val context: Context
     val savedInstanceState: Bundle?
 

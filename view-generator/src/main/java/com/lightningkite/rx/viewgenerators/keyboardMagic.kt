@@ -16,7 +16,7 @@ private operator fun View.contains(other: View?): Boolean {
 private fun usesKeyboard(view: View) = view is EditText
 
 fun runKeyboardUpdate(access: ActivityAccess, root: View? = null, discardingRoot: View? = null) {
-    val currentFocus = access.activity?.currentFocus
+    val currentFocus = access.activity.currentFocus
     var dismissOld = false
     if (currentFocus != null) {
         if (!currentFocus.isAttachedToWindow || discardingRoot?.contains(currentFocus) == true || !usesKeyboard(currentFocus)) {
