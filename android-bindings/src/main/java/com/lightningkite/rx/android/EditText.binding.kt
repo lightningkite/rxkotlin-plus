@@ -8,16 +8,12 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
 
 /**
+ * Binds the value of this to the internal text of the EditText.
+ * Changes will propagate both directions.
  *
- * Binds the edit text internal text to the Property provided.
- * Any changes made by the user to the edit text will update the value of the property.
- * Any changes directly to the property will manifest in the edit text.
- *
- * Example
- * val name = StandardProperty("Jason")
- * nameField.bindString(name)
- * The name field will be populated with "Jason"
- *
+ * Example:
+ * val name = ValueSubject("Jason")
+ * name.bind(editTextView)
  */
 fun <SOURCE: Subject<String>> SOURCE.bind(view: EditText): SOURCE {
     subscribeBy { value ->

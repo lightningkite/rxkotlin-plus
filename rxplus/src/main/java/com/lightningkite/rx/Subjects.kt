@@ -7,10 +7,18 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.util.Optional
 
+/**
+ * Convenience abstract class for dealing with subjects that have a value property
+ */
 abstract class HasValueSubject<T>: Subject<T>() {
     abstract var value: T
 }
 
+/**
+ * BehaviorSubject does not guarantee that it will have a value on creation. ValueSubjects
+ * wraps BehaviorSubject and requires a value at creation time. This prevents the possibility
+ * of crashing when calling value.
+ */
 class ValueSubject<T: Any>(value: T): HasValueSubject<T>() {
     val underlying = BehaviorSubject.createDefault(value)
     override var value: T
@@ -29,6 +37,9 @@ class ValueSubject<T: Any>(value: T): HasValueSubject<T>() {
     override fun getThrowable(): Throwable? = underlying.getThrowable()
 }
 
+/**
+ *  A convenient function for creating a Subject out of an observable and an observer of type T
+ */
 fun <T : Any> makeSubject(
     observable: Observable<T>,
     observer: Observer<T>
@@ -59,16 +70,27 @@ fun <T : Any> makeSubject(
     override fun getThrowable(): Throwable? = error
 }
 
+/**
+ *  Maps a Subject<A> to a Subject<B> using the lambdas provided.
+ */
 fun <A : Any, B : Any> Subject<A>.map(read: (A) -> B, write: (B) -> A): Subject<B> = makeSubject<B>(
     this.map(read),
     this.observerMap(write)
 )
 
+/**
+ *  Maps a Subject<A> to a Subject<B> using the lambdas provided. If the write labmda returns null it will not
+ *  call onNext of this.
+ */
 fun <A : Any, B : Any> Subject<A>.mapMaybeWrite(read: (A) -> B, write: (B) -> A?): Subject<B> = makeSubject<B>(
     this.map(read),
     this.observerMapNotNull(write)
 )
 
+/**
+ *  Maps a HasValueSubject<A> to a HasValueSubject<B> using the lambdas provided. This allows for more complicated mapping
+ *  between types. When written to the current value of this is passed into the write function.
+ */
 fun <A : Any, B : Any> HasValueSubject<A>.mapWithExisting(read: (A) -> B, write: (A, B) -> A): HasValueSubject<B> {
     return object : HasValueSubject<B>() {
         override fun subscribeActual(observer: Observer<in B>) = this@mapWithExisting.map(read).subscribe(observer)
@@ -86,10 +108,21 @@ fun <A : Any, B : Any> HasValueSubject<A>.mapWithExisting(read: (A) -> B, write:
     }
 }
 
+/**
+ *  Maps an Observable<Optional<T>> to an Observable<T>.
+ */
 fun <T : Any> Observable<Optional<T>>.notNull(): Observable<T> = this.filter { it.isPresent }.map { it.get() }
 
+/**
+ *  Retrieve the value of the optional using Kotlin's nullable type.
+ */
 val <T> Optional<T>.kotlin: T? get() = if (isPresent) this.get() else null
+
+/**
+ *  Wraps this into an Optional<T>
+ */
 val <T : Any> T?.optional: Optional<T> get() = Optional.ofNullable(this)
+
 
 private fun <T : Any, B : Any> Observer<T>.observerMap(mapper: (B) -> T): Observer<B> = object : Observer<B> {
     override fun onSubscribe(d: Disposable) = this@observerMap.onSubscribe(d)
@@ -107,6 +140,9 @@ private fun <T : Any, B : Any> Observer<T>.observerMapNotNull(mapper: (B) -> T?)
     override fun onComplete() = this@observerMapNotNull.onComplete()
 }
 
+/**
+ * Turn an Observable<T> into a Subject<T> using the onWrite provided to create the observer portion of the subject.
+ */
 fun <T : Any> Observable<T>.withWrite(onWrite: (T) -> Unit): Subject<T> = makeSubject(
     observable = this,
     observer = object : Observer<T> {
@@ -120,6 +156,9 @@ fun <T : Any> Observable<T>.withWrite(onWrite: (T) -> Unit): Subject<T> = makeSu
     }
 )
 
+/**
+ * From an Observable<T> create or choose a Subject<B> to use.
+ */
 fun <T : Any, B : Any> Observable<T>.switchMapMutable(transformation: (T) -> Subject<B>): Subject<B> =
     object : Subject<B>() {
         private var lastValue: Subject<B>? = null
@@ -132,7 +171,7 @@ fun <T : Any, B : Any> Observable<T>.switchMapMutable(transformation: (T) -> Sub
         }
 
         override fun onSubscribe(d: Disposable) { lastValue?.onSubscribe(d) }
-        override fun onNext(t: B) { lastValue?.onNext(t) }
+        override fun onNext(b: B) { lastValue?.onNext(b) }
         override fun onError(e: Throwable) {
             error = e
             lastValue?.onError(e)

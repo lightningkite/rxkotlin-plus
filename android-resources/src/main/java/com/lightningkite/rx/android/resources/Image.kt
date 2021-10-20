@@ -4,18 +4,15 @@ package com.lightningkite.rx.android.resources
 import android.graphics.Bitmap
 import android.net.Uri
 
-/**
- *
- * Image is a way to consolidate all the ways an image is described, handled, or created in the app.
- * These are Uri references, a remote URL, a bitmap and a Raw Byte Array.
- *
- */
 
 typealias Data = ByteArray
 
+/**
+ * Image is a way to consolidate all the ways an image is described, handled, or created in the app.
+ * Images can be a Uri reference, a remote URL, a bitmap, a Raw Byte Array, or an Android resource.
+ */
 sealed class Image
 data class ImageReference(val uri: Uri): Image()
-//In JS, this becomes ImageImageBitmap
 data class ImageBitmap(val bitmap: Bitmap): Image()
 data class ImageRaw(val raw: Data): Image()
 data class ImageRemoteUrl(val url: String): Image()

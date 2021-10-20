@@ -5,6 +5,11 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import java.util.*
 
+/**
+ * A CompositeDisposable which is tied to the life cycle of the view.
+ * When the view is detached from the window the CompositeDisposable is
+ * disposed.
+ */
 val View.removed: CompositeDisposable
     get() {
         return View_lifecycle.getOrPut(this) {

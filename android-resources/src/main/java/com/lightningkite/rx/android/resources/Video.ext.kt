@@ -8,6 +8,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
+/**
+ * Returns a Single<Image> that is a thumbnail from the video.
+ */
 fun Video.thumbnail(timeMs: Long = 2000L, size: PointF? = null, context: Context): Single<Image> {
     return Single.create<Image> { em ->
         try {

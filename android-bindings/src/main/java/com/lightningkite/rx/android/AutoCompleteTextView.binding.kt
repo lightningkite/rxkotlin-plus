@@ -9,6 +9,15 @@ import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
+/**
+ * Filters the contents of this based on the inputs of the view and then displays
+ * the filtered results in the drop down. Any selections made are passed to onItemSelected.
+ *
+ * Example:
+ * val values = ValueSubject<List<String>(listOf("Hi", "Hello", "No")
+ * val result = PublishSubject<String>()
+ * values.showIn(autoCompleteView, result, { it })
+ */
 @JvmName("showInWithObserver")
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     view: AutoCompleteTextView,
@@ -16,6 +25,16 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     toString: (T) -> String = { it.toString() }
 ): SOURCE = showIn(view, { onItemSelected.onNext(it) }, toString)
 
+
+/**
+ * Filters the contents of this based on the inputs of the view and then displays
+ * the filtered results in the drop down. Any selections made are passed to onItemSelected.
+ *
+ * Example:
+ * val values = ValueSubject<List<String>(listOf("Hi", "Hello", "No")
+ * val result = ""
+ * values.showIn(autoCompleteView,{ result = it }, { it })
+ */
 fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     view: AutoCompleteTextView,
     onItemSelected: (T) -> Unit = { view.setText(toString(it)) },

@@ -5,6 +5,9 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.kotlin.addTo
 
+/**
+ * A convenience function for hiding and showing views.
+ */
 var View.visible: Boolean
     get() = this.visibility == View.VISIBLE
     set(value) {
@@ -14,6 +17,9 @@ var View.visible: Boolean
         }
     }
 
+/**
+ * A convenience function for hiding and showing views.
+ */
 var View.exists: Boolean
     get() = this.visibility == View.VISIBLE || this.visibility == View.INVISIBLE
     set(value) {

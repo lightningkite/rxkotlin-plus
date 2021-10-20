@@ -12,10 +12,13 @@ import io.reactivex.rxjava3.subjects.Subject
 import io.reactivex.rxjava3.kotlin.addTo
 
 /**
+ * Will display the contents of this in the ViewPager using the makeView provided for each item.
+ * The page shown is tied to the showIndex Subject.
  *
- * Binds the items in the ViewPager to the list provided, and the showing index to the property provided.
- * Any changes to the property will change the current page. AS well updating the pager will update the property.
- *
+ * Example:
+ * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
+ * val showing = ValueSubject(0)
+ * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
 fun <T: Any> Observable<List<T>>.showIn(
     view: ViewPager,
@@ -53,10 +56,13 @@ fun <T: Any> Observable<List<T>>.showIn(
 }
 
 /**
+ * Will display the contents of this in the ViewPager using the makeView provided for each item.
+ * The page shown is tied to the showIndex Subject.
  *
- * Binds the items in the ViewPager to the list provided, and the showing index to the property provided.
- * Any changes to the property will change the current page. AS well updating the pager will update the property.
- *
+ * Example:
+ * val data = listOf(1,2,3,4,5,6,7,8,9,0)
+ * val showing = ValueSubject(0)
+ * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
 fun <T: Any> List<T>.showIn(
     view: ViewPager,

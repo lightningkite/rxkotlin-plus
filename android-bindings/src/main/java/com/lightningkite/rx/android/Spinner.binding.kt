@@ -16,6 +16,16 @@ import io.reactivex.rxjava3.subjects.Subject
 
 var butterflySpinnerRow: Int = android.R.layout.simple_spinner_item
 
+
+/**
+ * Sets the values displayed by the spinner to the contents of this and selections are
+ * passed to selected.
+ *
+ * Example:
+ * val values = ValueSubject<List<String>(listOf("Hi", "Hello", "No"))
+ * val result = PublishSubject<String>()
+ * values.showIn(spinnerView, result, { it })
+ */
 fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     view: Spinner,
     selected: Subject<T>,
@@ -67,6 +77,15 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     return this
 }
 
+/**
+ * Sets the values displayed by the spinner to the contents of this and selections are
+ * passed to selected.
+ *
+ * Example:
+ * val values = ValueSubject<List<String>(listOf("Hi", "Hello", "No"))
+ * val result = PublishSubject<String>()
+ * values.showIn(spinnerView, result, { ValueSubject(it) })
+ */
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
     view: Spinner,
     selected: Subject<T>,
