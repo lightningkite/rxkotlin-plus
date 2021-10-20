@@ -94,7 +94,7 @@ afterEvaluate {
             val release by creating(MavenPublication::class) {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                //artifact(tasks.getByName("javadocJar"))
+                artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -102,7 +102,7 @@ afterEvaluate {
             val debug by creating(MavenPublication::class) {
                 from(components["debug"])
                 artifact(tasks.getByName("sourceJar"))
-                //artifact(tasks.getByName("javadocJar"))
+                artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -151,21 +151,21 @@ if (useDeployment) {
                 }
                 "pom" {
                     "project" {
-                        setProperty("name", "RxKotlin-Property-View-Generators")
+                        setProperty("name", "View-Generators")
                         setProperty("packaging", "aar")
                         setProperty(
                             "description",
                             "A layout manager for Android."
                         )
-                        setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                        setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
 
                         "scm" {
-                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-property.git")
+                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
                             setProperty(
                                 "developerConnection",
-                                "scm:git:https://github.com/lightningkite/rxkotlin-property.git"
+                                "scm:git:https://github.com/lightningkite/rxkotlin-plus.git"
                             )
-                            setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                            setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
                         }
 
                         "licenses" {
@@ -174,13 +174,17 @@ if (useDeployment) {
                                 setProperty("url", "https://www.mit.edu/~amini/LICENSE.md")
                                 setProperty("distribution", "repo")
                             }
-
                         }
                         "developers"{
                             "developer"{
                                 setProperty("id", "bjsvedin")
                                 setProperty("name", "Brady Svedin")
                                 setProperty("email", "brady@lightningkite.com")
+                            }
+                            "developer"{
+                                setProperty("id", "LightningKiteJoseph")
+                                setProperty("name", "Joseph Ivie")
+                                setProperty("email", "joseph@lightningkite.com")
                             }
                         }
                     }

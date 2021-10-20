@@ -6,15 +6,15 @@ class MermaidBuilder(val out: Appendable, vertical: Boolean) {
 
     init {
         if (vertical) {
-            out.appendln("graph LR;")
+            out.appendLine("graph LR;")
         } else {
-            out.appendln("graph TD;")
+            out.appendLine("graph TD;")
         }
     }
 
     data class NodeStyle(val fill: Int, val stroke: Int, val strokeWidth: String) {
         fun emit(out: Appendable, forKey: String) {
-            out.appendln("style $forKey fill:${fill.colorString()},stroke:${stroke.colorString()},stroke-width:$strokeWidth;")
+            out.appendLine("style $forKey fill:${fill.colorString()},stroke:${stroke.colorString()},stroke-width:$strokeWidth;")
         }
     }
 
@@ -41,7 +41,7 @@ class MermaidBuilder(val out: Appendable, vertical: Boolean) {
             if(dashArray != null){
                 out.append("stroke-dasharray:${dashArray.joinToString()}")
             }
-            out.appendln(';')
+            out.appendLine(';')
         }
     }
 
@@ -72,7 +72,7 @@ class MermaidBuilder(val out: Appendable, vertical: Boolean) {
     fun node(name: String, shape: NodeShape = NodeShape.RoundSquare, style: NodeStyle? = null): Int {
         val thisNodeIndex = nodeIndex++
         val thisNodeId = getShortIdentifier(thisNodeIndex)
-        out.appendln(shape.make(thisNodeId, name) + ";")
+        out.appendLine(shape.make(thisNodeId, name) + ";")
         style?.emit(out, thisNodeId)
         return thisNodeIndex
     }
@@ -85,15 +85,15 @@ class MermaidBuilder(val out: Appendable, vertical: Boolean) {
         style: LinkStyle? = null
     ): Int {
         val thisLinkIndex = linkIndex++
-        out.appendln(shape.make(getShortIdentifier(from), getShortIdentifier(to), content) + ";")
+        out.appendLine(shape.make(getShortIdentifier(from), getShortIdentifier(to), content) + ";")
         style?.emit(out, thisLinkIndex)
         return thisLinkIndex
     }
 
     inline fun <T> subgraph(name: String, actions: () -> T): T {
-        out.appendln("subgraph $name;")
+        out.appendLine("subgraph $name;")
         val result = actions()
-        out.appendln("end;")
+        out.appendLine("end;")
         return result
     }
 

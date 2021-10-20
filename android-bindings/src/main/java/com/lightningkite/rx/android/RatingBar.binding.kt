@@ -21,7 +21,7 @@ fun <SOURCE: Subject<Float>> SOURCE.bind(
             suppress = false
         }
     }.addTo(view.removed)
-    view.onRatingBarChangeListener = RatingBar.OnRatingBarChangeListener { p0, p1, p2 ->
+    view.onRatingBarChangeListener = RatingBar.OnRatingBarChangeListener { _, p1, _ ->
         if (!suppress) {
             suppress = true
             onNext(p1)

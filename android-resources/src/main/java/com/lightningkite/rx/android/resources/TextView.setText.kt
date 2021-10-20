@@ -7,5 +7,5 @@ import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
 fun TextView.setText(viewString: ViewString) {
-    setText(viewString.get(context))
+    text = viewString.get(context)
 }

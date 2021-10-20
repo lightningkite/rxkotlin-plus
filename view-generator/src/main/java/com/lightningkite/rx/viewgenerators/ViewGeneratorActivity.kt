@@ -43,10 +43,10 @@ abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : Accessibl
             val builder = AlertDialog.Builder(this)
             builder.setMessage(request.string.get(this))
             request.confirmation?.let { conf ->
-                builder.setPositiveButton(android.R.string.ok) { dialog, which -> conf.invoke(); dialog.dismiss() }
-                builder.setNeutralButton(android.R.string.cancel) { dialog, which -> dialog.dismiss() }
+                builder.setPositiveButton(android.R.string.ok) { dialog, _ -> conf.invoke(); dialog.dismiss() }
+                builder.setNeutralButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
             } ?: run {
-                builder.setPositiveButton(android.R.string.ok) { dialog, which -> dialog.dismiss() }
+                builder.setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
             }
             builder
                 .create()

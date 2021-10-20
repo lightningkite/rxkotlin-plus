@@ -1,7 +1,6 @@
 package com.lightningkite.rx.gradle
 
 import com.lightningkite.rx.PrototyperSettings
-import com.lightningkite.rx.xml.createAndroidLayoutClasses
 import com.lightningkite.rx.flow.createFlowDocumentation
 import com.lightningkite.rx.generators.createPrototypeViewGenerators
 import com.lightningkite.rx.utils.getPropertyAsObject
@@ -36,17 +35,7 @@ class PrototyperPlugin : Plugin<Project> {
 
         //Prototyping
 
-        project.tasks.create("VGCreateLayoutClasses") { task ->
-            task.group = "prototype"
-            task.doLast {
-                createAndroidLayoutClasses(
-                    androidFolder = androidBase(),
-                    applicationPackage = ext.layoutPackage ?: packageName()
-                )
-            }
-        }
         project.tasks.create("VGPrototype") { task ->
-            task.dependsOn("VGCreateLayoutClasses")
             task.group = "prototype"
             task.doLast {
                 createPrototypeViewGenerators(

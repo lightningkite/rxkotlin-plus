@@ -22,6 +22,7 @@ fun String.camelCase(): String {
     }
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun InputStream.checksum(): String {
     val digest = MessageDigest.getInstance("MD5")
     val buffer = ByteArray(DEFAULT_BUFFER_SIZE)

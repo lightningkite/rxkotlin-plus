@@ -30,7 +30,7 @@ interface ActivityAccess {
 
     fun prepareOnResult(
         presetCode: Int = (Math.random() * Short.MAX_VALUE).toInt(),
-        onResult: (Int, Intent?) -> Unit = { a, b -> }
+        onResult: (Int, Intent?) -> Unit = { _, _ -> }
     ): Int
 
     fun requestPermissions(permission: Array<String>, onResult: (Map<String, Int>) -> Unit)

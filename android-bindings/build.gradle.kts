@@ -64,25 +64,16 @@ android {
 
 dependencies {
     api(project(":rxplus"))
+    api("io.reactivex.rxjava3:rxandroid:3.0.0")
+    api("androidx.core:core-ktx:1.6.0")
+    api("androidx.recyclerview:recyclerview:1.2.1")
+    api("com.google.android.material:material:1.4.0")
+    api("dev.b3nedikt.viewpump:viewpump:4.0.7")
+    api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-
-    api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
-
-    api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    api("com.google.android.material:material:1.4.0")
-    api("com.jakewharton.rxbinding4:rxbinding-material:4.0.0")
-
-    api("androidx.recyclerview:recyclerview:1.2.1")
-
-    api("androidx.core:core-ktx:1.6.0")
-
-    api("dev.b3nedikt.viewpump:viewpump:4.0.7")
-
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-
 }
 
 tasks {
@@ -108,7 +99,7 @@ afterEvaluate {
             val release by creating(MavenPublication::class) {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                //artifact(tasks.getByName("javadocJar"))
+                artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -116,7 +107,7 @@ afterEvaluate {
             val debug by creating(MavenPublication::class) {
                 from(components["debug"])
                 artifact(tasks.getByName("sourceJar"))
-                //artifact(tasks.getByName("javadocJar"))
+                artifact(tasks.getByName("javadocJar"))
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
@@ -165,21 +156,21 @@ if (useDeployment) {
                 }
                 "pom" {
                     "project" {
-                        setProperty("name", "RxKotlin-Property-Android")
+                        setProperty("name", "RxPlus-Android")
                         setProperty("packaging", "aar")
                         setProperty(
                             "description",
-                            "An observable library for kotlin based on rxkotlin."
+                            "An Android view binding library built on top of RxPlus."
                         )
-                        setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                        setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
 
                         "scm" {
-                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-property.git")
+                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
                             setProperty(
                                 "developerConnection",
-                                "scm:git:https://github.com/lightningkite/rxkotlin-property.git"
+                                "scm:git:https://github.com/lightningkite/rxkotlin-plus.git"
                             )
-                            setProperty("url", "https://github.com/lightningkite/rxkotlin-property")
+                            setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
                         }
 
                         "licenses" {
@@ -188,13 +179,17 @@ if (useDeployment) {
                                 setProperty("url", "https://www.mit.edu/~amini/LICENSE.md")
                                 setProperty("distribution", "repo")
                             }
-
                         }
                         "developers"{
                             "developer"{
                                 setProperty("id", "bjsvedin")
                                 setProperty("name", "Brady Svedin")
                                 setProperty("email", "brady@lightningkite.com")
+                            }
+                            "developer"{
+                                setProperty("id", "LightningKiteJoseph")
+                                setProperty("name", "Joseph Ivie")
+                                setProperty("email", "joseph@lightningkite.com")
                             }
                         }
                     }
