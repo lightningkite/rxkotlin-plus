@@ -36,7 +36,6 @@ class SwapView @JvmOverloads constructor(
 
         if (newView == null) {
             newView = View(context)
-            visibility = View.GONE
         } else {
             visibility = View.VISIBLE
         }
@@ -53,6 +52,9 @@ class SwapView @JvmOverloads constructor(
             if (oldView != null){
                 transition.exit.invoke(oldView).withEndAction {
                     removeView(oldView)
+                    if(to == null) {
+                        visibility = View.GONE
+                    }
                 }
             }
             currentView = newView

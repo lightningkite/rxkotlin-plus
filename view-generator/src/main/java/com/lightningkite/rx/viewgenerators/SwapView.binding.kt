@@ -41,7 +41,6 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
     var currentData: ViewGenerator? = null
     var currentStackSize = 0
     this.subscribeBy { datas ->
-        view.visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
         post {
             val newData = datas.lastOrNull()
             val newStackSize = datas.size
@@ -69,7 +68,6 @@ fun <T : ViewGenerator, SOURCE : Observable<List<Pair<T, ViewTransition>>>> SOUR
     var currentData: Pair<T, ViewTransition>? = null
     var currentStackSize = 0
     this.subscribeBy { datas ->
-        view.visibility = if (datas.isEmpty()) View.GONE else View.VISIBLE
         post {
             val newData = datas.lastOrNull()
             val newStackSize = datas.size
