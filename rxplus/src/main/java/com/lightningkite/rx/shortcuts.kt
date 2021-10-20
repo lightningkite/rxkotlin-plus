@@ -4,14 +4,11 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.functions.Action
-import io.reactivex.rxjava3.functions.Consumer
-import io.reactivex.rxjava3.internal.functions.Functions
-import io.reactivex.rxjava3.internal.observers.LambdaObserver
 import io.reactivex.rxjava3.kotlin.*
 import io.reactivex.rxjava3.subjects.Subject
 import java.time.*
 import java.util.*
+import kotlin.reflect.KMutableProperty1
 
 fun <T: Any> Observable<Optional<T>>.subscribeByNullable(
     onError: (Throwable) -> Unit = {  },
@@ -99,6 +96,10 @@ infix fun <T: Any> HasValueSubject<Optional<T>>.isEqualToOrNull(constant: T): Su
 infix fun <T: Any> HasValueSubject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean>
         = this.map { it.isEmpty || it.kotlin != constant }.withWrite { if(it || (!it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
 
+operator fun <T: Any, V: Any> HasValueSubject<T>.get(property: KMutableProperty1<T, V>): HasValueSubject<V> = mapWithExisting(
+    read = { property.get(it) },
+    write = { existing, it -> property.set(existing, it); existing }
+)
 
 infix fun <T: Any> Observable<T>.isIn(other: Observable<Collection<T>>): Observable<Boolean>
         = Observable.combineLatest(this, other) { left, right -> left in right }
@@ -114,6 +115,9 @@ infix fun Observable<Boolean>.and(other: Observable<Boolean>): Observable<Boolea
 
 infix fun Observable<Boolean>.or(other: Observable<Boolean>): Observable<Boolean>
     = Observable.combineLatest(this, other) { left, right -> left || right }
+
+operator fun Subject<Boolean>.not(): Subject<Boolean>
+    = map(read = { !it }, write = { !it })
 
 @JvmName("toSubjectStringFromInt")
 fun Subject<Int>.toSubjectString(): Subject<String> {

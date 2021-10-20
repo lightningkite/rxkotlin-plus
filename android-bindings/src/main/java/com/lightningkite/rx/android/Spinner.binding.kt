@@ -47,6 +47,10 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
+    Observable
+        .combineLatest(selected, this) { sel: T, list: List<T> -> list.indexOf(sel) }
+        .subscribeBy { index -> if (index != -1 && index != view.selectedItemPosition) view.setSelection(index) }
+        .addTo(view.removed)
     view.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -96,6 +100,10 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
+    Observable
+        .combineLatest(selected, this) { sel: T, list: List<T> -> list.indexOf(sel) }
+        .subscribeBy { index -> if (index != -1 && index != view.selectedItemPosition) view.setSelection(index) }
+        .addTo(view.removed)
     view.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
 

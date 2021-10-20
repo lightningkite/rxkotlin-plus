@@ -5,12 +5,15 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
+import com.lightningkite.rx.HasValueSubject
+import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 
-private class LinearLayoutBoundSubview<T>(val view: View, val property: PublishSubject<T>)
+private class LinearLayoutBoundSubview<T>(val view: View, val property: BehaviorSubject<T>)
 
 /**
  *
@@ -49,7 +52,7 @@ fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
         } else if (existingViews.size < value.size) {
             //add views
             for (iter in 1..(-excessViews)) {
-                val prop = PublishSubject.create<T>()
+                val prop = BehaviorSubject.create<T>()
                 val v = makeView(prop)
                 if (view.orientation == LinearLayout.VERTICAL)
                     view.addView(v, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
