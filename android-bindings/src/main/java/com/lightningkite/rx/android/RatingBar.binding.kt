@@ -9,7 +9,6 @@ import io.reactivex.rxjava3.kotlin.addTo
  *
  * Binds the rating bar to the property provided.
  */
-
 fun <SOURCE: Subject<Float>> SOURCE.bind(
     view: RatingBar
 ): SOURCE {

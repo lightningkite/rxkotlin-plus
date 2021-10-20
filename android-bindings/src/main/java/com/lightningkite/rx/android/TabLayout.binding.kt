@@ -14,7 +14,6 @@ import io.reactivex.rxjava3.kotlin.addTo
  * will update selected, as well modifying selected will manifest in the tabs.
  *
  */
-
 fun <T : Any> TabLayout.bind(
     tabs: List<T>,
     selected: Subject<T>,

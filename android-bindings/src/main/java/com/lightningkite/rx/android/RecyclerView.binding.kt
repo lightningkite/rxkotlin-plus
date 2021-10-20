@@ -26,7 +26,6 @@ private fun RecyclerView.defaultLayoutManager(){
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView) { obs -> ... return view }
  */
-
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     view: RecyclerView,
     makeView: (Observable<T>) -> View

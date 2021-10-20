@@ -130,6 +130,7 @@ private fun <T : Any, B : Any> Observer<T>.observerMap(mapper: (B) -> T): Observ
     override fun onError(e: Throwable) = this@observerMap.onError(e)
     override fun onComplete() = this@observerMap.onComplete()
 }
+
 private fun <T : Any, B : Any> Observer<T>.observerMapNotNull(mapper: (B) -> T?): Observer<B> = object : Observer<B> {
     override fun onSubscribe(d: Disposable) = this@observerMapNotNull.onSubscribe(d)
     override fun onNext(t: B) {
