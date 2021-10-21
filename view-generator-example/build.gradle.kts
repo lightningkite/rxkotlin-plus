@@ -2,8 +2,6 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-android-extensions")
-//    id("com.jakeout.gradle-inspector") version "0.3.0"
 }
 
 android {
@@ -18,20 +16,15 @@ android {
         versionName = "1.0.5"
     }
     compileOptions {
-        setSourceCompatibility(JavaVersion.VERSION_1_8)
-        setTargetCompatibility(JavaVersion.VERSION_1_8)
+        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         viewBinding = true
     }
     packagingOptions {
         exclude("META-INF/**")
-    }
-    buildTypes {
-        //        release {
-//            minifyEnabled = false
-//            proguardFiles = getDefaultProguardFile("proguard-android.txt"), 'proguard-rules.pro'
-//        }
     }
 }
 
@@ -51,6 +44,7 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
 
 

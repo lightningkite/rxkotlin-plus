@@ -6,7 +6,7 @@ Uses Jake Wharton's RxBinding and ViewPump.
 
 All are available in Maven Central under `com.lightningkite.rx`. 
 
-Apache 2.0 License
+MIT License
 
 # Packages
 

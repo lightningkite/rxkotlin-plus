@@ -26,7 +26,7 @@ version = "0.0.1"
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
     Properties().apply { load(stream) }
-}
+} ?: Properties()
 val signingKey: String? = (System.getenv("SIGNING_KEY")?.takeUnless { it.isEmpty() }
     ?: props?.getProperty("signingKey")?.toString())
     ?.lineSequence()
@@ -113,11 +113,11 @@ dependencies {
     testApi("org.apache.maven:maven-aether-provider:$mavenVersion")
 }
 
+
 tasks {
     val sourceJar by creating(Jar::class) {
         archiveClassifier.set("sources")
-        from(sourceSets["main"].java.srcDirs)
-        from(project.projectDir.resolve("src/include"))
+        from(kotlin.sourceSets["main"].kotlin.srcDirs)
     }
     val javadocJar by creating(Jar::class) {
         dependsOn("dokkaJavadoc")
@@ -132,98 +132,68 @@ tasks {
 
 afterEvaluate {
     publishing {
-        publications {
-            val release by creating(MavenPublication::class) {
-                from(components["java"])
-                artifact(tasks["sourceJar"])
-                artifact(tasks["javadocJar"])
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
-            }
+        this.publications.forEach {
+            (it as MavenPublication).setPom()
         }
-    }
-    if(useSigning){
-        signing {
-            useInMemoryPgpKeys(signingKey, signingPassword)
-            sign(configurations.archives.get())
+        publications.getByName<MavenPublication>("pluginMaven") {
+            artifact(tasks.getByName("sourceJar"))
+            artifact(tasks.getByName("javadocJar"))
         }
-    }
-}
-
-if(useDeployment){
-    tasks.register("uploadSnapshot"){
-        group="upload"
-        finalizedBy("uploadArchives")
-        doLast{
-            project.version = project.version.toString() + "-SNAPSHOT"
-        }
-    }
-
-    tasks.named<Upload>("uploadArchives") {
-        repositories.withConvention(MavenRepositoryHandlerConvention::class) {
-            mavenDeployer {
-                beforeDeployment {
-                    signing.signPom(this)
-                }
-            }
-        }
-
-        repositories.withGroovyBuilder {
-            "mavenDeployer"{
-                "repository"("url" to "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    "authentication"(
-                        "userName" to deploymentUser,
-                        "password" to deploymentPassword
-                    )
-                }
-                "snapshotRepository"("url" to "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                    "authentication"(
-                        "userName" to deploymentUser,
-                        "password" to deploymentPassword
-                    )
-                }
-                "pom" {
-                    "project" {
-                        setProperty("name", "View-Generator-Prototyper")
-                        setProperty("packaging", "jar")
-                        setProperty(
-                            "description",
-                            "A gradle plugin to help generate Android View Generator files based on the layout xmls in the project."
-                        )
-                        setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
-
-                        "scm" {
-                            setProperty("connection", "scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
-                            setProperty(
-                                "developerConnection",
-                                "scm:git:https://github.com/lightningkite/rxkotlin-plus.git"
-                            )
-                            setProperty("url", "https://github.com/lightningkite/rxkotlin-plus")
-                        }
-
-                        "licenses" {
-                            "license"{
-                                setProperty("name", "The MIT License (MIT)")
-                                setProperty("url", "https://www.mit.edu/~amini/LICENSE.md")
-                                setProperty("distribution", "repo")
-                            }
-                        }
-                        "developers"{
-                            "developer"{
-                                setProperty("id", "bjsvedin")
-                                setProperty("name", "Brady Svedin")
-                                setProperty("email", "brady@lightningkite.com")
-                            }
-                            "developer"{
-                                setProperty("id", "LightningKiteJoseph")
-                                setProperty("name", "Joseph Ivie")
-                                setProperty("email", "joseph@lightningkite.com")
-                            }
-                        }
+        repositories {
+            if (useSigning) {
+                maven {
+                    name = "MavenCentral"
+                    val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                    url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+                    credentials {
+                        this.username = deploymentUser
+                        this.password = deploymentPassword
                     }
                 }
             }
         }
+    }
+    if (useSigning) {
+        signing {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(publishing.publications)
+        }
+    }
+}
+
+fun MavenPublication.setPom() {
+    pom {
+        name.set("ViewGenerators-Plugin")
+        description.set("A Gradle plugin that automatically generates ViewGenerators from Android Layout XMLs")
+        url.set("https://github.com/lightningkite/rxkotlin-plus")
+
+        scm {
+            connection.set("scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
+            developerConnection.set("scm:git:https://github.com/lightningkite/rxkotlin-plus.git")
+            url.set("https://github.com/lightningkite/rxkotlin-plus")
+        }
+
+        licenses {
+            license {
+                name.set("The MIT License (MIT)")
+                url.set("https://www.mit.edu/~amini/LICENSE.md")
+                distribution.set("repo")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("bjsvedin")
+                name.set("Brady Svedin")
+                email.set("brady@lightningkite.com")
+            }
+            developer {
+                id.set("LightningKiteJoseph")
+                name.set("Joseph Ivie")
+                email.set("joseph@lightningkite.com")
+            }
+        }
+
     }
 }
