@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.1"
+version = "0.0.2"
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
     Properties().apply { load(stream) }

@@ -1,18 +1,11 @@
 package com.lightningkite.rx.generators
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.lightningkite.rx.log
 import com.lightningkite.rx.utils.XmlNode
 import com.lightningkite.rx.utils.camelCase
 import com.lightningkite.rx.utils.readXMLStyles
 import com.lightningkite.rx.xml.AndroidLayoutFile
 import java.io.File
-
-
-fun readLayoutInfo(buildFolder: File): Map<String, AndroidLayoutFile> =
-    jacksonObjectMapper().readValue(buildFolder.resolve("layout/summary.json"))
-
 
 fun createPrototypeViewGenerators(androidFolder: File, applicationPackage: String) =
     createPrototypeViewGenerators(
@@ -28,8 +21,9 @@ internal fun createPrototypeViewGenerators(
 ) {
     outputFolder.mkdirs()
 
-    val layoutInfo = readLayoutInfo(resourcesFolder.resolve("../../../build"))
-    val styles = File(resourcesFolder, "values/styles.xml").readXMLStyles()
+    val styles = File(resourcesFolder, "values/styles.xml").takeIf { it.exists() }?.readXMLStyles() ?: mapOf()
+    val layoutInfo = AndroidLayoutFile.parseAll(resourcesFolder, styles)
+
     val packageName =
         outputFolder.absolutePath.replace('\\', '/').substringAfter("src/main/").substringAfter('/').replace('/', '.')
     val nodes = HashMap<String, ViewNode>()
