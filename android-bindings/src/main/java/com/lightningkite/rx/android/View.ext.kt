@@ -1,6 +1,7 @@
 package com.lightningkite.rx.android
 
 import android.view.View
+import android.view.ViewGroup
 import com.jakewharton.rxbinding4.view.clicks
 import com.jakewharton.rxbinding4.view.longClicks
 import com.lightningkite.rx.kotlin
@@ -203,4 +204,16 @@ fun <T: Any> View.onLongClick(observable:Observable<T>, action: (T)->Unit){
  */
 fun <T: Any> View.onLongClickNullable(observable:Observable<Optional<T>>, action: (T?)->Unit){
     longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)
+}
+
+
+/**
+ * Replaces the current view in the view hierarchy with the view provided.
+ */
+fun View.replace(other: View) {
+    val parent = (this.parent as ViewGroup)
+    other.layoutParams = this.layoutParams
+    val index = parent.indexOfChild(this)
+    parent.removeView(this)
+    parent.addView(other, index)
 }
