@@ -154,9 +154,10 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribe
 
 /**
  * Subscribes to the view clicks observable which is fired any time the view is clicked. The action provided will be called on click.
+ * disabledMilliseconds is the time before it can be pressed again.
  */
-fun View.onClick(action: ()->Unit) {
-    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+fun View.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
+    clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
 }
 
 /**
@@ -164,9 +165,10 @@ fun View.onClick(action: ()->Unit) {
  * The value of the observable will be passed into the action provided.
  * This is designed to work with ValueSubjects or BehaviorSubject where a value is
  * immediately available.
+ * disabledMilliseconds is the time before it can be pressed again.
  */
-fun <T: Any> View.onClick(observable:Observable<T>, action: (T)->Unit) {
-    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)
+fun <T: Any> View.onClick(observable:Observable<T>, disabledMilliseconds:Long = 500L, action: (T)->Unit) {
+    clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)
 }
 
 /**
@@ -174,16 +176,18 @@ fun <T: Any> View.onClick(observable:Observable<T>, action: (T)->Unit) {
  * The value of the observable will be passed into the action provided.
  * This is designed to work with ValueSubjects or BehaviorSubject where a value is
  * immediately available. Unwrapping the optional is automatically handled.
+ * disabledMilliseconds is the time before it can be pressed again.
  */
-fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, action: (T?)->Unit) {
-    clicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)
+fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, disabledMilliseconds:Long = 500L, action: (T?)->Unit) {
+    clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)
 }
 
 /**
  * Subscribes to the view longClicks observable which is fired any time the view is longPressed. The action provided will be called on click.
+ * disabledMilliseconds is the time before it can be pressed again.
  */
-fun View.onLongClick(action: ()->Unit) {
-    longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+fun View.onLongClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
+    longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
 }
 
 /**
@@ -191,9 +195,10 @@ fun View.onLongClick(action: ()->Unit) {
  * The value of the observable will be passed into the action provided.
  * This is designed to work with ValueSubjects or BehaviorSubject where a value is
  * immediately available.
+ * disabledMilliseconds is the time before it can be pressed again.
  */
-fun <T: Any> View.onLongClick(observable:Observable<T>, action: (T)->Unit){
-    longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)
+fun <T: Any> View.onLongClick(observable:Observable<T>, disabledMilliseconds:Long = 500L, action: (T)->Unit){
+    longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)
 }
 
 /**
@@ -201,9 +206,10 @@ fun <T: Any> View.onLongClick(observable:Observable<T>, action: (T)->Unit){
  * The value of the observable will be passed into the action provided.
  * This is designed to work with ValueSubjects or BehaviorSubject where a value is
  * immediately available. Unwrapping the optional is automatically handled.
+ * disabledMilliseconds is the time before it can be pressed again.
  */
-fun <T: Any> View.onLongClickNullable(observable:Observable<Optional<T>>, action: (T?)->Unit){
-    longClicks().throttleFirst(500L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)
+fun <T: Any> View.onLongClickNullable(observable:Observable<Optional<T>>, disabledMilliseconds:Long = 500L, action: (T?)->Unit){
+    longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)
 }
 
 
