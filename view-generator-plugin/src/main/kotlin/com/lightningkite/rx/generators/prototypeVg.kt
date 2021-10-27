@@ -114,10 +114,10 @@ private fun generateFile(
     val actions = ArrayList<() -> Unit>()
 
 
-    fun getStackAndFile(node: XmlNode, attribute:String):Pair<String, String>{
+    fun getStackAndFile(node: XmlNode, attribute: String): Pair<String, String> {
         val prefix = attribute.removePrefix("@").substringBefore('/')
         val file = attribute.substringAfter("/").camelCase().capitalize()
-        val onStack = node.allAttributes[ViewNode.attributeOnStack] ?: if(prefix != "layout") prefix else "stack"
+        val onStack = node.allAttributes[ViewNode.attributeOnStack] ?: if (prefix != "layout") prefix else "stack"
         return file to onStack
     }
 
@@ -290,153 +290,150 @@ private fun generateFile(
                 line("val view = xml.root")
 
                 fun handleNode(inside: String, node: XmlNode, prefix: String) {
-
-                    val viewIdentifier = node.allAttributes["android:id"]?.removePrefix("@+id/")?.camelCase()
-                    val isOptional = prefix.contains('?') || (
-                            layoutInfo[inside]?.bindings?.get(viewIdentifier)?.optional
-                                ?: layoutInfo[inside]?.sublayouts?.get(viewIdentifier)?.optional
-                                ?: false
-                            )
-                    val view = viewIdentifier?.let {
-                        if (node.name == "include") {
-                            if (isOptional)
-                                "$it?.root"
-                            else
-                                "$it.root"
-                        } else it
-                    }?.let { prefix + it }
-                    val viewAccess = if (isOptional) "$view?." else "$view."
-
-                    if (view?.contains("dummy", true) == true) {
-                        handleNodeClick(node, view, viewAccess) { action ->
-                            val p =
-                                view.replace("dummy", "").removePrefix("xml").replace(Regex("\\.[a-zA-Z]")) { result ->
-                                    result.value[1].toUpperCase().toString()
-                                }
-                            if (p.isEmpty() || !p[0].isJavaIdentifierStart()) return@handleNodeClick
-                            val actionName = (p + "Action").decapitalize()
-                            actions += {
-                                line("${CodeSection.sectionMarker} Action $actionName ${CodeSection.overwriteMarker}")
-                                line("fun $actionName() {")
-                                tab {
-                                    action()
-                                }
-                                line("}")
-                            }
-                        }
-                        return
-                    }
-                    if (node.name == "com.google.android.material.tabs.TabLayout" && node.children.isNotEmpty() && view !== null) {
-                        line()
-                        line(
-                            "${CodeSection.sectionMarker} Set Up ${
-                                view.replace(
-                                    "?",
-                                    ""
+                    node.allAttributes["android:id"]?.removePrefix("@+id/")?.let { viewId ->
+                        val viewIdentifier = viewId.camelCase()
+                        val isOptional = prefix.contains('?') || (
+                                layoutInfo[inside]?.bindings?.get(viewIdentifier)?.optional
+                                    ?: layoutInfo[inside]?.sublayouts?.get(viewIdentifier)?.optional
+                                    ?: false
                                 )
-                            } ${CodeSection.overwriteMarker}"
-                        )
-                        line("${viewAccess}addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {")
-                        tab {
-                            line("override fun onTabSelected(tab: TabLayout.Tab) {")
+                        val view = prefix + if (node.name == "include") {
+                            if (isOptional)
+                                "$viewIdentifier?.root"
+                            else
+                                "$viewIdentifier.root"
+                        } else viewIdentifier
+
+                        val viewAccess = if (isOptional) "$view?." else "$view."
+                        if (view.contains("dummy", true)) {
+                            handleNodeClick(node, view, viewAccess) { action ->
+                                val p =
+                                    view.replace("dummy", "").removePrefix("xml")
+                                        .replace(Regex("\\.[a-zA-Z]")) { result ->
+                                            result.value[1].toUpperCase().toString()
+                                        }
+                                if (p.isEmpty() || !p[0].isJavaIdentifierStart()) return@handleNodeClick
+                                val actionName = (p + "Action").decapitalize()
+                                actions += {
+                                    line("${CodeSection.sectionMarker} Action $actionName ${CodeSection.overwriteMarker}")
+                                    line("fun $actionName() {")
+                                    tab {
+                                        action()
+                                    }
+                                    line("}")
+                                }
+                            }
+                            return
+                        }
+                        if (node.name == "com.google.android.material.tabs.TabLayout" && node.children.isNotEmpty()) {
+                            line()
+                            line(
+                                "${CodeSection.sectionMarker} Set Up ${
+                                    view.replace(
+                                        "?",
+                                        ""
+                                    )
+                                } ${CodeSection.overwriteMarker}"
+                            )
+                            line("${viewAccess}addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {")
                             tab {
-                                line("when(tab.position) {")
-                                node.children
-                                    .filter { it.name == "com.google.android.material.tabs.TabItem" }
-                                    .forEachIndexed { index, child ->
-                                        val childId =
-                                            child.allAttributes["android:id"]?.removePrefix("@+id/")?.camelCase()
-                                                ?: index.toString()
-                                        handleNodeClick(child, "$view.$childId", "") { action ->
-                                            val actionName =
-                                                (view.removePrefix("xml").replace(Regex("\\.[a-zA-Z]")) { result ->
-                                                    result.value.drop(1).toUpperCase()
-                                                } + childId.capitalize()).decapitalize()
-                                            line(
-                                                "${CodeSection.sectionMarker} Action for ${
-                                                    view.replace(
-                                                        "?",
-                                                        ""
-                                                    )
-                                                }.$childId ${CodeSection.overwriteMarker}"
-                                            )
-                                            line("$index -> $actionName()")
-                                            actions += {
-                                                line("${CodeSection.sectionMarker} Action $actionName ${CodeSection.overwriteMarker}")
-                                                line("fun $actionName() {")
-                                                tab {
-                                                    action()
+                                line("override fun onTabSelected(tab: TabLayout.Tab) {")
+                                tab {
+                                    line("when(tab.position) {")
+                                    node.children
+                                        .filter { it.name == "com.google.android.material.tabs.TabItem" }
+                                        .forEachIndexed { index, child ->
+                                            val childId =
+                                                child.allAttributes["android:id"]?.removePrefix("@+id/")?.camelCase()
+                                                    ?: index.toString()
+                                            handleNodeClick(child, "$view.$childId", "") { action ->
+                                                val actionName =
+                                                    (view.removePrefix("xml").replace(Regex("\\.[a-zA-Z]")) { result ->
+                                                        result.value.drop(1).toUpperCase()
+                                                    } + childId.capitalize()).decapitalize()
+                                                line(
+                                                    "${CodeSection.sectionMarker} Action for ${
+                                                        view.replace(
+                                                            "?",
+                                                            ""
+                                                        )
+                                                    }.$childId ${CodeSection.overwriteMarker}"
+                                                )
+                                                line("$index -> $actionName()")
+                                                actions += {
+                                                    line("${CodeSection.sectionMarker} Action $actionName ${CodeSection.overwriteMarker}")
+                                                    line("fun $actionName() {")
+                                                    tab {
+                                                        action()
+                                                    }
+                                                    line("}")
                                                 }
-                                                line("}")
                                             }
                                         }
-                                    }
-                                line("${CodeSection.sectionMarker} Action for ${view.replace("?", "")} Done")
+                                    line("${CodeSection.sectionMarker} Action for ${view.replace("?", "")} Done")
+                                    line("}")
+                                }
                                 line("}")
+                                line("override fun onTabUnselected(tab: TabLayout.Tab) {}")
+                                line("override fun onTabReselected(tab: TabLayout.Tab) = onTabSelected(tab)")
                             }
-                            line("}")
-                            line("override fun onTabUnselected(tab: TabLayout.Tab) {}")
-                            line("override fun onTabReselected(tab: TabLayout.Tab) = onTabSelected(tab)")
-                        }
-                        line("})")
-                        return
-                    } else if (view != null) {
-                        line()
-                        line(
-                            "${CodeSection.sectionMarker} Set Up ${
-                                view.replace(
-                                    "?",
-                                    ""
-                                )
-                            } ${CodeSection.overwriteMarker}"
-                        )
-                        node.allAttributes["tools:text"]?.let {
-                            if (it.startsWith("@string")) {
-                                line(
-                                    """${viewAccess}text = dependency.getString(R.string.${
-                                        it.removePrefix(
-                                            "@string/"
-                                        )
-                                    })"""
-                                )
-                            } else {
-                                line(
-                                    """${viewAccess}text = "${
-                                        it.replace(
-                                            "$",
-                                            "\\$"
-                                        )
-                                    }""""
-                                )
-                            }
-                        }
-                        node.allAttributes["tools:src"]?.let {
-                            if (it.startsWith("@drawable")) {
-                                line("""${viewAccess}setImageResource(R.drawable.${it.removePrefix("@drawable/")})""")
-                            }
-                        }
-                        node.allAttributes["tools:visibility"]?.let {
-                            when (it) {
-                                "gone" -> line("${viewAccess}visibility = View.GONE")
-                                "invisible" -> line("${viewAccess}visibility = View.INVISIBLE")
-                                "visible" -> line("${viewAccess}visibility = View.VISIBLE")
-                                else -> {
+                            line("})")
+                            return
+                        } else {
+                            line()
+                            line(
+                                "${CodeSection.sectionMarker} Set Up ${
+                                    view.replace(
+                                        "?",
+                                        ""
+                                    )
+                                } ${CodeSection.overwriteMarker}"
+                            )
+                            node.allAttributes["tools:text"]?.let {
+                                if (it.startsWith("@string")) {
+                                    line(
+                                        """${viewAccess}text = dependency.getString(R.string.${
+                                            it.removePrefix(
+                                                "@string/"
+                                            )
+                                        })"""
+                                    )
+                                } else {
+                                    line(
+                                        """${viewAccess}text = "${
+                                            it.replace(
+                                                "$",
+                                                "\\$"
+                                            )
+                                        }""""
+                                    )
                                 }
                             }
-                        }
-                        node.allAttributes["tools:embed"]?.let {
-                            val rawId = node.allAttributes["android:id"]?.removePrefix("@+id/") ?: return@let
-                            line("${viewAccess}replace(${rawId.camelCase()}Vg.generate(dependency))")
-                        }
-                        node.allAttributes["tools:listitem"]?.let {
-                            val subName = it.removePrefix("@layout/").camelCase().capitalize()
-                            val xmlName = subName.plus("Binding")
-                            val otherViewNode = viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
-                            line("Observable.just(listOf(1, 2, 3, 4))")
-                            tab {
-                                line(".showIn($view) label@ { obs ->")
+                            node.allAttributes["tools:src"]?.let {
+                                if (it.startsWith("@drawable")) {
+                                    line("""${viewAccess}setImageResource(R.drawable.${it.removePrefix("@drawable/")})""")
+                                }
+                            }
+                            node.allAttributes["tools:visibility"]?.let {
+                                when (it) {
+                                    "gone" -> line("${viewAccess}visibility = View.GONE")
+                                    "invisible" -> line("${viewAccess}visibility = View.INVISIBLE")
+                                    "visible" -> line("${viewAccess}visibility = View.VISIBLE")
+                                    else -> {
+                                    }
+                                }
+                            }
+                            node.allAttributes["tools:embed"]?.let {
+                                line("${viewAccess}replace(${viewIdentifier.camelCase()}Vg.generate(dependency))")
+                            }
+                            node.allAttributes["tools:listitem"]?.let {
+                                val subName = it.removePrefix("@layout/").camelCase().capitalize()
+                                val xmlName = subName.plus("Binding")
+                                val otherViewNode = viewNodeMap[subName]
+                                line("Observable.just(listOf(1, 2, 3, 4))")
+                                line("    .showIn($view) label@ { obs ->")
                                 line()
-                                tab{
+                                tab {
                                     line(
                                         "${CodeSection.sectionMarker} Make Subview For ${
                                             view.replace(
@@ -469,52 +466,51 @@ private fun generateFile(
                                     line("return@label cellView")
                                 }
                                 line("}")
+
+                            }
+                            handleNodeClick(node, view, viewAccess)
+                            node.allAttributes[ViewNode.attributeStackId]?.let { stackName ->
+                                node.allAttributes[ViewNode.attributeStackDefault]?.let stackDefault@{
+                                    val otherViewNode =
+                                        viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
+                                            ?: run {
+                                                println(
+                                                    "WARNING: Could not find view ${
+                                                        it.removePrefix("@layout/").camelCase().capitalize()
+                                                    } for default of stack $stackName"
+                                                )
+                                                return@stackDefault
+                                            }
+                                    val makeView = makeView(otherViewNode, stackName, null)
+                                    inits.add {
+                                        line("${CodeSection.sectionMarker} Set Initial View for $stackName ${CodeSection.overwriteMarker}")
+                                        line("this.$stackName.reset($makeView)")
+                                        line()
+                                    }
+                                }
+                                line("$stackName.showIn($view, dependency)")
                             }
                         }
-                        handleNodeClick(node, view, viewAccess)
-                        node.allAttributes[ViewNode.attributeStackId]?.let { stackName ->
-                            node.allAttributes[ViewNode.attributeStackDefault]?.let stackDefault@{
-                                val otherViewNode =
-                                    viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
-                                        ?: run {
-                                            println(
-                                                "WARNING: Could not find view ${
-                                                    it.removePrefix("@layout/").camelCase().capitalize()
-                                                } for default of stack ${stackName}"
-                                            )
-                                            return@stackDefault
-                                        }
-                                val makeView = makeView(otherViewNode, stackName, null)
-                                inits.add {
-                                    line("${CodeSection.sectionMarker} Set Initial View for ${stackName} ${CodeSection.overwriteMarker}")
-                                    line("this.$stackName.reset($makeView)")
-                                    line()
+
+                        if (node.name == "include") {
+                            node.allAttributes["layout"]?.let {
+                                val fileName = it.removePrefix("@layout/")
+                                if (fileName.startsWith("component", true)) {
+                                    val file = xml.parentFile.resolve(fileName.plus(".xml"))
+                                    handleNode(
+                                        inside = fileName.camelCase().capitalize(),
+                                        node = XmlNode.read(file, styles),
+                                        prefix = if (isOptional) "$prefix$viewIdentifier?." else "$prefix$viewIdentifier."
+                                    )
+                                } else {
+                                    //embed
+                                    line("${viewAccess}replace(${viewIdentifier}Vg.generate(dependency))")
                                 }
                             }
-                            line("$stackName.showIn($view, dependency)")
                         }
-                    } else {
+                    } ?: run {
                         if (node.allAttributes.keys.any { it.startsWith("tools:") }) {
                             println("WARNING: ${xml.name}: Element type ${node.name} has tools but no id")
-                        }
-                    }
-
-                    if (node.name == "include") {
-                        val id = node.allAttributes["android:id"]?.removePrefix("@+id/")?.camelCase()
-                        if (id != null && id.startsWith("component", true)) {
-                            node.allAttributes["layout"]?.let {
-                                val file = xml.parentFile.resolve(it.removePrefix("@layout/").plus(".xml"))
-                                handleNode(
-                                    inside = it.removePrefix("@layout/").camelCase().capitalize(),
-                                    node = XmlNode.read(file, styles),
-                                    prefix = if (isOptional) "$prefix$id?." else "$prefix$id."
-                                )
-                            }
-                        } else {
-                            //embed
-                            node.allAttributes["android:id"]?.removePrefix("@+id/")?.let { rawId ->
-                                line("${viewAccess}replace(${rawId.camelCase()}Vg.generate(dependency))")
-                            }
                         }
                     }
                     node.children.forEach {

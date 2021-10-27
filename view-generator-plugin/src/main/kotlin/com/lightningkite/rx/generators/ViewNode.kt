@@ -60,6 +60,7 @@ class ViewNode(
         const val attributeStackId = "tools:stackId"
         const val attributeRequires = "tools:requires"
         const val attributeProvides = "tools:provides"
+        const val attributeIgnore = "tools:ignore"
 
         //Breadth-first search
         fun estimateDepth(map: Map<String, ViewNode>) {
@@ -89,13 +90,14 @@ class ViewNode(
             }
         }
 
-        fun root(map: Map<String, ViewNode>): ViewNode? = map["Root"] ?: map["Main"] ?: map["Landing"] ?: map.values.firstOrNull()
+        fun root(map: Map<String, ViewNode>): ViewNode? =
+            map["Root"] ?: map["Main"] ?: map["Landing"] ?: map.values.firstOrNull()
 
         fun assertNoLeaks(map: Map<String, ViewNode>) {
             val root = root(map) ?: return
             val leakMessages = ArrayList<String>()
 
-            for(node in map.values){
+            for (node in map.values) {
                 val tr = node.totalRequiresBetter(map).toList()
                 tr.groupBy { it.viewVar.name }.filter { it.value.size > 1 }.forEach {
                     leakMessages += "Found same-name variable requirements with different types on ${node.name}.${it.key}:"
@@ -118,20 +120,22 @@ class ViewNode(
         }
     }
 
-    fun totalRequires(map: Map<String, ViewNode>, seen: Set<String> = setOf()): Collection<ViewVar> = totalRequiresBetter(map, seen).map { it.viewVar }
+    fun totalRequires(map: Map<String, ViewNode>, seen: Set<String> = setOf()): Collection<ViewVar> =
+        totalRequiresBetter(map, seen).map { it.viewVar }
+
     fun totalRequiresBetter(map: Map<String, ViewNode>, seen: Set<String> = setOf()): Collection<ViewVar.Requirement> {
 
-        if(name in seen) return listOf()
+        if (name in seen) return listOf()
 
         val directRequirements = requires.map { it.requiredByMe(this.name) }
 
         val indirectRequirements = ArrayList<ViewVar.Requirement>()
-        for(inst in instantiates){
+        for (inst in instantiates) {
             val subnode = map[inst] ?: continue
-            for(x in subnode.totalRequiresBetter(map, seen + name)){
-                if(x.viewVar.name == "stack") continue
-                if(x.viewVar.default != null) continue
-                if(directRequirements.any { it.viewVar.satisfies(x.viewVar) }) continue
+            for (x in subnode.totalRequiresBetter(map, seen + name)) {
+                if (x.viewVar.name == "stack") continue
+                if (x.viewVar.default != null) continue
+                if (directRequirements.any { it.viewVar.satisfies(x.viewVar) }) continue
                 indirectRequirements.addOrMerge(
                     x.requiredBy(inst),
                     satisfies = { myItem, existing -> existing.merge(myItem) }
@@ -139,7 +143,13 @@ class ViewNode(
             }
         }
 
-        return directRequirements.filter { provides.none { p -> p.sameAs(it.viewVar) } } + indirectRequirements.filter { provides.none { p -> p.satisfies(it.viewVar) } }
+        return directRequirements.filter { provides.none { p -> p.sameAs(it.viewVar) } } + indirectRequirements.filter {
+            provides.none { p ->
+                p.satisfies(
+                    it.viewVar
+                )
+            }
+        }
     }
 
     fun belongsToStacks(map: Map<String, ViewNode>): Set<String> {
@@ -158,10 +168,10 @@ class ViewNode(
     }
 
 
-    fun getStackAndFile(node: XmlNode, attribute:String):Pair<String, String>{
+    fun getStackAndFile(node: XmlNode, attribute: String): Pair<String, String> {
         val prefix = attribute.removePrefix("@").substringBefore('/')
         val file = attribute.substringAfter("/").camelCase().capitalize()
-        val onStack = node.allAttributes[attributeOnStack] ?: if(prefix != "layout") prefix else "stack"
+        val onStack = node.allAttributes[attributeOnStack] ?: if (prefix != "layout") prefix else "stack"
         return file to onStack
     }
 
@@ -172,7 +182,7 @@ class ViewNode(
             }
         }
         node.allAttributes[attributePush]?.let {
-            val (file, onStack) =  getStackAndFile(node, it)
+            val (file, onStack) = getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.Push(
                     stack = onStack,
@@ -188,7 +198,7 @@ class ViewNode(
             )
         }
         node.allAttributes[attributeSwap]?.let {
-            val (file, onStack) =  getStackAndFile(node, it)
+            val (file, onStack) = getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.Swap(
                     stack = onStack,
@@ -204,7 +214,7 @@ class ViewNode(
             )
         }
         node.allAttributes[attributeReset]?.let {
-            val (file, onStack) =  getStackAndFile(node, it)
+            val (file, onStack) = getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.Reset(
                     stack = onStack,
@@ -220,7 +230,7 @@ class ViewNode(
             )
         }
         node.allAttributes[attributePopTo]?.let {
-            val (file, onStack) =  getStackAndFile(node, it)
+            val (file, onStack) = getStackAndFile(node, it)
             operations.add(
                 ViewStackOp.PopTo(
                     stack = onStack,
@@ -307,22 +317,28 @@ class ViewNode(
         if (node.name == "include") {
             node.allAttributes["layout"]?.let {
                 val targetName = it.removePrefix("@layout/")
-                if(targetName.startsWith("component", true)) {
-                    val file = xml.parentFile.resolve(targetName.plus(".xml"))
-                    gather(XmlNode.read(file, styles), xml, styles, path)
-                } else {
-                    operations.add(
-                        ViewStackOp.Embed(
-                            replaceId = node.allAttributes["android:id"]!!.removePrefix("@+id/"),
-                            viewName = it.removePrefix("@layout/").camelCase().capitalize()
+                val nodeId = node.allAttributes["android:id"]?.removePrefix("@+id/")
+                if (nodeId != null) {
+                    if (targetName.startsWith("component", true)) {
+                        val file = xml.parentFile.resolve(targetName.plus(".xml"))
+                        gather(XmlNode.read(file, styles), xml, styles, path)
+                    } else {
+                        operations.add(
+                            ViewStackOp.Embed(
+                                replaceId = nodeId,
+                                viewName = it.removePrefix("@layout/").camelCase().capitalize()
+                            )
                         )
-                    )
+                    }
+                } else {
+                    node.allAttributes[attributeIgnore]?.let { if(it == "true") true else null }
+                        ?: throw Exception("Element $targetName was included without an id assigned in ${xml.name}. If you do not wish to add an id add tool:ignore=\"true\" to the element.")
                 }
             }
         }
         node.allAttributes["tools:listitem"]?.let {
             val p = it.removePrefix("@layout/")
-            if(p.startsWith("component") || p.startsWith("android_")){
+            if (p.startsWith("component") || p.startsWith("android_")) {
                 val file = xml.parentFile.resolve(p.plus(".xml"))
                 gather(XmlNode.read(file, styles), xml, styles, parentPath)
             } else {
