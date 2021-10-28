@@ -35,7 +35,7 @@ repositories {
     mavenLocal()
 }
 
-val kotlin_version = "1.5.30"
+val kotlin_version = "1.5.31"
 dependencies {
     api(project(":view-generator"))
     api(project(":okhttp-resources"))

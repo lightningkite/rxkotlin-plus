@@ -83,7 +83,7 @@ dependencies {
     api(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = kotlinVersion)
     api(group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin-api", version = kotlinVersion)
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
