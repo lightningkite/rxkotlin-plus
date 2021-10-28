@@ -1,5 +1,6 @@
 package com.lightningkite.rx.generators
 
+import com.lightningkite.rx.gradle.pluginConfiguration
 import com.lightningkite.rx.xml.AndroidLayoutFile
 import com.lightningkite.rx.utils.*
 import java.io.File
@@ -217,6 +218,7 @@ private fun generateFile(
             }
         }
 
+        if(pluginConfiguration.injectKhrysalisAnnotations){ line("@file:SharedCode") }
         line("//")
         line("// ${viewName}VG.swift")
         line("// Created by RxKotlin-Plus Prototype Generator")
@@ -232,6 +234,7 @@ private fun generateFile(
         line("import com.lightningkite.rx.android.*")
         line("import com.lightningkite.rx.android.resources.*")
         line("import com.lightningkite.rx.viewgenerators.*")
+        if(pluginConfiguration.injectKhrysalisAnnotations){ line("import com.lightningkite.khrysalis.*") }
         line("import $applicationPackage.R")
         line("import $applicationPackage.databinding.*")
         line("import io.reactivex.rxjava3.core.Observable")
@@ -244,7 +247,9 @@ private fun generateFile(
             val things = (viewNode.totalRequires(viewNodeMap).sortedBy { it.name })
             things.forEachIndexed { _, it ->
                 if ((it.type.contains("->") || it.type.contains("-]")) && !it.type.endsWith('?')) {
-                    line("val ${it.name}: ${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
+                    line("val ${it.name}: ${if(pluginConfiguration.injectKhrysalisAnnotations) "@Escaping() " else ""}${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
+                } else if(pluginConfiguration.injectKhrysalisAnnotations && (it.type.contains("VG") || it.type.contains("ViewGenerator"))) {
+                    line("@Unowned val $it,")
                 } else {
                     line("val $it,")
                 }
@@ -392,7 +397,7 @@ private fun generateFile(
                             node.allAttributes["tools:text"]?.let {
                                 if (it.startsWith("@string")) {
                                     line(
-                                        """${viewAccess}text = dependency.getString(R.string.${
+                                        """${viewAccess}setText(R.string.${
                                             it.removePrefix(
                                                 "@string/"
                                             )
@@ -400,12 +405,12 @@ private fun generateFile(
                                     )
                                 } else {
                                     line(
-                                        """${viewAccess}text = "${
+                                        """${viewAccess}setText("${
                                             it.replace(
                                                 "$",
                                                 "\\$"
                                             )
-                                        }""""
+                                        }")"""
                                     )
                                 }
                             }
