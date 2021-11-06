@@ -20,7 +20,7 @@ abstract class HasValueSubject<T>: Subject<T>() {
  * of crashing when calling value.
  */
 class ValueSubject<T: Any>(value: T): HasValueSubject<T>() {
-    val underlying = BehaviorSubject.createDefault(value)
+    private val underlying = BehaviorSubject.createDefault(value)
     override var value: T
         get() = underlying.value!!
         set(value) { underlying.onNext(value) }

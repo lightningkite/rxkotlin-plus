@@ -19,7 +19,7 @@ import io.reactivex.rxjava3.core.Single
 fun Image.load(context: Context): Single<Bitmap> {
     return try {
         when (this) {
-            is ImageRaw -> Single.just(BitmapFactory.decodeByteArray(this.raw, 0, this.raw.size))
+            is ImageRaw -> Single.just(BitmapFactory.decodeByteArray(this.data, 0, this.data.size))
             is ImageReference -> load(context = context)
             is ImageBitmap -> Single.just(this.bitmap)
             is ImageRemoteUrl -> load(context = context)
@@ -45,7 +45,7 @@ fun Image.load(context: Context): Single<Bitmap> {
     }
 }
 
-private fun ImageReference.load(maxDimension: Int = 2048, context: Context): Single<Bitmap> {
+private fun ImageReference.load(context: Context, maxDimension: Int = 2048): Single<Bitmap> {
     return Single.create { emitter ->
         var emitted = false
         Glide.with(context)

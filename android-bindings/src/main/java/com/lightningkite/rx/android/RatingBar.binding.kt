@@ -10,17 +10,17 @@ import io.reactivex.rxjava3.kotlin.addTo
  * Binds the rating bar to the property provided.
  */
 fun <SOURCE: Subject<Float>> SOURCE.bind(
-    view: RatingBar
+    ratingBar: RatingBar
 ): SOURCE {
     var suppress = false
     subscribeBy { value ->
         if (!suppress) {
             suppress = true
-            view.rating = value
+            ratingBar.rating = value
             suppress = false
         }
-    }.addTo(view.removed)
-    view.onRatingBarChangeListener = RatingBar.OnRatingBarChangeListener { _, p1, _ ->
+    }.addTo(ratingBar.removed)
+    ratingBar.onRatingBarChangeListener = RatingBar.OnRatingBarChangeListener { _, p1, _ ->
         if (!suppress) {
             suppress = true
             onNext(p1)

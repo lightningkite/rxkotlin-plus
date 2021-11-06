@@ -14,7 +14,7 @@ typealias Data = ByteArray
 sealed class Image
 data class ImageReference(val uri: Uri): Image()
 data class ImageBitmap(val bitmap: Bitmap): Image()
-data class ImageRaw(val raw: Data): Image()
+data class ImageRaw(val data: Data): Image()
 data class ImageRemoteUrl(val url: String): Image()
 data class ImageResource(val resource: DrawableResource): Image()
 

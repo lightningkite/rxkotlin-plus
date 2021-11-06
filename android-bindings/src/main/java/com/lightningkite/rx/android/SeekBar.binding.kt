@@ -13,17 +13,17 @@ import io.reactivex.rxjava3.kotlin.addTo
  * value.bind(seekBarView)
  */
 fun <SOURCE: Subject<Int>> SOURCE.bind(
-    view: SeekBar
+    seekBar: SeekBar
 ): SOURCE {
     var suppress = false
     subscribeBy { value ->
         if (!suppress) {
             suppress = true
-            view.progress = value
+            seekBar.progress = value
             suppress = false
         }
-    }.addTo(view.removed)
-    view.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+    }.addTo(seekBar.removed)
+    seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
             if (!suppress) {
                 suppress = true

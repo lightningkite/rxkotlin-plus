@@ -27,23 +27,23 @@ private fun RecyclerView.defaultLayoutManager(){
  * data.showIn(recyclerView) { obs -> ... return view }
  */
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
-    view: RecyclerView,
+    recyclerView: RecyclerView,
     makeView: (Observable<T>) -> View
 ): SOURCE {
-    view.defaultLayoutManager()
+    recyclerView.defaultLayoutManager()
     var lastPublished: List<T> = listOf()
-    view.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
             subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
-            }.addTo(view.removed)
+            }.addTo(recyclerView.removed)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val event = BehaviorSubject.create<T>()
             val subview = makeView(event)
-            subview.setRemovedCondition(view.removed)
+            subview.setRemovedCondition(recyclerView.removed)
             subview.tag = event
             subview.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             return object : RecyclerView.ViewHolder(subview) {}
@@ -72,18 +72,18 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
  * data.showIn(recyclerView, {item -> if(item < 5) 0 else 1 } ) { type, obs -> ... return view }
  */
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
-    view: RecyclerView,
+    recyclerView: RecyclerView,
     determineType: (T)->Int,
     makeView: (Int, Observable<T>) -> View
 ): SOURCE {
-    view.defaultLayoutManager()
+    recyclerView.defaultLayoutManager()
     var lastPublished: List<T> = listOf()
-    view.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
             subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
-            }.addTo(view.removed)
+            }.addTo(recyclerView.removed)
         }
 
         override fun getItemViewType(position: Int): Int {
@@ -93,7 +93,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val event = BehaviorSubject.create<T>()
             val subview = makeView(viewType, event)
-            subview.setRemovedCondition(view.removed)
+            subview.setRemovedCondition(recyclerView.removed)
             subview.tag = event
             subview.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             return object : RecyclerView.ViewHolder(subview) {}
