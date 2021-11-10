@@ -26,14 +26,14 @@ fun ViewGeneratorStack.backPressDismiss(): Boolean {
 /**
  * Adds an element to the top of the stack and emits an event.
  */
-fun <T> StackSubject<T>.push(element: T) {
+fun ViewGeneratorStack.push(element: ViewGenerator) {
     onNext(value + element)
 }
 
 /**
  * Swaps the top element of the stack for this one and emits an event.
  */
-fun <T> StackSubject<T>.swap(element: T) {
+fun ViewGeneratorStack.swap(element: ViewGenerator) {
     onNext(value.toMutableList().apply {
         removeAt(lastIndex)
         add(element)
@@ -44,7 +44,7 @@ fun <T> StackSubject<T>.swap(element: T) {
  * Removes the top element of the stack, as long as there will be at least one element left afterwards.
  * @return if there was any value to remove
  */
-fun <T> StackSubject<T>.pop(): Boolean {
+fun ViewGeneratorStack.pop(): Boolean {
     if (value.size <= 1) {
         return false
     }
@@ -58,7 +58,7 @@ fun <T> StackSubject<T>.pop(): Boolean {
  * Removes the top element of the stack.
  * @return if there was any value to remove
  */
-fun <T> StackSubject<T>.dismiss(): Boolean {
+fun ViewGeneratorStack.dismiss(): Boolean {
     if (value.isEmpty()) {
         return false
     }
@@ -71,7 +71,7 @@ fun <T> StackSubject<T>.dismiss(): Boolean {
 /**
  * Removes all elements going back to an element matching [predicate].
  */
-fun <T> StackSubject<T>.popToPredicate(predicate: (T) -> Boolean) {
+fun ViewGeneratorStack.popToPredicate(predicate: (ViewGenerator) -> Boolean) {
     val stack = value.toMutableList()
     var found = false
     for (i in 0..stack.lastIndex) {
@@ -87,13 +87,13 @@ fun <T> StackSubject<T>.popToPredicate(predicate: (T) -> Boolean) {
 /**
  * Removes all elements but the first.
  */
-fun <T> StackSubject<T>.root() {
+fun ViewGeneratorStack.root() {
     onNext(listOf(value.first()))
 }
 
 /**
  * Clears out the entire stack, replacing it with a single element.
  */
-fun <T> StackSubject<T>.reset(element: T) {
+fun ViewGeneratorStack.reset(element: ViewGenerator) {
     onNext(listOf(element))
 }

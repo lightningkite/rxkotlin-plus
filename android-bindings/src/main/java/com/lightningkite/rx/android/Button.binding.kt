@@ -236,7 +236,3 @@ private fun Context.timeSelectorDialog(start: LocalTime, onResult: (LocalTime) -
     ).show()
 }
 
-private fun test() {
-    LocalDateTime.of()
-    ZonedDateTime.now()
-}

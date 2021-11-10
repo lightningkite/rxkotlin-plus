@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.3"
+version = "0.0.4"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -55,7 +55,7 @@ android {
         minSdkVersion(21)
         targetSdkVersion(31)
         versionCode = 0
-        versionName = "0.0.1"
+        versionName = "0.0.4"
     }
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_1_8

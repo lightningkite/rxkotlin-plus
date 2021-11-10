@@ -9,9 +9,7 @@ import android.provider.CalendarContract
 import com.lightningkite.rx.android.resources.Image
 import com.lightningkite.rx.android.resources.ImageReference
 import com.lightningkite.rx.android.resources.ImageRemoteUrl
-import com.lightningkite.rx.viewgenerators.ActivityAccess
 import java.time.ZonedDateTime
-import java.util.*
 
 /**
  * Starts an intent with a direct callback.

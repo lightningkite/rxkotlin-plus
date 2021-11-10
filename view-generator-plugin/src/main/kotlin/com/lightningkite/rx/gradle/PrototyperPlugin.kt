@@ -5,12 +5,17 @@ import com.lightningkite.rx.flow.createFlowDocumentation
 import com.lightningkite.rx.generators.createPrototypeViewGenerators
 import com.lightningkite.rx.utils.getPropertyAsObject
 import com.lightningkite.rx.utils.groovyObject
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 open class PrototyperPluginExtension {
     open var layoutPackage: String? = null
     open var injectKhrysalisAnnotations: Boolean = false
+}
+
+fun Project.viewGeneratorPrototyper(configure: Action<PrototyperPluginExtension>) {
+    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("prototyper", configure)
 }
 
 lateinit var pluginConfiguration:PrototyperPluginExtension

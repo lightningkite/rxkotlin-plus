@@ -30,19 +30,3 @@ fun ImageView.setImage(image: Image?) {
     }
 }
 
-
-/**
- * Loads a thumbnail from the video into the ImageView
- */
-fun ImageView.setFromVideoThumbnail(video: Video?) {
-    setImage(null)
-    if (video == null) return
-    video.thumbnail(context = context).subscribeBy(
-        onError = {
-            setImage(null)
-        },
-        onSuccess = {
-            setImage(it)
-        }
-    ).forever()
-}
