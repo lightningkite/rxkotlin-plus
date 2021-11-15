@@ -17,12 +17,11 @@ import kotlin.reflect.KMutableProperty1
  * An extension function on observables of type Optional<T> which wraps the regular subscribeBy.
  * This handles unwrapping the optional before passing it to the callers onNext.
  */
-fun <T: Any> Observable<Optional<T>>.subscribeByNullable(
-    onError: (Throwable) -> Unit = {  },
-    onComplete: () -> Unit = {  },
-    onNext: (T?) -> Unit = {  }
-): Disposable
-    = this.subscribeBy(onError, onComplete) { onNext(it.kotlin) }
+fun <T : Any> Observable<Optional<T>>.subscribeByNullable(
+    onError: (Throwable) -> Unit = { },
+    onComplete: () -> Unit = { },
+    onNext: (T?) -> Unit = { }
+): Disposable = this.subscribeBy(onError, onComplete) { onNext(it.kotlin) }
 
 /**
  * A subscribeBy wrapper that unwraps optionals.
@@ -30,11 +29,10 @@ fun <T: Any> Observable<Optional<T>>.subscribeByNullable(
  * An extension function on Singles of type Optional<T> which wraps the regular subscribeBy.
  * This handles unwrapping the optional before passing it to the callers onSuccess.
  */
-fun <T: Any> Single<Optional<T>>.subscribeByNullable(
+fun <T : Any> Single<Optional<T>>.subscribeByNullable(
     onError: (Throwable) -> Unit = { },
-    onSuccess: (T?) -> Unit = {  }
-): Disposable
-    = this.subscribeBy(onError) { onSuccess(it.kotlin) }
+    onSuccess: (T?) -> Unit = { }
+): Disposable = this.subscribeBy(onError) { onSuccess(it.kotlin) }
 
 /**
  * A subscribeBy wrapper that unwraps optionals.
@@ -42,60 +40,59 @@ fun <T: Any> Single<Optional<T>>.subscribeByNullable(
  * An extension function on Maybes of type Optional<T> which wraps the regular subscribeBy.
  * This handles unwrapping the optional before passing it to the callers onSuccess.
  */
-fun <T: Any> Maybe<Optional<T>>.subscribeByNullable(
+fun <T : Any> Maybe<Optional<T>>.subscribeByNullable(
     onError: (Throwable) -> Unit = {},
     onComplete: () -> Unit = {},
     onSuccess: (T?) -> Unit = {}
-): Disposable
-    = this.subscribeBy(onError, onComplete) { onSuccess(it.kotlin) }
+): Disposable = this.subscribeBy(onError, onComplete) { onSuccess(it.kotlin) }
 
 
 /**
  * Returns an Observable of type Boolean whose value is the equality check between the
  * two different values from this and the other observable.
  */
-infix fun <T: Any> Observable<T>.isEqualTo(other: Observable<T>): Observable<Boolean>
-    = Observable.combineLatest(this, other) { left, right -> left == right }
+infix fun <T : Any> Observable<T>.isEqualTo(other: Observable<T>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left == right }
 
 
 /**
  * Returns an Observable of type Boolean whose value is the negative equality check between the
  * two different values from this and the other observable.
  */
-infix fun <T: Any> Observable<T>.notEqualTo(other: Observable<T>): Observable<Boolean>
-    = Observable.combineLatest(this, other){ left, right -> left != right }
+infix fun <T : Any> Observable<T>.notEqualTo(other: Observable<T>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left != right }
 
 /**
  * Returns an Observable of type Boolean whose value is the equality check between the
  * two different values from this and the other observable.
  */
 @JvmName("isEqualToN1")
-infix fun <T: Any> Observable<Optional<T>>.isEqualTo(other: Observable<T>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> left.kotlin == right }
+infix fun <T : Any> Observable<Optional<T>>.isEqualTo(other: Observable<T>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left.kotlin == right }
 
 /**
  * Returns an Observable of type Boolean whose value is the negative equality check between the
  * two different values from this and the other observable.
  */
 @JvmName("notEqualToN1")
-infix fun <T: Any> Observable<Optional<T>>.notEqualTo(other: Observable<T>): Observable<Boolean>
-        = Observable.combineLatest(this, other){ left, right -> left.kotlin != right }
+infix fun <T : Any> Observable<Optional<T>>.notEqualTo(other: Observable<T>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left.kotlin != right }
 
 /**
  * Returns an Observable of type Boolean whose value is the equality check between the
  * two different values from this and the other observable.
  */
 @JvmName("isEqualToN2")
-infix fun <T: Any> Observable<T>.isEqualTo(other: Observable<Optional<T>>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> left == right.kotlin }
+infix fun <T : Any> Observable<T>.isEqualTo(other: Observable<Optional<T>>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left == right.kotlin }
 
 /**
  * Returns an Observable of type Boolean whose value is the negative equality check between the
  * two different values from this and the other observable.
  */
 @JvmName("notEqualToN2")
-infix fun <T: Any> Observable<T>.notEqualTo(other: Observable<Optional<T>>): Observable<Boolean>
-        = Observable.combineLatest(this, other){ left, right -> left != right.kotlin }
+infix fun <T : Any> Observable<T>.notEqualTo(other: Observable<Optional<T>>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left != right.kotlin }
 
 /**
  * Returns a Subject of type Boolean created from comparing this to the constant.
@@ -104,8 +101,8 @@ infix fun <T: Any> Observable<T>.notEqualTo(other: Observable<Optional<T>>): Obs
  * the value of this and the constant provided. If the new Subject has true written to it,
  * the constant will be passed into the on next of this.
  */
-infix fun <T: Any> Subject<T>.isEqualTo(constant: T): Subject<Boolean>
-        = this.map { it == constant }.withWrite { if(it) onNext(constant) }
+infix fun <T : Any> Subject<T>.isEqualTo(constant: T): Subject<Boolean> =
+    this.map { it == constant }.withWrite { if (it) onNext(constant) }
 
 /**
  * Returns a Subject of type Boolean created from comparing this to the constant.
@@ -114,8 +111,8 @@ infix fun <T: Any> Subject<T>.isEqualTo(constant: T): Subject<Boolean>
  * the value of this and the constant provided. If the new Subject has false written to it,
  * the constant will be passed into the on next of this.
  */
-infix fun <T: Any> Subject<T>.notEqualTo(constant: T): Subject<Boolean>
-        = this.map { it != constant }.withWrite { if(!it) onNext(constant) }
+infix fun <T : Any> Subject<T>.notEqualTo(constant: T): Subject<Boolean> =
+    this.map { it != constant }.withWrite { if (!it) onNext(constant) }
 
 /**
  * Returns a Subject of type Boolean created from comparing this to the constant.
@@ -125,8 +122,8 @@ infix fun <T: Any> Subject<T>.notEqualTo(constant: T): Subject<Boolean>
  * the constant will be passed into the on next of this.
  */
 @JvmName("isEqualToN1")
-infix fun <T: Any> Subject<Optional<T>>.isEqualTo(constant: T): Subject<Boolean>
-        = this.map { it.kotlin == constant }.withWrite { if(it) onNext(constant.optional) }
+infix fun <T : Any> Subject<Optional<T>>.isEqualTo(constant: T): Subject<Boolean> =
+    this.map { it.kotlin == constant }.withWrite { if (it) onNext(constant.optional) }
 
 /**
  * Returns a Subject of type Boolean created from comparing this to the constant.
@@ -136,8 +133,8 @@ infix fun <T: Any> Subject<Optional<T>>.isEqualTo(constant: T): Subject<Boolean>
  * the constant will be passed into the on next of this.
  */
 @JvmName("notEqualToN1")
-infix fun <T: Any> Subject<Optional<T>>.notEqualTo(constant: T): Subject<Boolean>
-        = this.map { it.kotlin != constant }.withWrite { if(it) onNext(constant.optional) }
+infix fun <T : Any> Subject<Optional<T>>.notEqualTo(constant: T): Subject<Boolean> =
+    this.map { it.kotlin != constant }.withWrite { if (it) onNext(constant.optional) }
 
 /**
  * Returns an Observable of type Boolean created from comparing this to the other Observable.
@@ -147,8 +144,8 @@ infix fun <T: Any> Subject<Optional<T>>.notEqualTo(constant: T): Subject<Boolean
  * it will return true.
  */
 @JvmName("isEqualToOrNullN1")
-infix fun <T: Any> Observable<Optional<T>>.isEqualToOrNull(other: Observable<T>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> left.isEmpty || left.kotlin == right }
+infix fun <T : Any> Observable<Optional<T>>.isEqualToOrNull(other: Observable<T>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left.isEmpty || left.kotlin == right }
 
 /**
  * Returns an Observable of type Boolean created from comparing this to the other Observable.
@@ -158,8 +155,8 @@ infix fun <T: Any> Observable<Optional<T>>.isEqualToOrNull(other: Observable<T>)
  * it will return true.
  */
 @JvmName("notEqualToOrNullN1")
-infix fun <T: Any> Observable<Optional<T>>.notEqualToOrNull(other: Observable<T>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> left.isEmpty || left.kotlin != right }
+infix fun <T : Any> Observable<Optional<T>>.notEqualToOrNull(other: Observable<T>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left.isEmpty || left.kotlin != right }
 
 /**
  * Returns an Observable of type Boolean created from comparing this to the other Observable.
@@ -169,8 +166,8 @@ infix fun <T: Any> Observable<Optional<T>>.notEqualToOrNull(other: Observable<T>
  * it will return true.
  */
 @JvmName("isEqualToOrNullN2")
-infix fun <T: Any> Observable<T>.isEqualToOrNull(other: Observable<Optional<T>>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> right.isEmpty || left == right.kotlin }
+infix fun <T : Any> Observable<T>.isEqualToOrNull(other: Observable<Optional<T>>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> right.isEmpty || left == right.kotlin }
 
 /**
  * Returns an Observable of type Boolean created from comparing this to the other Observable.
@@ -180,8 +177,8 @@ infix fun <T: Any> Observable<T>.isEqualToOrNull(other: Observable<Optional<T>>)
  * it will return true.
  */
 @JvmName("notEqualToOrNullN2")
-infix fun <T: Any> Observable<T>.notEqualToOrNull(other: Observable<Optional<T>>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> right.isEmpty || left != right.kotlin }
+infix fun <T : Any> Observable<T>.notEqualToOrNull(other: Observable<Optional<T>>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> right.isEmpty || left != right.kotlin }
 
 /**
  * Returns a HasValueSubject of type Boolean created from comparing this to the constant.
@@ -191,8 +188,9 @@ infix fun <T: Any> Observable<T>.notEqualToOrNull(other: Observable<Optional<T>>
  * the constant will be passed to onNext of this. Else an empty Optional is passed to onNext.
  *
  */
-infix fun <T: Any> HasValueSubject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean>
-        = this.map { it.isEmpty || it.kotlin == constant }.withWrite { if(it || (!it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
+infix fun <T : Any> HasValueSubject<Optional<T>>.isEqualToOrNull(constant: T): Subject<Boolean> =
+    this.map { it.isEmpty || it.kotlin == constant }
+        .withWrite { if (it || (!it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
 
 /**
  * Returns a HasValueSubject of type Boolean created from comparing this to the constant.
@@ -202,8 +200,9 @@ infix fun <T: Any> HasValueSubject<Optional<T>>.isEqualToOrNull(constant: T): Su
  * the constant will be passed to onNext of this. Else an empty Optional is passed to onNext.
  *
  */
-infix fun <T: Any> HasValueSubject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean>
-        = this.map { it.isEmpty || it.kotlin != constant }.withWrite { if(!it || (it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
+infix fun <T : Any> HasValueSubject<Optional<T>>.notEqualToOrNull(constant: T): Subject<Boolean> =
+    this.map { it.isEmpty || it.kotlin != constant }
+        .withWrite { if (!it || (it && this.value.isEmpty)) onNext(constant.optional) else onNext(Optional.empty()) }
 
 /**
  * A shortcut for mapWithExisting on a HasValueSubject with bracket access using a KMutableProperty.
@@ -216,10 +215,11 @@ infix fun <T: Any> HasValueSubject<Optional<T>>.notEqualToOrNull(constant: T): S
  * val itemObs:ValueSubject<Item> = ValueSubject(Item(0, 1))
  * val intObs:HasValueSubject<Int> = itemObs[Item::first]
  */
-operator fun <T: Any, V: Any> HasValueSubject<T>.get(property: KMutableProperty1<T, V>): HasValueSubject<V> = mapWithExisting(
-    read = { property.get(it) },
-    write = { existing, it -> property.set(existing, it); existing }
-)
+operator fun <T : Any, V : Any> HasValueSubject<T>.get(property: KMutableProperty1<T, V>): HasValueSubject<V> =
+    mapWithExisting(
+        read = { property.get(it) },
+        write = { existing, it -> property.set(existing, it); existing }
+    )
 
 /**
  * Returns an Observable of type Boolean created from checking the collection for this value.
@@ -227,8 +227,8 @@ operator fun <T: Any, V: Any> HasValueSubject<T>.get(property: KMutableProperty1
  * Returns an Observable of type Boolean created from doing a check on the collection provided from
  * the other observable. If this value is contained by the collection it returns true, otherwise false.
  */
-infix fun <T: Any> Observable<T>.isIn(other: Observable<Collection<T>>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> left in right }
+infix fun <T : Any> Observable<T>.isIn(other: Observable<Collection<T>>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left in right }
 
 /**
  * Returns an Observable of type Boolean created from checking the collection for this value.
@@ -236,8 +236,8 @@ infix fun <T: Any> Observable<T>.isIn(other: Observable<Collection<T>>): Observa
  * Returns an Observable of type Boolean created from doing a check on the collection provided from
  * the other observable. If this value is NOT contained by the collection it returns true, otherwise false.
  */
-infix fun <T: Any> Observable<T>.notIn(other: Observable<Collection<T>>): Observable<Boolean>
-        = Observable.combineLatest(this, other) { left, right -> left !in right }
+infix fun <T : Any> Observable<T>.notIn(other: Observable<Collection<T>>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left !in right }
 
 /**
  * Returns a Subject of type Boolean created from checking the collection for the constant.
@@ -247,11 +247,11 @@ infix fun <T: Any> Observable<T>.notIn(other: Observable<Collection<T>>): Observ
  * new subject the constant is added to the collection, then the new collection passed into onNext. If false
  * is written to the new Subject the value is removed from the collection, then the new collection passed into onNext.
  */
-infix fun <T: Any> HasValueSubject<Collection<T>>.contains(constant: T): Subject<Boolean>
-        = this.map { it.contains(constant) }.withWrite {
-    if(it) onNext(value + constant)
-    else onNext(value - constant)
-}
+infix fun <T : Any> HasValueSubject<List<T>>.contains(constant: T): Subject<Boolean> =
+    this.map { it.contains(constant) }.withWrite {
+        if (it) onNext(value + constant)
+        else onNext(value - constant)
+    }
 
 /**
  * Returns a Subject of type Boolean created from checking the collection for the constant.
@@ -261,29 +261,58 @@ infix fun <T: Any> HasValueSubject<Collection<T>>.contains(constant: T): Subject
  * new Subject the value is removed from the collection, then the new collection passed into onNext. If false
  * is written to the new Subject the constant is added to the collection, then the new collection passed into onNext.
  */
-infix fun <T: Any> HasValueSubject<Collection<T>>.doesNotContain(constant: T): Subject<Boolean>
-        = this.map { !it.contains(constant) }.withWrite {
-    if(it) onNext(value - constant)
-    else onNext(value + constant)
-}
+infix fun <T : Any> HasValueSubject<List<T>>.doesNotContain(constant: T): Subject<Boolean> =
+    this.map { !it.contains(constant) }.withWrite {
+        if (it) onNext(value - constant)
+        else onNext(value + constant)
+    }
+
+/**
+ * Returns a Subject of type Boolean created from checking the collection for the constant.
+ * <p>
+ * Returns a Subject of type Boolean created from doing a check on this collection for the provided constant.
+ * If this value is contained by the collection it returns true, otherwise false. If true is written to the
+ * new subject the constant is added to the collection, then the new collection passed into onNext. If false
+ * is written to the new Subject the value is removed from the collection, then the new collection passed into onNext.
+ */
+@JvmName("setContains")
+infix fun <T : Any> HasValueSubject<Set<T>>.contains(constant: T): Subject<Boolean> =
+    this.map { it.contains(constant) }.withWrite {
+        if (it) onNext(value + constant)
+        else onNext(value - constant)
+    }
+
+/**
+ * Returns a Subject of type Boolean created from checking the collection for the constant.
+ * <p>
+ * Returns a Subject of type Boolean created from doing a check on this collection for the provided constant.
+ * If this value is NOT contained by the collection it returns true, otherwise false. If true is written to the
+ * new Subject the value is removed from the collection, then the new collection passed into onNext. If false
+ * is written to the new Subject the constant is added to the collection, then the new collection passed into onNext.
+ */
+@JvmName("setDoesNotContain")
+infix fun <T : Any> HasValueSubject<Set<T>>.doesNotContain(constant: T): Subject<Boolean> =
+    this.map { !it.contains(constant) }.withWrite {
+        if (it) onNext(value - constant)
+        else onNext(value + constant)
+    }
 
 /**
  * Returns an Observable of type Boolean whose value is the and of each incoming observables.
  */
-infix fun Observable<Boolean>.and(other: Observable<Boolean>): Observable<Boolean>
-    = Observable.combineLatest(this, other) { left, right -> left && right }
+infix fun Observable<Boolean>.and(other: Observable<Boolean>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left && right }
 
 /**
  * Returns an Observable of type Boolean whose value is the or of each incoming observables.
  */
-infix fun Observable<Boolean>.or(other: Observable<Boolean>): Observable<Boolean>
-    = Observable.combineLatest(this, other) { left, right -> left || right }
+infix fun Observable<Boolean>.or(other: Observable<Boolean>): Observable<Boolean> =
+    Observable.combineLatest(this, other) { left, right -> left || right }
 
 /**
  * Returns a Subject of type Boolean whose value is opposite of the value of this.
  */
-operator fun Subject<Boolean>.not(): Subject<Boolean>
-    = map(read = { !it }, write = { !it })
+operator fun Subject<Boolean>.not(): Subject<Boolean> = map(read = { !it }, write = { !it })
 
 /**
  * Returns a Subject of type String whose value comes from the toString function on the value of this.
@@ -442,8 +471,8 @@ operator fun Subject<Float>.times(amount: Float): Subject<Float> {
 /**
  * Returns an Observable of type B with a mapper that can fail and returns null. On failures the return Observable is empty.
  */
-infix fun <T: Any, B: Any> Observable<T>.mapNotNull(mapper: (T)->B?): Observable<B>
-        = this.switchMap { mapper(it)?.let{ Observable.just(it) } ?: Observable.empty() }
+infix fun <T : Any, B : Any> Observable<T>.mapNotNull(mapper: (T) -> B?): Observable<B> =
+    this.switchMap { mapper(it)?.let { Observable.just(it) } ?: Observable.empty() }
 
 /**
  * A map wrapper that turns an Observable<Optional<T>> into an Observable<B>.
@@ -451,8 +480,8 @@ infix fun <T: Any, B: Any> Observable<T>.mapNotNull(mapper: (T)->B?): Observable
  * An extension function on observables of type Optional<T> which wraps the regular map.
  * This handles unwrapping the optional before passing it to the mapper.
  */
-infix fun <T: Any, B: Any> Observable<Optional<T>>.mapFromNullable(mapper: (T?)->B): Observable<B>
-        = this.map { it.kotlin.let(mapper) }
+infix fun <T : Any, B : Any> Observable<Optional<T>>.mapFromNullable(mapper: (T?) -> B): Observable<B> =
+    this.map { it.kotlin.let(mapper) }
 
 /**
  * A map wrapper that turns an Observable<Optional<T>> into an Observable<Optional<B>>.
@@ -460,8 +489,8 @@ infix fun <T: Any, B: Any> Observable<Optional<T>>.mapFromNullable(mapper: (T?)-
  * An extension function on observables of type Optional<T> which wraps the regular map.
  * This handles unwrapping the optional before passing it to the mapper, then wraps the results in an Optional.
  */
-infix fun <T: Any, B: Any> Observable<Optional<T>>.mapNullable(mapper: (T?)->B?): Observable<Optional<B>>
-        = this.map { it.kotlin.let(mapper).optional }
+infix fun <T : Any, B : Any> Observable<Optional<T>>.mapNullable(mapper: (T?) -> B?): Observable<Optional<B>> =
+    this.map { it.kotlin.let(mapper).optional }
 
 /**
  * A map wrapper that turns an Observable<T> into an Observable<Optional<B>>.
@@ -469,8 +498,8 @@ infix fun <T: Any, B: Any> Observable<Optional<T>>.mapNullable(mapper: (T?)->B?)
  * An extension function on observables of type T which wraps the regular map.
  * This handles wrapping the results of the mapper into an Optional.
  */
-infix fun <T: Any, B: Any> Observable<T>.mapToNullable(mapper: (T)->B?): Observable<Optional<B>>
-        = this.map { it.let(mapper).optional }
+infix fun <T : Any, B : Any> Observable<T>.mapToNullable(mapper: (T) -> B?): Observable<Optional<B>> =
+    this.map { it.let(mapper).optional }
 
 /**
  * A flatMap wrapper that turns an Observable<Optional<T>> into an Observable<Optional<B>>.
@@ -478,8 +507,8 @@ infix fun <T: Any, B: Any> Observable<T>.mapToNullable(mapper: (T)->B?): Observa
  * An extension function on observables of type Optional<T> which wraps the regular flatMap.
  * This handles unwrapping the Optional before the mapper is called, then handles wrapping the results of the mapper into an Optional.
  */
-infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T)->Observable<B>?): Observable<Optional<B>>
-        = this.flatMap { it.kotlin?.let(mapper)?.map { it.optional } ?: Observable.just(Optional.empty<B>()) }
+infix fun <T : Any, B : Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T) -> Observable<B>?): Observable<Optional<B>> =
+    this.flatMap { it.kotlin?.let(mapper)?.map { it.optional } ?: Observable.just(Optional.empty<B>()) }
 
 /**
  * A switchMap wrapper that turns an Observable<Optional<T>> into an Observable<Optional<B>>.
@@ -487,8 +516,8 @@ infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T)->O
  * An extension function on observables of type Optional<T> which wraps the regular switchMap.
  * This handles unwrapping the Optional before the mapper is called, then handles wrapping the results of the mapper into an Optional.
  */
-infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T)->Observable<B>?): Observable<Optional<B>>
-        = this.switchMap { it.kotlin?.let(mapper)?.map { it.optional } ?: Observable.just(Optional.empty<B>()) }
+infix fun <T : Any, B : Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T) -> Observable<B>?): Observable<Optional<B>> =
+    this.switchMap { it.kotlin?.let(mapper)?.map { it.optional } ?: Observable.just(Optional.empty<B>()) }
 
 /**
  * A flatMap wrapper that turns an Observable<Optional<T>> into an Observable<Optional<B>>.
@@ -497,8 +526,8 @@ infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T)-
  * This handles unwrapping the Optional before the mapper is called.
  */
 @JvmName("flatMapNotNull2")
-infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T)->Observable<Optional<B>>?): Observable<Optional<B>>
-        = this.flatMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
+infix fun <T : Any, B : Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T) -> Observable<Optional<B>>?): Observable<Optional<B>> =
+    this.flatMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
 
 /**
  * A switchMap wrapper that turns an Observable<Optional<T>> into an Observable<Optional<B>>.
@@ -507,8 +536,8 @@ infix fun <T: Any, B: Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T)->O
  * This handles unwrapping the Optional before the mapper is called.
  */
 @JvmName("switchMapNotNull2")
-infix fun <T: Any, B: Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T)->Observable<Optional<B>>?): Observable<Optional<B>>
-        = this.switchMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
+infix fun <T : Any, B : Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T) -> Observable<Optional<B>>?): Observable<Optional<B>> =
+    this.switchMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
 
 /**
  * Convenience for Observable.combineLatest that handles the output typing better.
