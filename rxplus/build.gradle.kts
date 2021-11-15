@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.4"
+version = "0.0.5"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
