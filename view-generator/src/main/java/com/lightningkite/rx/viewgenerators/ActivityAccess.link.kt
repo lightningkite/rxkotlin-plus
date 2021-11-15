@@ -9,9 +9,7 @@ import android.provider.CalendarContract
 import com.lightningkite.rx.android.resources.Image
 import com.lightningkite.rx.android.resources.ImageReference
 import com.lightningkite.rx.android.resources.ImageRemoteUrl
-import com.lightningkite.rx.viewgenerators.ActivityAccess
 import java.time.ZonedDateTime
-import java.util.*
 
 /**
  * Starts an intent with a direct callback.
@@ -27,7 +25,7 @@ fun ActivityAccess.startIntent(
 /**
  * Open a sharing dialog.
  */
-fun ActivityAccess.share(shareTitle: String, message: String? = null, url: String? = null, image: Image? = null) {
+fun ActivityAccess.share(title: String, message: String? = null, url: String? = null, image: Image? = null) {
     val i = Intent(Intent.ACTION_SEND)
     i.type = "text/plain"
     listOfNotNull(message, url).joinToString("\n").let { i.putExtra(Intent.EXTRA_TEXT, it) }
@@ -43,7 +41,7 @@ fun ActivityAccess.share(shareTitle: String, message: String? = null, url: Strin
             }
         }
     }
-    context.startActivity(Intent.createChooser(i, shareTitle))
+    context.startActivity(Intent.createChooser(i, title))
 }
 
 /**

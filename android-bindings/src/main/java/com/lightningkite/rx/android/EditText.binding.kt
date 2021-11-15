@@ -15,13 +15,13 @@ import io.reactivex.rxjava3.subjects.Subject
  * val name = ValueSubject("Jason")
  * name.bind(editTextView)
  */
-fun <SOURCE: Subject<String>> SOURCE.bind(view: EditText): SOURCE {
+fun <SOURCE: Subject<String>> SOURCE.bind(editText: EditText): SOURCE {
     subscribeBy { value ->
-        if (value != view.text.toString()) {
-            view.setText(value)
+        if (value != editText.text.toString()) {
+            editText.setText(value)
         }
-    }.addTo(view.removed)
-    view.addTextChangedListener(object : TextWatcher {
+    }.addTo(editText.removed)
+    editText.addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {}
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

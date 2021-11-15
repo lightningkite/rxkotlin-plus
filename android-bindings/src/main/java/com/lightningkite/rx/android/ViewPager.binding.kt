@@ -7,7 +7,6 @@ import androidx.viewpager.widget.ViewPager
 import com.lightningkite.rx.*
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 import io.reactivex.rxjava3.kotlin.addTo
 
@@ -21,12 +20,12 @@ import io.reactivex.rxjava3.kotlin.addTo
  * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
 fun <T: Any> Observable<List<T>>.showIn(
-    view: ViewPager,
+    viewPager: ViewPager,
     showIndex: Subject<Int> = ValueSubject(0),
     makeView: (Observable<T>)->View
 )  {
     var lastSubmitted = listOf<T>()
-    view.adapter = object : PagerAdapter() {
+    viewPager.adapter = object : PagerAdapter() {
         override fun isViewFromObject(p0: View, p1: Any): Boolean = p1 == p0
         override fun getCount(): Int = lastSubmitted.size
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -40,13 +39,13 @@ fun <T: Any> Observable<List<T>>.showIn(
     }
     subscribeBy { list ->
         lastSubmitted = list
-        view.adapter!!.notifyDataSetChanged()
-        view.currentItem
-    }.addTo(view.removed)
+        viewPager.adapter!!.notifyDataSetChanged()
+        viewPager.currentItem
+    }.addTo(viewPager.removed)
     showIndex.subscribeBy{ value ->
-        view.currentItem = value
-    }.addTo(view.removed)
-    view.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewPager.currentItem = value
+    }.addTo(viewPager.removed)
+    viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(p0: Int) {}
         override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
         override fun onPageSelected(p0: Int) {
@@ -65,11 +64,11 @@ fun <T: Any> Observable<List<T>>.showIn(
  * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
 fun <T: Any> List<T>.showIn(
-    view: ViewPager,
+    viewPager: ViewPager,
     showIndex: Subject<Int> = ValueSubject(0),
     makeView: (T)->View
 )  {
-    view.adapter = object : PagerAdapter() {
+    viewPager.adapter = object : PagerAdapter() {
         override fun isViewFromObject(p0: View, p1: Any): Boolean = p1 == p0
         override fun getCount(): Int = this@showIn.size
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -82,9 +81,9 @@ fun <T: Any> List<T>.showIn(
         }
     }
     showIndex.subscribeBy{ value ->
-        view.currentItem = value
-    }.addTo(view.removed)
-    view.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        viewPager.currentItem = value
+    }.addTo(viewPager.removed)
+    viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
         override fun onPageScrollStateChanged(p0: Int) {}
         override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
         override fun onPageSelected(p0: Int) {

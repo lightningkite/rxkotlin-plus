@@ -11,19 +11,10 @@ package com.lightningkite.rxexample.vg
 import android.view.View
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import java.time.*
-import java.time.format.*
-import java.time.*
-import java.time.format.*
-import java.time.*
-import java.time.format.*
-import java.time.*
-import java.time.format.*
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rxexample.databinding.ExternalTestBinding
-import java.util.*
-import java.time.*
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
@@ -57,7 +48,7 @@ class ExternalTestVG(
         xml.openEvent.onClick {
             dependency.openEvent(
                 title = "A Virtual Lunch with LK",
-                description = "Come eat virtual food with us!",
+                details = "Come eat virtual food with us!",
                 location = "Lightning Kite in Logan Utah",
                 start = ZonedDateTime.now().plusDays(1).withHour(12).withMinute(0).withSecond(0),
                 end = ZonedDateTime.now().plusDays(1).withHour(13).withMinute(0).withSecond(0)

@@ -6,10 +6,11 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`
+    id("com.lightningkite.khrysalis")
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.1"
+version = "0.0.4"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->

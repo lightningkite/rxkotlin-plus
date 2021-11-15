@@ -5,13 +5,10 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
-import com.lightningkite.rx.HasValueSubject
-import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
 
 private class LinearLayoutBoundSubview<T>(val view: View, val property: BehaviorSubject<T>)
 
@@ -23,7 +20,7 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: Behavior
  * data.showIn(linearLayoutView) { obs -> ... return view }
  */
 fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
-    view: LinearLayout,
+    linearLayout: LinearLayout,
     makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
@@ -34,17 +31,17 @@ fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
             //remove views
             for (iter in 1..excessViews) {
                 val old = existingViews.removeAt(existingViews.lastIndex)
-                view.removeView(old.view)
+                linearLayout.removeView(old.view)
             }
         } else if (existingViews.size < value.size) {
             //add views
             for (iter in 1..(-excessViews)) {
                 val prop = BehaviorSubject.create<T>()
                 val v = makeView(prop)
-                if (view.orientation == LinearLayout.VERTICAL)
-                    view.addView(v, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+                if (linearLayout.orientation == LinearLayout.VERTICAL)
+                    linearLayout.addView(v, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
                 else
-                    view.addView(v, LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
+                    linearLayout.addView(v, LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
                 existingViews.add(LinearLayoutBoundSubview(v, prop))
             }
         }
@@ -53,7 +50,7 @@ fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
         for (index in value.indices) {
             existingViews[index].property.onNext(value[index])
         }
-    }.addTo(view.removed)
+    }.addTo(linearLayout.removed)
     return this
 }
 

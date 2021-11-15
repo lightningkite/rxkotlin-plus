@@ -20,10 +20,10 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
  */
 @JvmName("showInWithObserver")
 fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
-    view: AutoCompleteTextView,
+    autoCompleteTextView: AutoCompleteTextView,
     onItemSelected: Observer<T>,
     toString: (T) -> String = { it.toString() }
-): SOURCE = showIn(view, { onItemSelected.onNext(it) }, toString)
+): SOURCE = showIn(autoCompleteTextView, { onItemSelected.onNext(it) }, toString)
 
 
 /**
@@ -36,20 +36,20 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
  * values.showIn(autoCompleteView,{ result = it }, { it })
  */
 fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
-    view: AutoCompleteTextView,
-    onItemSelected: (T) -> Unit = { view.setText(toString(it)) },
+    autoCompleteTextView: AutoCompleteTextView,
+    onItemSelected: (T) -> Unit = { autoCompleteTextView.setText(toString(it)) },
     toString: (T) -> String = { it.toString() }
 ): SOURCE {
     var lastPublishedResults: List<T> = listOf()
-    view.setAdapter(object : BaseAdapter(), Filterable {
+    autoCompleteTextView.setAdapter(object : BaseAdapter(), Filterable {
         init {
             subscribeBy {
                 val copy = it.toList()
-                view.post {
+                autoCompleteTextView.post {
                     lastPublishedResults = copy
                     notifyDataSetChanged()
                 }
-            }.addTo(view.removed)
+            }.addTo(autoCompleteTextView.removed)
         }
 
         override fun getFilter(): Filter = object : Filter() {
@@ -71,12 +71,12 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
 
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val v = (convertView as? TextView) ?: TextView(view.context).apply {
-                setTextColor(view.textColors)
-                textSize = view.textSize / resources.displayMetrics.scaledDensity
-                maxLines = view.maxLines
+            val v = (convertView as? TextView) ?: TextView(autoCompleteTextView.context).apply {
+                setTextColor(autoCompleteTextView.textColors)
+                textSize = autoCompleteTextView.textSize / resources.displayMetrics.scaledDensity
+                maxLines = autoCompleteTextView.maxLines
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    letterSpacing = view.letterSpacing
+                    letterSpacing = autoCompleteTextView.letterSpacing
                 }
                 val size = (context.resources.displayMetrics.density * 8).toInt()
                 setPadding(size, size, size, size)
@@ -89,7 +89,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
         override fun getItemId(position: Int): Long = position.toLong()
         override fun getCount(): Int = lastPublishedResults.size
     })
-    view.setOnItemClickListener { _, _, index, _ ->
+    autoCompleteTextView.setOnItemClickListener { _, _, index, _ ->
         lastPublishedResults.getOrNull(index)?.let(onItemSelected)
     }
     return this

@@ -2,7 +2,6 @@
 
 package com.lightningkite.rx.android
 
-import android.graphics.LightingColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.Gravity
@@ -17,7 +16,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.*
 
 /**
@@ -29,11 +27,11 @@ import java.util.*
  * val value = ValueSubject<Boolean>(false)
  * value.showLoading(viewFlipper)
  */
-fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(view: ViewFlipper, color: ColorResource? = null): SOURCE {
-    defaults(view, color)
+fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): SOURCE {
+    defaults(viewFlipper, color)
     subscribeBy { it ->
-        view.displayedChild = if (it) 1 else 0
-    }.addTo(view.removed)
+        viewFlipper.displayedChild = if (it) 1 else 0
+    }.addTo(viewFlipper.removed)
     return this
 }
 
@@ -75,9 +73,9 @@ var ViewFlipper.loadCount: Int
  * val value = Single.just<Boolean>(false)
  * value.showLoading(viewFlipper)
  */
-fun <T: Any> Single<T>.showLoading(view: ViewFlipper, color: ColorResource? = null): Single<T> {
-    defaults(view, color)
-    return this.doOnSubscribe { view.loadCount++ }.doOnTerminate { view.loadCount-- }
+fun <T: Any> Single<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): Single<T> {
+    defaults(viewFlipper, color)
+    return this.doOnSubscribe { viewFlipper.loadCount++ }.doOnTerminate { viewFlipper.loadCount-- }
 }
 
 /**
@@ -89,7 +87,7 @@ fun <T: Any> Single<T>.showLoading(view: ViewFlipper, color: ColorResource? = nu
  * val value: Maybe<Boolean> ...
  * value.showLoading(viewFlipper)
  */
-fun <T: Any> Maybe<T>.showLoading(view: ViewFlipper, color: ColorResource? = null): Maybe<T> {
-    defaults(view, color)
-    return this.doOnSubscribe { view.loadCount++ }.doOnTerminate { view.loadCount-- }
+fun <T: Any> Maybe<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): Maybe<T> {
+    defaults(viewFlipper, color)
+    return this.doOnSubscribe { viewFlipper.loadCount++ }.doOnTerminate { viewFlipper.loadCount-- }
 }

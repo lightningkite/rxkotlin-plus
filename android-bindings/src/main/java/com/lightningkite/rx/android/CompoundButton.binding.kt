@@ -13,15 +13,15 @@ import io.reactivex.rxjava3.subjects.Subject
  * selected.bind(compoundButtonView)
  * button.bindSelect(selected)
  */
-fun <SOURCE : Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
+fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
     subscribeBy { it ->
         lastKnownValue = it
-        if (it != view.isChecked) {
-            view.isChecked = it
+        if (it != compoundButton.isChecked) {
+            compoundButton.isChecked = it
         }
-    }.addTo(view.removed)
-    view.setOnCheckedChangeListener { _, isChecked ->
+    }.addTo(compoundButton.removed)
+    compoundButton.setOnCheckedChangeListener { _, isChecked ->
         if (lastKnownValue != isChecked) {
             onNext(isChecked)
         }
@@ -38,20 +38,20 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bind(view: CompoundButton): SOURCE {
  * selected.bindNoUncheck(compoundButtonView)
  * button.bindSelect(selected)
  */
-fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(view: CompoundButton): SOURCE {
+fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
     subscribeBy { it ->
         lastKnownValue = it
-        if (it != view.isChecked) {
-            view.isChecked = it
+        if (it != compoundButton.isChecked) {
+            compoundButton.isChecked = it
         }
-    }.addTo(view.removed)
-    view.setOnCheckedChangeListener { _, isChecked ->
+    }.addTo(compoundButton.removed)
+    compoundButton.setOnCheckedChangeListener { _, isChecked ->
         if (lastKnownValue != isChecked) {
             if (isChecked) {
                 onNext(isChecked)
             } else {
-                view.isChecked = true
+                compoundButton.isChecked = true
             }
         }
     }
