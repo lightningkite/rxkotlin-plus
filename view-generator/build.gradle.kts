@@ -3,7 +3,6 @@ import java.util.Properties
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("maven")
     id("signing")
     id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`

@@ -19,11 +19,11 @@ import io.reactivex.rxjava3.kotlin.addTo
  * val showing = ValueSubject(0)
  * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
-fun <T: Any> Observable<List<T>>.showIn(
+fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     viewPager: ViewPager,
     showIndex: Subject<Int> = ValueSubject(0),
     makeView: (Observable<T>)->View
-)  {
+): SOURCE {
     var lastSubmitted = listOf<T>()
     viewPager.adapter = object : PagerAdapter() {
         override fun isViewFromObject(p0: View, p1: Any): Boolean = p1 == p0
@@ -52,6 +52,7 @@ fun <T: Any> Observable<List<T>>.showIn(
             showIndex.onNext(p0)
         }
     })
+    return this
 }
 
 /**
