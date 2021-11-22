@@ -1,13 +1,15 @@
 package com.lightningkite.rx.okhttp
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.serializer
 import okhttp3.Response
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 /**
  * Closes the body of the response as a [Single].
@@ -32,15 +34,17 @@ fun Response.readByteArray(): Single<ByteArray> =
 /**
  * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
  */
-inline fun <reified T : Any> Response.readJson(): Single<T> = readJson(jacksonTypeRef())
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <reified T : Any> Response.readJson(): Single<T> = readJson(typeOf<T>())
 
 /**
  * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
  */
-fun <T : Any> Response.readJson(typeToken: TypeReference<T>): Single<T> = Single.create<T> { em: SingleEmitter<T> ->
+@OptIn(ExperimentalSerializationApi::class)
+fun <T : Any> Response.readJson(typeToken: KType): Single<T> = Single.create<T> { em: SingleEmitter<T> ->
     try {
-        val result: T = body!!.use {
-            defaultJsonMapper.readValue<T>(it.byteStream(), typeToken)
+        @Suppress("UNCHECKED_CAST") val result: T = body!!.use {
+            defaultJsonMapper.decodeFromStream(defaultJsonMapper.serializersModule.serializer(typeToken), it.byteStream()) as T
         }
         em.onSuccess(result)
     } catch (e: Throwable) {
@@ -53,10 +57,11 @@ fun <T : Any> Response.readJson(typeToken: TypeReference<T>): Single<T> = Single
  * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
  * Dumps the raw response to [System.out].
  */
-inline fun <reified T : Any> Response.readJsonDebug(): Single<T> = readJsonDebug(jacksonTypeRef())
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <reified T : Any> Response.readJsonDebug(): Single<T> = readJsonDebug(typeOf<T>())
 
 /**
  * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
  * Dumps the raw response to [System.out].
  */
-fun <T : Any> Response.readJsonDebug(typeToken: TypeReference<T>): Single<T> = readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(typeToken) }
+fun <T : Any> Response.readJsonDebug(typeToken: KType): Single<T> = readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(typeToken) }

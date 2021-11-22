@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     id("kotlin")
+    kotlin("plugin.serialization") version "1.5.31"
     id("signing")
     id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`
@@ -9,7 +10,7 @@ plugins {
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.5"
+version = "0.0.6"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -48,13 +49,9 @@ repositories {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.0.0")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
     api("io.reactivex.rxjava3:rxjava:3.1.1")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    api("com.fasterxml.jackson.core:jackson-core:2.13.0")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.13.0")
-    api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
     api("com.squareup.okhttp3:okhttp:4.9.2")
 }
 

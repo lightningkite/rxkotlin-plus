@@ -1,11 +1,9 @@
 package com.lightningkite.rx.okhttp
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.reactivex.rxjava3.core.Single
 import okhttp3.Response
 import java.lang.reflect.ParameterizedType
+import kotlin.reflect.typeOf
 
 /**
  * Changes unsuccessful responses into [HttpResponseException].
@@ -36,8 +34,9 @@ fun Single<Response>.discard(): Single<Unit> {
 /**
  * Reads the response into JSON using the [defaultJsonMapper].
  */
+@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T: Any> Single<Response>.readJson(): Single<T> {
-    val type = jacksonTypeRef<T>()
+    val type = typeOf<T>()
     return this.flatMap { it ->
         if (it.isSuccessful) {
             it.readJson<T>(type)
@@ -50,8 +49,9 @@ inline fun <reified T: Any> Single<Response>.readJson(): Single<T> {
 /**
  * Reads the response into JSON using the [defaultJsonMapper], but prints the raw value to [System.out].
  */
+@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T: Any> Single<Response>.readJsonDebug(): Single<T> {
-    val type = jacksonTypeRef<T>()
+    val type = typeOf<T>()
     return this.flatMap { it ->
         if (it.isSuccessful) {
             it.readJsonDebug<T>(type)
