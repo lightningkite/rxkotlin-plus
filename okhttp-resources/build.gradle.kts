@@ -4,13 +4,13 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
     id("signing")
-    id("org.jetbrains.dokka") version "1.5.0"
+    id("org.jetbrains.dokka")
     `maven-publish`
-    id("com.lightningkite.khrysalis")
+    
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.5"
+version = "0.7.0"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -64,13 +64,13 @@ android {
 
 dependencies {
     api(project(":android-resources"))
-    api(project(":okhttp"))
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
+    api("com.squareup.okhttp3:okhttp:4.9.2")
 }
 
 tasks {

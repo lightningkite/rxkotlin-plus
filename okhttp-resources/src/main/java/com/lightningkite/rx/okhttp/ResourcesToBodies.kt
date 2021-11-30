@@ -90,7 +90,7 @@ fun Bitmap.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000):
             it.toByteArray()
         }
     }
-    return data.toRequestBody(MediaType.JPEG, 0, data.size)
+    return data.toRequestBody("image/jpeg".toMediaType(), 0, data.size)
 }
 
 /**

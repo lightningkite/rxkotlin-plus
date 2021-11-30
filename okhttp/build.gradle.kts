@@ -2,15 +2,15 @@ import java.util.Properties
 
 plugins {
     id("kotlin")
-    kotlin("plugin.serialization") version "1.5.31"
+    kotlin("plugin.serialization")
     id("signing")
-    id("org.jetbrains.dokka") version "1.5.0"
+    id("org.jetbrains.dokka")
     `maven-publish`
-    id("com.lightningkite.khrysalis")
+    
 }
 
 group = "com.lightningkite.rx"
-version = "0.0.6"
+version = "0.7.0"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -139,6 +139,5 @@ fun MavenPublication.setPom() {
                 email.set("joseph@lightningkite.com")
             }
         }
-
     }
 }
