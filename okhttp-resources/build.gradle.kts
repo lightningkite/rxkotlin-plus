@@ -6,7 +6,6 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka") version "1.5.0"
     `maven-publish`
-//    id("com.lightningkite.khrysalis")
 }
 
 group = "com.lightningkite.rx"
