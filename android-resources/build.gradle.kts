@@ -6,11 +6,11 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka")
     `maven-publish`
-    
+
 }
 
 group = "com.lightningkite.rx"
-version = "0.7.0"
+version = "0.7.1"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -45,16 +45,13 @@ val useDeployment = deploymentUser != null || deploymentPassword != null
 repositories {
     mavenCentral()
     google()
-    mavenLocal()
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(31)
-        versionCode = 0
-        versionName = "0.0.4"
+        minSdk= 21
+        targetSdk= 31
     }
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -64,7 +61,7 @@ android {
 
 dependencies {
     api(project(":android-bindings"))
-    api("com.google.android.exoplayer:exoplayer:2.15.1")
+    api("com.google.android.exoplayer:exoplayer:2.16.1")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
@@ -96,16 +93,9 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
-                setPom()
-            }
-            create<MavenPublication>("debug") {
-                from(components["debug"])
-                artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                if (useSigning) {
+                    artifact(tasks.getByName("javadocJar"))
+                }
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()

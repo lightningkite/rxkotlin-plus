@@ -6,11 +6,11 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka")
     `maven-publish`
-    
+
 }
 
 group = "com.lightningkite.rx"
-version = "0.7.0"
+version = "0.7.1"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -45,16 +45,13 @@ val useDeployment = deploymentUser != null || deploymentPassword != null
 repositories {
     mavenCentral()
     google()
-    mavenLocal()
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(31)
-        versionCode = 0
-        versionName = "0.0.4"
+        minSdk= 21
+        targetSdk= 31
     }
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -70,7 +67,7 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
-    api("com.squareup.okhttp3:okhttp:4.9.2")
+    api("com.squareup.okhttp3:okhttp:4.9.3")
 }
 
 tasks {
@@ -96,16 +93,9 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
-                setPom()
-            }
-            create<MavenPublication>("debug") {
-                from(components["debug"])
-                artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                if (useSigning) {
+                    artifact(tasks.getByName("javadocJar"))
+                }
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
