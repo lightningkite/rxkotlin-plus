@@ -334,8 +334,8 @@ object HttpClient {
      */
     fun webSocket(
         url: String
-    ): Observable<ConnectedWebSocket> {
-        return Observable.using<ConnectedWebSocket, ConnectedWebSocket>(
+    ): Observable<WebSocketInterface> {
+        return Observable.using<WebSocketInterface, WebSocketInterface>(
             {
                 val out = ConnectedWebSocket(url)
                 out.underlyingSocket = client.newWebSocket(

@@ -13,21 +13,15 @@ import okio.ByteString.Companion.toByteString
 /**
  * A live web socket connection.
  */
-class ConnectedWebSocket(val url: String) : WebSocketListener(), Observer<WebSocketFrame> {
+class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterface {
     internal var underlyingSocket: WebSocket? = null
     private val _read =
         PublishSubject.create<WebSocketFrame>()
-    private val _ownConnection = PublishSubject.create<ConnectedWebSocket>()
+    private val _ownConnection = PublishSubject.create<WebSocketInterface>()
 
-    /**
-     * An observable representing the socket's connection.  Will emit once it is fully connected.
-     */
-    val ownConnection: Observable<ConnectedWebSocket> get() = _ownConnection.let { HttpClient.threadCorrectly(it) }
+    override val ownConnection: Observable<WebSocketInterface> get() = _ownConnection.let { HttpClient.threadCorrectly(it) }
 
-    /**
-     * Messages that come through the websocket.
-     */
-    val read: Observable<WebSocketFrame> get() = _read.let { HttpClient.threadCorrectly(it) }
+    override val read: Observable<WebSocketFrame> get() = _read.let { HttpClient.threadCorrectly(it) }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         _ownConnection.onNext(this)

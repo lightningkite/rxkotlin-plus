@@ -11,7 +11,6 @@ import io.reactivex.rxjava3.subjects.Subject
  * Example:
  * val selected = PublishSubject(false)
  * selected.bind(compoundButtonView)
- * button.bindSelect(selected)
  */
 fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
@@ -36,7 +35,6 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOU
  * Example:
  * val selected = ValueSubject(false)
  * selected.bindNoUncheck(compoundButtonView)
- * button.bindSelect(selected)
  */
 fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
