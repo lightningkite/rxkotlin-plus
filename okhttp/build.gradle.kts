@@ -6,7 +6,7 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka")
     `maven-publish`
-    
+
 }
 
 group = "com.lightningkite.rx"
@@ -77,7 +77,9 @@ afterEvaluate {
             create<MavenPublication>("java") {
                 from(components["java"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                if (useSigning) {
+                    artifact(tasks.getByName("javadocJar"))
+                }
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()

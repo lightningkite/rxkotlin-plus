@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.lightningkite.rx"
-version = "0.7.0"
+version = "0.7.1"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -47,8 +47,8 @@ repositories {
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.0.0")
-    api("io.reactivex.rxjava3:rxjava:3.1.1")
+    testImplementation("org.mockito:mockito-core:4.1.0")
+    api("io.reactivex.rxjava3:rxjava:3.1.3")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
 }
 
@@ -74,7 +74,9 @@ afterEvaluate {
             create<MavenPublication>("java") {
                 from(components["java"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                if (useSigning) {
+                    artifact(tasks.getByName("javadocJar"))
+                }
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()

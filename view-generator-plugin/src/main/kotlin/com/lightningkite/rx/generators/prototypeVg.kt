@@ -218,7 +218,9 @@ private fun generateFile(
             }
         }
 
-        if(pluginConfiguration.injectKhrysalisAnnotations){ line("@file:SharedCode") }
+        if (pluginConfiguration.injectKhrysalisAnnotations) {
+            line("@file:SharedCode")
+        }
         line("//")
         line("// ${viewName}VG.swift")
         line("// Created by RxKotlin-Plus Prototype Generator")
@@ -234,7 +236,9 @@ private fun generateFile(
         line("import com.lightningkite.rx.android.*")
         line("import com.lightningkite.rx.android.resources.*")
         line("import com.lightningkite.rx.viewgenerators.*")
-        if(pluginConfiguration.injectKhrysalisAnnotations){ line("import com.lightningkite.khrysalis.*") }
+        if (pluginConfiguration.injectKhrysalisAnnotations) {
+            line("import com.lightningkite.khrysalis.*")
+        }
         line("import $applicationPackage.R")
         line("import $applicationPackage.databinding.*")
         line("import io.reactivex.rxjava3.core.Observable")
@@ -247,8 +251,11 @@ private fun generateFile(
             val things = (viewNode.totalRequires(viewNodeMap).sortedBy { it.name })
             things.forEachIndexed { _, it ->
                 if ((it.type.contains("->") || it.type.contains("-]")) && !it.type.endsWith('?')) {
-                    line("val ${it.name}: ${if(pluginConfiguration.injectKhrysalisAnnotations) "@Escaping() " else ""}${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
-                } else if(pluginConfiguration.injectKhrysalisAnnotations && (it.type.contains("VG") || it.type.contains("ViewGenerator"))) {
+                    line("val ${it.name}: ${if (pluginConfiguration.injectKhrysalisAnnotations) "@Escaping() " else ""}${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
+                } else if (pluginConfiguration.injectKhrysalisAnnotations && (it.type.contains("VG") || it.type.contains(
+                        "ViewGenerator"
+                    ))
+                ) {
                     line("@Unowned val $it,")
                 } else {
                     line("val $it,")
@@ -310,6 +317,33 @@ private fun generateFile(
                         } else viewIdentifier
 
                         val viewAccess = if (isOptional) "$view?." else "$view."
+
+                        if (node.name == "include") {
+                            line()
+                            line(
+                                "${CodeSection.sectionMarker} Set Up ${
+                                    view.replace(
+                                        "?",
+                                        ""
+                                    )
+                                } ${CodeSection.overwriteMarker}"
+                            )
+                            node.allAttributes["layout"]?.let {
+                                val fileName = it.removePrefix("@layout/")
+                                if (fileName.startsWith("component", true)) {
+                                    val file = xml.parentFile.resolve(fileName.plus(".xml"))
+                                    handleNode(
+                                        inside = fileName.camelCase().capitalize(),
+                                        node = XmlNode.read(file, styles),
+                                        prefix = if (isOptional) "$prefix$viewIdentifier?." else "$prefix$viewIdentifier."
+                                    )
+                                } else {
+                                    //embed
+                                    line("${viewAccess}replace(${viewIdentifier}Vg.generate(dependency))")
+                                }
+                            }
+                            return
+                        }
                         if (view.contains("dummy", true)) {
                             handleNodeClick(node, view, viewAccess) { action ->
                                 val p =
@@ -384,134 +418,116 @@ private fun generateFile(
                             }
                             line("})")
                             return
-                        } else {
-                            line()
-                            line(
-                                "${CodeSection.sectionMarker} Set Up ${
-                                    view.replace(
-                                        "?",
-                                        ""
-                                    )
-                                } ${CodeSection.overwriteMarker}"
-                            )
-                            node.allAttributes["tools:text"]?.let {
-                                if (it.startsWith("@string")) {
-                                    line(
-                                        """${viewAccess}setText(R.string.${
-                                            it.removePrefix(
-                                                "@string/"
-                                            )
-                                        })"""
-                                    )
-                                } else {
-                                    line(
-                                        """${viewAccess}setText("${
-                                            it.replace(
-                                                "$",
-                                                "\\$"
-                                            )
-                                        }")"""
-                                    )
-                                }
-                            }
-                            node.allAttributes["tools:src"]?.let {
-                                if (it.startsWith("@drawable")) {
-                                    line("""${viewAccess}setImageResource(R.drawable.${it.removePrefix("@drawable/")})""")
-                                }
-                            }
-                            node.allAttributes["tools:visibility"]?.let {
-                                when (it) {
-                                    "gone" -> line("${viewAccess}visibility = View.GONE")
-                                    "invisible" -> line("${viewAccess}visibility = View.INVISIBLE")
-                                    "visible" -> line("${viewAccess}visibility = View.VISIBLE")
-                                    else -> {
-                                    }
-                                }
-                            }
-                            node.allAttributes["tools:embed"]?.let {
-                                line("${viewAccess}replace(${viewIdentifier.camelCase()}Vg.generate(dependency))")
-                            }
-                            node.allAttributes["tools:listitem"]?.let {
-                                val subName = it.removePrefix("@layout/").camelCase().capitalize()
-                                val xmlName = subName.plus("Binding")
-                                val otherViewNode = viewNodeMap[subName]
-                                line("Observable.just(listOf(1, 2, 3, 4))")
-                                line("    .showIn($view) label@ { obs ->")
-                                line()
-                                tab {
-                                    line(
-                                        "${CodeSection.sectionMarker} Make Subview For ${
-                                            view.replace(
-                                                "?",
-                                                ""
-                                            )
-                                        } ${CodeSection.overwriteMarker}"
-                                    )
-                                    // If sublayout has a VG, use that instead of looping down the layout.
-                                    if (otherViewNode != null) {
-                                        line("val cellVg = ${makeView(otherViewNode, "stack", view)} ")
-                                        line("val cellView = cellVg.generate(dependency)")
-                                        handleNodeClick(node, "cellView", "cellView.")
-                                    } else {
-                                        line("val cellXml = $xmlName.inflate(dependency.layoutInflater) ")
-                                        line("val cellView = cellXml.root")
-                                        val file = xml.parentFile.resolve(it.removePrefix("@layout/").plus(".xml"))
-                                        handleNode(subName, XmlNode.read(file, styles), "cellXml.")
-                                        handleNodeClick(node, "cellXml.root", "cellXml.root.")
-                                    }
-                                    line()
-                                    line(
-                                        "${CodeSection.sectionMarker} End Make Subview For ${
-                                            view.replace(
-                                                "?",
-                                                ""
-                                            )
-                                        } ${CodeSection.overwriteMarker}"
-                                    )
-                                    line("return@label cellView")
-                                }
-                                line("}")
-
-                            }
-                            handleNodeClick(node, view, viewAccess)
-                            node.allAttributes[ViewNode.attributeStackId]?.let { stackName ->
-                                node.allAttributes[ViewNode.attributeStackDefault]?.let stackDefault@{
-                                    val otherViewNode =
-                                        viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
-                                            ?: run {
-                                                println(
-                                                    "WARNING: Could not find view ${
-                                                        it.removePrefix("@layout/").camelCase().capitalize()
-                                                    } for default of stack $stackName"
-                                                )
-                                                return@stackDefault
-                                            }
-                                    val makeView = makeView(otherViewNode, stackName, null)
-                                    inits.add {
-                                        line("${CodeSection.sectionMarker} Set Initial View for $stackName ${CodeSection.overwriteMarker}")
-                                        line("this.$stackName.reset($makeView)")
-                                        line()
-                                    }
-                                }
-                                line("$stackName.showIn($view, dependency)")
+                        }
+                        line()
+                        line(
+                            "${CodeSection.sectionMarker} Set Up ${
+                                view.replace(
+                                    "?",
+                                    ""
+                                )
+                            } ${CodeSection.overwriteMarker}"
+                        )
+                        node.allAttributes["tools:text"]?.let {
+                            if (it.startsWith("@string")) {
+                                line(
+                                    """${viewAccess}setText(R.string.${
+                                        it.removePrefix(
+                                            "@string/"
+                                        )
+                                    })"""
+                                )
+                            } else {
+                                line(
+                                    """${viewAccess}setText("${
+                                        it.replace(
+                                            "$",
+                                            "\\$"
+                                        )
+                                    }")"""
+                                )
                             }
                         }
-
-                        if (node.name == "include") {
-                            node.allAttributes["layout"]?.let {
-                                val fileName = it.removePrefix("@layout/")
-                                if (fileName.startsWith("component", true)) {
-                                    val file = xml.parentFile.resolve(fileName.plus(".xml"))
-                                    handleNode(
-                                        inside = fileName.camelCase().capitalize(),
-                                        node = XmlNode.read(file, styles),
-                                        prefix = if (isOptional) "$prefix$viewIdentifier?." else "$prefix$viewIdentifier."
-                                    )
-                                } else {
-                                    //embed
-                                    line("${viewAccess}replace(${viewIdentifier}Vg.generate(dependency))")
+                        node.allAttributes["tools:src"]?.let {
+                            if (it.startsWith("@drawable")) {
+                                line("""${viewAccess}setImageResource(R.drawable.${it.removePrefix("@drawable/")})""")
+                            }
+                        }
+                        node.allAttributes["tools:visibility"]?.let {
+                            when (it) {
+                                "gone" -> line("${viewAccess}visibility = View.GONE")
+                                "invisible" -> line("${viewAccess}visibility = View.INVISIBLE")
+                                "visible" -> line("${viewAccess}visibility = View.VISIBLE")
+                                else -> {
                                 }
                             }
+                        }
+                        node.allAttributes["tools:embed"]?.let {
+                            line("${viewAccess}replace(${viewIdentifier.camelCase()}Vg.generate(dependency))")
+                        }
+                        node.allAttributes["tools:listitem"]?.let {
+                            val subName = it.removePrefix("@layout/").camelCase().capitalize()
+                            val xmlName = subName.plus("Binding")
+                            val otherViewNode = viewNodeMap[subName]
+                            line("Observable.just(listOf(1, 2, 3, 4))")
+                            line("    .showIn($view) label@ { obs ->")
+                            line()
+                            tab {
+                                line(
+                                    "${CodeSection.sectionMarker} Make Subview For ${
+                                        view.replace(
+                                            "?",
+                                            ""
+                                        )
+                                    } ${CodeSection.overwriteMarker}"
+                                )
+                                // If sublayout has a VG, use that instead of looping down the layout.
+                                if (otherViewNode != null) {
+                                    line("val cellVg = ${makeView(otherViewNode, "stack", view)} ")
+                                    line("val cellView = cellVg.generate(dependency)")
+                                    handleNodeClick(node, "cellView", "cellView.")
+                                } else {
+                                    line("val cellXml = $xmlName.inflate(dependency.layoutInflater) ")
+                                    line("val cellView = cellXml.root")
+                                    val file = xml.parentFile.resolve(it.removePrefix("@layout/").plus(".xml"))
+                                    handleNode(subName, XmlNode.read(file, styles), "cellXml.")
+                                    handleNodeClick(node, "cellXml.root", "cellXml.root.")
+                                }
+                                line()
+                                line(
+                                    "${CodeSection.sectionMarker} End Make Subview For ${
+                                        view.replace(
+                                            "?",
+                                            ""
+                                        )
+                                    } ${CodeSection.overwriteMarker}"
+                                )
+                                line("return@label cellView")
+                            }
+                            line("}")
+
+                        }
+                        handleNodeClick(node, view, viewAccess)
+                        node.allAttributes[ViewNode.attributeStackId]?.let { stackName ->
+                            node.allAttributes[ViewNode.attributeStackDefault]?.let stackDefault@{
+                                val otherViewNode =
+                                    viewNodeMap[it.removePrefix("@layout/").camelCase().capitalize()]
+                                        ?: run {
+                                            println(
+                                                "WARNING: Could not find view ${
+                                                    it.removePrefix("@layout/").camelCase().capitalize()
+                                                } for default of stack $stackName"
+                                            )
+                                            return@stackDefault
+                                        }
+                                val makeView = makeView(otherViewNode, stackName, null)
+                                inits.add {
+                                    line("${CodeSection.sectionMarker} Set Initial View for $stackName ${CodeSection.overwriteMarker}")
+                                    line("this.$stackName.reset($makeView)")
+                                    line()
+                                }
+                            }
+                            line("$stackName.showIn($view, dependency)")
                         }
                     } ?: run {
                         if (node.allAttributes.keys.any { it.startsWith("tools:") }) {

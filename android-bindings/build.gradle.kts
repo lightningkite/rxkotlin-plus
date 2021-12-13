@@ -6,11 +6,11 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka")
     `maven-publish`
-    
+
 }
 
 group = "com.lightningkite.rx"
-version = "0.7.0"
+version = "0.7.1"
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -25,11 +25,11 @@ val signingPassword: String? = System.getenv("SIGNING_PASSWORD")?.takeUnless { i
     ?: props?.getProperty("signingPassword")?.toString()
 val useSigning = signingKey != null && signingPassword != null
 
-if(signingKey != null) {
-    if(!signingKey.contains('\n')){
+if (signingKey != null) {
+    if (!signingKey.contains('\n')) {
         throw IllegalArgumentException("Expected signing key to have multiple lines")
     }
-    if(signingKey.contains('"')){
+    if (signingKey.contains('"')) {
         throw IllegalArgumentException("Signing key has quote outta nowhere")
     }
 }
@@ -45,16 +45,13 @@ val useDeployment = deploymentUser != null || deploymentPassword != null
 repositories {
     mavenCentral()
     google()
-    mavenLocal()
 }
 
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(31)
-        versionCode = 0
-        versionName = "0.0.4"
+        minSdk = 21
+        targetSdk = 31
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -65,10 +62,10 @@ android {
 dependencies {
     api(project(":rxplus"))
     api("io.reactivex.rxjava3:rxandroid:3.0.0")
-    api("androidx.core:core-ktx:1.6.0")
+    api("androidx.core:core-ktx:1.7.0")
     api("androidx.recyclerview:recyclerview:1.2.1")
     api("com.google.android.material:material:1.4.0")
-    api("dev.b3nedikt.viewpump:viewpump:4.0.7")
+    api("dev.b3nedikt.viewpump:viewpump:4.0.8")
     api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     testImplementation("junit:junit:4.13.2")
@@ -99,16 +96,9 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
-                setPom()
-            }
-            create<MavenPublication>("debug") {
-                from(components["debug"])
-                artifact(tasks.getByName("sourceJar"))
-                artifact(tasks.getByName("javadocJar"))
+                if (useSigning) {
+                    artifact(tasks.getByName("javadocJar"))
+                }
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()

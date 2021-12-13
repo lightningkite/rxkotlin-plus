@@ -1,11 +1,8 @@
 import java.util.Properties
 
-val kotlinVersion = "1.5.31"
+val kotlinVersion = "1.6.0"
 buildscript {
-    val kotlinVersion = "1.5.31"
-    repositories {
-        jcenter()
-    }
+    val kotlinVersion = "1.6.0"
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
     }
@@ -21,7 +18,7 @@ plugins {
 }
 
 group = "com.lightningkite.rx"
-version = "0.7.0"
+version = "0.7.1"
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
     Properties().apply { load(stream) }
@@ -62,8 +59,6 @@ gradlePlugin {
 }
 
 repositories {
-    mavenLocal()
-    jcenter()
     mavenCentral()
     google()
 }
@@ -87,9 +82,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     api("org.apache.commons:commons-lang3:3.12.0")
-    api("com.fasterxml.jackson.core:jackson-databind:2.9.10")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.10")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.10")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
     api("net.jodah:xsylum:0.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder
@@ -99,10 +94,10 @@ dependencies {
     // https://mvnrepository.com/artifact/net.mabboud.fontverter/FontVerter
     implementation(group = "net.mabboud.fontverter", name = "FontVerter", version = "1.2.22")
 
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13.2")
 
-    val aetherVersion = "1.0.0.v20140518"
-    val mavenVersion = "3.1.0"
+    val aetherVersion = "1.1.0"
+    val mavenVersion = "3.3.9"
     testApi("org.eclipse.aether:aether-api:$aetherVersion")
     testApi("org.eclipse.aether:aether-impl:$aetherVersion")
     testApi("org.eclipse.aether:aether-util:$aetherVersion")
@@ -136,7 +131,9 @@ afterEvaluate {
         }
         publications.getByName<MavenPublication>("pluginMaven") {
             artifact(tasks.getByName("sourceJar"))
-            artifact(tasks.getByName("javadocJar"))
+            if (useSigning) {
+                artifact(tasks.getByName("javadocJar"))
+            }
         }
         repositories {
             if (useSigning) {
