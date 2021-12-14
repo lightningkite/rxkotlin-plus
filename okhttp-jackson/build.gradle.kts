@@ -8,8 +8,9 @@ plugins {
 
 }
 
+val publishVersion:String by project
 group = "com.lightningkite.rx"
-version = "0.7.1"
+version = publishVersion
 
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
@@ -47,15 +48,15 @@ repositories {
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.0.0")
+    testImplementation("org.mockito:mockito-core:4.1.0")
     api("com.fasterxml.jackson.core:jackson-core:2.13.0")
     api("com.fasterxml.jackson.core:jackson-annotations:2.13.0")
     api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
-    api("io.reactivex.rxjava3:rxjava:3.1.1")
+    api("io.reactivex.rxjava3:rxjava:3.1.3")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    api("com.squareup.okhttp3:okhttp:4.9.2")
+    api("com.squareup.okhttp3:okhttp:4.9.3")
 }
 
 tasks {

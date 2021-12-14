@@ -1,3 +1,4 @@
+val kotlinVersion:String by project
 
 plugins {
     id("com.android.application")
@@ -6,10 +7,10 @@ plugins {
 
 android {
     //    buildToolsVersion = "28.0.3"
-    compileSdkVersion(30)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = 21
+        targetSdk = 31
         multiDexEnabled = true
         applicationId = "com.lightningkite.rxexample"
         versionCode = 5
@@ -24,7 +25,7 @@ android {
         viewBinding = true
     }
     packagingOptions {
-        exclude("META-INF/**")
+        resources.excludes.add("META-INF/**")
     }
 }
 
@@ -35,18 +36,16 @@ repositories {
     mavenLocal()
 }
 
-val kotlin_version = "1.5.31"
 dependencies {
     api(project(":view-generator"))
     api(project(":okhttp-resources"))
-    testImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test:runner:1.3.0")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
-
 
 tasks.create("wrapper"){
 

@@ -1,10 +1,9 @@
 import java.util.Properties
 
-val kotlinVersion = "1.6.0"
 buildscript {
-    val kotlinVersion = "1.6.0"
+    val kotlinVersion:String by project
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 plugins {
@@ -17,8 +16,9 @@ plugins {
     `maven-publish`
 }
 
+val publishVersion:String by project
 group = "com.lightningkite.rx"
-version = "0.7.1"
+version = publishVersion
 
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
     Properties().apply { load(stream) }
@@ -70,6 +70,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
     }
 }
 
+val kotlinVersion:String by project
 dependencies {
     api(localGroovy())
     api(gradleApi())
