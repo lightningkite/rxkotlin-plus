@@ -6,42 +6,12 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka")
     `maven-publish`
-    
+
 }
 
-val publishVersion:String by project
+val publishVersion: String by project
 group = "com.lightningkite.rx"
 version = publishVersion
-
-
-val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
-    Properties().apply { load(stream) }
-}
-val signingKey: String? = (System.getenv("SIGNING_KEY")?.takeUnless { it.isEmpty() }
-    ?: props?.getProperty("signingKey")?.toString())
-    ?.lineSequence()
-    ?.filter { it.trim().firstOrNull()?.let { it.isLetterOrDigit() || it == '=' || it == '/' || it == '+' } == true }
-    ?.joinToString("\n")
-val signingPassword: String? = System.getenv("SIGNING_PASSWORD")?.takeUnless { it.isEmpty() }
-    ?: props?.getProperty("signingPassword")?.toString()
-val useSigning = signingKey != null && signingPassword != null
-
-if(signingKey != null) {
-    if(!signingKey.contains('\n')){
-        throw IllegalArgumentException("Expected signing key to have multiple lines")
-    }
-    if(signingKey.contains('"')){
-        throw IllegalArgumentException("Signing key has quote outta nowhere")
-    }
-}
-
-val deploymentUser = (System.getenv("OSSRH_USERNAME")?.takeUnless { it.isEmpty() }
-    ?: props?.getProperty("ossrhUsername")?.toString())
-    ?.trim()
-val deploymentPassword = (System.getenv("OSSRH_PASSWORD")?.takeUnless { it.isEmpty() }
-    ?: props?.getProperty("ossrhPassword")?.toString())
-    ?.trim()
-val useDeployment = deploymentUser != null || deploymentPassword != null
 
 repositories {
     mavenCentral()
@@ -68,6 +38,38 @@ dependencies {
     api("androidx.appcompat:appcompat:1.4.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
+
+
+// Signing and publishing
+val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
+    Properties().apply { load(stream) }
+}
+val signingKey: String? = (System.getenv("SIGNING_KEY")?.takeUnless { it.isEmpty() }
+    ?: props?.getProperty("signingKey")?.toString())
+    ?.lineSequence()
+    ?.filter { it.trim().firstOrNull()?.let { it.isLetterOrDigit() || it == '=' || it == '/' || it == '+' } == true }
+    ?.joinToString("\n")
+val signingPassword: String? = System.getenv("SIGNING_PASSWORD")?.takeUnless { it.isEmpty() }
+    ?: props?.getProperty("signingPassword")?.toString()
+val useSigning = signingKey != null && signingPassword != null
+
+if (signingKey != null) {
+    if (!signingKey.contains('\n')) {
+        throw IllegalArgumentException("Expected signing key to have multiple lines")
+    }
+    if (signingKey.contains('"')) {
+        throw IllegalArgumentException("Signing key has quote outta nowhere")
+    }
+}
+
+val deploymentUser = (System.getenv("OSSRH_USERNAME")?.takeUnless { it.isEmpty() }
+    ?: props?.getProperty("ossrhUsername")?.toString())
+    ?.trim()
+val deploymentPassword = (System.getenv("OSSRH_PASSWORD")?.takeUnless { it.isEmpty() }
+    ?: props?.getProperty("ossrhPassword")?.toString())
+    ?.trim()
+val useDeployment = deploymentUser != null || deploymentPassword != null
+
 
 tasks {
     val sourceJar by creating(Jar::class) {
@@ -101,8 +103,8 @@ afterEvaluate {
                 setPom()
             }
         }
-        repositories {
-            if (useSigning) {
+        if (useDeployment) {
+            repositories {
                 maven {
                     name = "MavenCentral"
                     val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"

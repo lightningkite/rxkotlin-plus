@@ -5,14 +5,26 @@ plugins {
     id("signing")
     id("org.jetbrains.dokka")
     `maven-publish`
-    
+
 }
 
-val publishVersion:String by project
+val publishVersion: String by project
 group = "com.lightningkite.rx"
 version = publishVersion
 
+repositories {
+    mavenCentral()
+}
 
+dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:4.1.0")
+    api("io.reactivex.rxjava3:rxjava:3.1.3")
+    api("io.reactivex.rxjava3:rxkotlin:3.0.1")
+}
+
+
+// Signing and publishing
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
     Properties().apply { load(stream) }
 }
@@ -25,11 +37,11 @@ val signingPassword: String? = System.getenv("SIGNING_PASSWORD")?.takeUnless { i
     ?: props?.getProperty("signingPassword")?.toString()
 val useSigning = signingKey != null && signingPassword != null
 
-if(signingKey != null) {
-    if(!signingKey.contains('\n')){
+if (signingKey != null) {
+    if (!signingKey.contains('\n')) {
         throw IllegalArgumentException("Expected signing key to have multiple lines")
     }
-    if(signingKey.contains('"')){
+    if (signingKey.contains('"')) {
         throw IllegalArgumentException("Signing key has quote outta nowhere")
     }
 }
@@ -41,17 +53,6 @@ val deploymentPassword = (System.getenv("OSSRH_PASSWORD")?.takeUnless { it.isEmp
     ?: props?.getProperty("ossrhPassword")?.toString())
     ?.trim()
 val useDeployment = deploymentUser != null || deploymentPassword != null
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.1.0")
-    api("io.reactivex.rxjava3:rxjava:3.1.3")
-    api("io.reactivex.rxjava3:rxkotlin:3.0.1")
-}
 
 tasks {
     val sourceJar by creating(Jar::class) {
@@ -84,8 +85,8 @@ afterEvaluate {
                 setPom()
             }
         }
-        repositories {
-            if (useSigning) {
+        if (useDeployment) {
+            repositories {
                 maven {
                     name = "MavenCentral"
                     val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -139,6 +140,5 @@ fun MavenPublication.setPom() {
                 email.set("joseph@lightningkite.com")
             }
         }
-
     }
 }

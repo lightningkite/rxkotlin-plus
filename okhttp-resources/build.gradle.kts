@@ -9,11 +9,40 @@ plugins {
 
 }
 
-val publishVersion:String by project
+val publishVersion: String by project
 group = "com.lightningkite.rx"
 version = publishVersion
 
+repositories {
+    mavenCentral()
+    google()
+}
 
+android {
+    compileSdk = 31
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 31
+    }
+    compileOptions {
+        targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
+    }
+}
+
+dependencies {
+    api(project(":android-resources"))
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    api("com.squareup.okhttp3:okhttp:4.9.3")
+}
+
+
+// Signing and publishing
 val props = project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { stream ->
     Properties().apply { load(stream) }
 } ?: Properties()
@@ -43,33 +72,6 @@ val deploymentPassword = (System.getenv("OSSRH_PASSWORD")?.takeUnless { it.isEmp
     ?.trim()
 val useDeployment = deploymentUser != null || deploymentPassword != null
 
-repositories {
-    mavenCentral()
-    google()
-}
-
-android {
-    compileSdk = 31
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 31
-    }
-    compileOptions {
-        targetCompatibility = JavaVersion.VERSION_1_8
-        isCoreLibraryDesugaringEnabled = true
-    }
-}
-
-dependencies {
-    api(project(":android-resources"))
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    api("com.squareup.okhttp3:okhttp:4.9.3")
-}
 
 tasks {
     val sourceJar by creating(Jar::class) {
@@ -103,8 +105,8 @@ afterEvaluate {
                 setPom()
             }
         }
-        repositories {
-            if (useSigning) {
+        if (useDeployment) {
+            repositories {
                 maven {
                     name = "MavenCentral"
                     val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -125,6 +127,7 @@ afterEvaluate {
         }
     }
 }
+
 
 fun MavenPublication.setPom() {
     pom {
@@ -158,6 +161,5 @@ fun MavenPublication.setPom() {
                 email.set("joseph@lightningkite.com")
             }
         }
-
     }
 }
