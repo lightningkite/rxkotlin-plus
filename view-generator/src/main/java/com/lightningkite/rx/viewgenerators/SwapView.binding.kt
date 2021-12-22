@@ -2,8 +2,10 @@ package com.lightningkite.rx.viewgenerators
 
 import io.reactivex.rxjava3.kotlin.addTo
 import com.lightningkite.rx.android.removed
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -39,22 +41,20 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
 ): SOURCE {
     var currentData: ViewGenerator? = null
     var currentStackSize = 0
-    this.subscribeBy { datas ->
-        post {
-            val newData = datas.lastOrNull()
-            val newStackSize = datas.size
-            if (currentData == newData) return@post
-            swapView.swap(
-                newData?.generate(dependency), when {
-                    currentStackSize == 0 || newStackSize == 0 -> viewTransition.neutral
-                    newStackSize > currentStackSize -> viewTransition.push
-                    newStackSize < currentStackSize -> viewTransition.pop
-                    else -> viewTransition.neutral
-                }
-            )
-            currentData = newData
-            currentStackSize = newStackSize
-        }
+    this.debounce(1L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribeBy { datas ->
+        val newData = datas.lastOrNull()
+        val newStackSize = datas.size
+        if (currentData == newData) return@subscribeBy
+        swapView.swap(
+            newData?.generate(dependency), when {
+                currentStackSize == 0 || newStackSize == 0 -> viewTransition.neutral
+                newStackSize > currentStackSize -> viewTransition.push
+                newStackSize < currentStackSize -> viewTransition.pop
+                else -> viewTransition.neutral
+            }
+        )
+        currentData = newData
+        currentStackSize = newStackSize
     }.addTo(swapView.removed)
     return this
 }

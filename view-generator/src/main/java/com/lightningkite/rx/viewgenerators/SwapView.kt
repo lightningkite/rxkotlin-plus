@@ -32,6 +32,7 @@ class SwapView @JvmOverloads constructor(
     }
 
     private var currentView: View? = null
+    private var hasCurrentView: Boolean = false
 
     /**
      * Swaps from the current view to another one with the given [transition].
@@ -39,34 +40,32 @@ class SwapView @JvmOverloads constructor(
     fun swap(to: View?, transition: ViewTransitionUnidirectional) {
         val oldView = currentView
         var newView = to
-
+        hasCurrentView = newView != null
         if (newView == null) {
             newView = View(context)
         } else {
             visibility = View.VISIBLE
         }
 
-        post {
-            addView(
-                newView, FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
+        addView(
+            newView, FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
             )
+        )
 
-            transition.enter.invoke(newView).start()
-            if (oldView != null){
-                transition.exit.invoke(oldView).withEndAction {
-                    removeView(oldView)
-                    if(to == null) {
-                        visibility = View.GONE
-                    }
+        transition.enter.invoke(newView).start()
+        if (oldView != null){
+            transition.exit.invoke(oldView).withEndAction {
+                removeView(oldView)
+                if(to == null && !hasCurrentView) {
+                    visibility = View.GONE
                 }
             }
-            currentView = newView
-            post {
-                runKeyboardUpdate(newView, oldView)
-            }
+        }
+        currentView = newView
+        post {
+            runKeyboardUpdate(newView, oldView)
         }
     }
 }
