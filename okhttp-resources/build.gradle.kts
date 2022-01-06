@@ -11,7 +11,7 @@ plugins {
 
 val publishVersion: String by project
 group = "com.lightningkite.rx"
-version = publishVersion
+version = publishVersion + if(System.getenv("stage") == "true") "" else "-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -99,9 +99,6 @@ afterEvaluate {
                 if (useSigning) {
                     artifact(tasks.getByName("javadocJar"))
                 }
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
                 setPom()
             }
         }
@@ -111,7 +108,7 @@ afterEvaluate {
                     name = "MavenCentral"
                     val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                     val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                    url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+                    url = uri(if(System.getenv("stage") == "true") releasesRepoUrl else snapshotsRepoUrl)
                     credentials {
                         this.username = deploymentUser
                         this.password = deploymentPassword

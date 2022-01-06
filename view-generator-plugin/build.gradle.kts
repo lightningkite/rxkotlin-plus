@@ -19,7 +19,7 @@ plugins {
 
 val publishVersion: String by project
 group = "com.lightningkite.rx"
-version = publishVersion
+version = publishVersion + if(System.getenv("stage") == "true") "" else "-SNAPSHOT"
 
 gradlePlugin {
     plugins {
@@ -54,9 +54,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     api("org.apache.commons:commons-lang3:3.12.0")
-    api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.1")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.1")
     api("net.jodah:xsylum:0.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder
@@ -143,7 +143,7 @@ afterEvaluate {
                     name = "MavenCentral"
                     val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                     val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                    url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+                    url = uri(if(System.getenv("stage") == "true") releasesRepoUrl else snapshotsRepoUrl)
                     credentials {
                         this.username = deploymentUser
                         this.password = deploymentPassword

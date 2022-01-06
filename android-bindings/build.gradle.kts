@@ -11,7 +11,7 @@ plugins {
 
 val publishVersion: String by project
 group = "com.lightningkite.rx"
-version = publishVersion
+version = publishVersion + if(System.getenv("stage") == "true") "" else "-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -36,7 +36,7 @@ dependencies {
     api("androidx.core:core-ktx:1.7.0")
     api("androidx.recyclerview:recyclerview:1.2.1")
     api("com.google.android.material:material:1.4.0")
-    api("dev.b3nedikt.viewpump:viewpump:4.0.8")
+    api("dev.b3nedikt.viewpump:viewpump:4.0.10")
     api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     testImplementation("junit:junit:4.13.2")
@@ -102,9 +102,6 @@ afterEvaluate {
                 if (useSigning) {
                     artifact(tasks.getByName("javadocJar"))
                 }
-                groupId = project.group.toString()
-                artifactId = project.name
-                version = project.version.toString()
                 setPom()
             }
         }
@@ -114,7 +111,7 @@ afterEvaluate {
                     name = "MavenCentral"
                     val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                     val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                    url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+                    url = uri(if(System.getenv("stage") == "true") releasesRepoUrl else snapshotsRepoUrl)
                     credentials {
                         this.username = deploymentUser
                         this.password = deploymentPassword
