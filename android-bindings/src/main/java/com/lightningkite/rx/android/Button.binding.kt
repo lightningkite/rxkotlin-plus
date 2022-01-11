@@ -216,7 +216,7 @@ private fun Context.dateSelectorDialog(start: LocalDate, onResult: (LocalDate) -
     DatePickerDialog(
         this,
         { _, year, month, dayOfMonth ->
-            onResult(LocalDate.of(year, month, dayOfMonth))
+            onResult(LocalDate.of(year, month + 1, dayOfMonth))
         },
         start.year,
         start.monthValue - 1,
