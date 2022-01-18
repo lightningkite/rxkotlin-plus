@@ -38,6 +38,7 @@ repositories {
 
 dependencies {
     api(project(":view-generator"))
+    api(project(":okhttp"))
     api(project(":okhttp-resources"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")

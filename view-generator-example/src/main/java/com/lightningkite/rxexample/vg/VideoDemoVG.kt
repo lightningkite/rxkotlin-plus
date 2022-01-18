@@ -54,11 +54,6 @@ class VideoDemoVG(
             xml.video.setVideo(it.kotlin)
         }
 
-        //--- Set Up xml.thumbnail
-        currentVideo.subscribeAutoDispose<Observable<Optional<Video>>, ImageView, Optional<Video>>(xml.thumbnail) {
-            xml.thumbnail.setFromVideoThumbnail(it.kotlin)
-        }
-
         //--- Set Up xml.play (overwritten on flow generation)
         xml.play.onClick { this.playClick() }
 

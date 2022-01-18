@@ -48,7 +48,7 @@ class ExternalTestVG(
         xml.openEvent.onClick {
             dependency.openEvent(
                 title = "A Virtual Lunch with LK",
-                details = "Come eat virtual food with us!",
+                description = "Come eat virtual food with us!",
                 location = "Lightning Kite in Logan Utah",
                 start = ZonedDateTime.now().plusDays(1).withHour(12).withMinute(0).withSecond(0),
                 end = ZonedDateTime.now().plusDays(1).withHour(13).withMinute(0).withSecond(0)

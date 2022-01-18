@@ -36,7 +36,7 @@ class WebsocketDemoVG(
     override val titleString: ViewString get() = ViewStringRaw("Websocket Demo")
 
     //--- Data
-    val socket: Observable<ConnectedWebSocket> = HttpClient.webSocket("wss://echo.websocket.org").replay(1).refCount()
+    val socket = HttpClient.webSocket("wss://echo.websocket.org").replay(1).refCount()
     val text: ValueSubject<String> = ValueSubject("")
 
     //--- Generate Start (overwritten on flow generation)
