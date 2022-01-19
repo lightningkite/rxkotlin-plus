@@ -72,7 +72,7 @@ class WebsocketDemoVG(
 
         //--- Set Up xml.submit
         xml.submit.onClick {
-            this.socket.take(1).subscribe { it -> it.onNext(WebSocketFrame(text = this.text.value)) }
+            this.socket.take(1).subscribe { it -> it.write.onNext(WebSocketFrame(text = this.text.value)) }
                 .addTo(xml.submit.removed)
         }
 
