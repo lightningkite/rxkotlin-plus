@@ -348,7 +348,7 @@ object HttpClient {
                 out
             },
             { it.ownConnection },
-            { it.onComplete() }
+            { it.write.onComplete() }
         ).let { threadCorrectly(it) }
     }
 
