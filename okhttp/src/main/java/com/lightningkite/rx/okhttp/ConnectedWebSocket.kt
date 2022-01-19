@@ -52,23 +52,25 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterf
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
     }
 
-    override fun onComplete() {
-        underlyingSocket?.close(1000, null)
-    }
-
-    override fun onSubscribe(d: Disposable) {
-    }
-
-    override fun onNext(frame: WebSocketFrame) {
-        frame.text?.let {
-            underlyingSocket?.send(it)
+    override val write: Observer<WebSocketFrame> = object : Observer<WebSocketFrame> {
+        override fun onComplete() {
+            underlyingSocket?.close(1000, null)
         }
-        frame.binary?.let { binary ->
-            underlyingSocket?.send(binary.toByteString())
-        }
-    }
 
-    override fun onError(error: Throwable) {
-        underlyingSocket?.close(1011, error.message)
+        override fun onSubscribe(d: Disposable) {
+        }
+
+        override fun onNext(frame: WebSocketFrame) {
+            frame.text?.let {
+                underlyingSocket?.send(it)
+            }
+            frame.binary?.let { binary ->
+                underlyingSocket?.send(binary.toByteString())
+            }
+        }
+
+        override fun onError(error: Throwable) {
+            underlyingSocket?.close(1011, error.message)
+        }
     }
 }

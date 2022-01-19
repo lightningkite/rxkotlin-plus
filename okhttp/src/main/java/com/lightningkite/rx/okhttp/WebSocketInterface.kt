@@ -13,7 +13,7 @@ import okio.ByteString.Companion.toByteString
 /**
  * A live web socket connection.
  */
-interface WebSocketInterface: Observer<WebSocketFrame> {
+interface WebSocketInterface {
     /**
      * An observable representing the socket's connection.  Will emit once it is fully connected.
      */
@@ -23,4 +23,9 @@ interface WebSocketInterface: Observer<WebSocketFrame> {
      * Messages that come through the websocket.
      */
     val read: Observable<WebSocketFrame>
+
+    /**
+     * Messages to send through the socket
+     */
+    val write: Observer<WebSocketFrame>
 }
