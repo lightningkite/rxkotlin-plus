@@ -1,6 +1,7 @@
 package com.lightningkite.rx.okhttp
 
 import io.reactivex.rxjava3.core.Single
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.encodeToString
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -16,6 +17,14 @@ import java.io.File
  */
 inline fun <reified T> T.toJsonRequestBody(): RequestBody {
     val sending = defaultJsonMapper.encodeToString(this)
+    return sending.toRequestBody(MediaType.JSON)
+}
+
+/**
+ * Transforms a given object into a JSON request body using the [defaultJsonMapper].
+ */
+fun <T> T.toJsonRequestBody(serializer: KSerializer<T>): RequestBody {
+    val sending = defaultJsonMapper.encodeToString(serializer, this)
     return sending.toRequestBody(MediaType.JSON)
 }
 

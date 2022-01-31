@@ -3,6 +3,7 @@ package com.lightningkite.rx.okhttp
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.core.SingleEmitter
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
 import okhttp3.Response
@@ -52,6 +53,21 @@ fun <T : Any> Response.readJson(typeToken: KType): Single<T> = Single.create<T> 
     }
 }.let { HttpClient.threadCorrectly<T>(it) }
 
+/**
+ * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
+ */
+@OptIn(ExperimentalSerializationApi::class)
+fun <T : Any> Response.readJson(serializer: KSerializer<T>): Single<T> = Single.create<T> { em: SingleEmitter<T> ->
+    try {
+        @Suppress("UNCHECKED_CAST") val result: T = body!!.use {
+            defaultJsonMapper.decodeFromStream(serializer, it.byteStream()) as T
+        }
+        em.onSuccess(result)
+    } catch (e: Throwable) {
+        em.tryOnError(e)
+    }
+}.let { HttpClient.threadCorrectly<T>(it) }
+
 
 /**
  * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
@@ -65,3 +81,4 @@ inline fun <reified T : Any> Response.readJsonDebug(): Single<T> = readJsonDebug
  * Dumps the raw response to [System.out].
  */
 fun <T : Any> Response.readJsonDebug(typeToken: KType): Single<T> = readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(typeToken) }
+fun <T : Any> Response.readJsonDebug(serializer: KSerializer<T>): Single<T> = readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(serializer) }

@@ -1,6 +1,7 @@
 package com.lightningkite.rx.okhttp
 
 import io.reactivex.rxjava3.core.Single
+import kotlinx.serialization.KSerializer
 import okhttp3.Response
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.typeOf
@@ -55,6 +56,32 @@ inline fun <reified T: Any> Single<Response>.readJsonDebug(): Single<T> {
     return this.flatMap { it ->
         if (it.isSuccessful) {
             it.readJsonDebug<T>(type)
+        } else {
+            Single.error<T>(HttpResponseException(it)) as Single<T>
+        }
+    }
+}
+
+/**
+ * Reads the response into JSON using the [defaultJsonMapper].
+ */
+fun <T: Any> Single<Response>.readJson(serializer: KSerializer<T>): Single<T> {
+    return this.flatMap { it ->
+        if (it.isSuccessful) {
+            it.readJson<T>(serializer)
+        } else {
+            Single.error<T>(HttpResponseException(it)) as Single<T>
+        }
+    }
+}
+
+/**
+ * Reads the response into JSON using the [defaultJsonMapper], but prints the raw value to [System.out].
+ */
+fun <T: Any> Single<Response>.readJsonDebug(serializer: KSerializer<T>): Single<T> {
+    return this.flatMap { it ->
+        if (it.isSuccessful) {
+            it.readJsonDebug<T>(serializer)
         } else {
             Single.error<T>(HttpResponseException(it)) as Single<T>
         }
