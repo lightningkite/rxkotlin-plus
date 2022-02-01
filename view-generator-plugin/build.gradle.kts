@@ -1,12 +1,5 @@
 import com.lightningkite.deployhelpers.*
 
-buildscript {
-    val kotlinVersion: String by project
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    }
-}
-
 plugins {
     kotlin("jvm")
     java
@@ -52,9 +45,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     api("org.apache.commons:commons-lang3:3.12.0")
-    api("com.fasterxml.jackson.core:jackson-databind:2.13.0")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.1")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.1")
     api("net.jodah:xsylum:0.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder

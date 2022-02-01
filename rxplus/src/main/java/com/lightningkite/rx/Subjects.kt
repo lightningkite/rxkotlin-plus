@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.util.Optional
+import kotlin.reflect.KMutableProperty1
 
 /**
  * Convenience abstract class for dealing with subjects that have a value property
@@ -188,3 +189,35 @@ fun <T : Any, B : Any> Observable<T>.switchMapMutable(transformation: (T) -> Sub
         override fun hasComplete(): Boolean = hasCompleted
         override fun getThrowable(): Throwable? = error
     }
+
+
+var <T> HasValueSubject<Optional<T>>.valueNullable: T?
+    get() = this.value.kotlin
+    set(value) {
+        this.value = Optional.ofNullable(value)
+    }
+
+operator fun <T : Any, V : Any> HasValueSubject<T>.get(property: KMutableProperty1<T, V?>): HasValueSubject<Optional<V>> =
+    mapWithExisting(
+        read = { property.get(it).optional },
+        write = { existing, it -> property.set(existing, it.kotlin); existing }
+    )
+
+fun <T : Any, V : Any> HasValueSubject<Optional<T>>.mapWithExistingNullable(
+    property: KMutableProperty1<T, V>,
+    defaultValue: V
+): HasValueSubject<V> =
+    mapWithExisting(
+        read = { it.kotlin?.let { property.get(it) } ?: defaultValue },
+        write = { existing, it -> existing.kotlin?.let { current -> property.set(current, it) }; existing }
+    )
+
+
+fun <T : Any, V : Any> HasValueSubject<T>.mapWithExistingDefault(
+    property: KMutableProperty1<T, V?>,
+    defaultValue: V
+): HasValueSubject<V> =
+    mapWithExisting(
+        read = { property.get(it) ?: defaultValue },
+        write = { existing, it -> property.set(existing, it); existing }
+    )

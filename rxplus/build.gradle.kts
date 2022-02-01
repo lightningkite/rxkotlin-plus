@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.1.0")
+    testImplementation("org.mockito:mockito-core:4.2.0")
     api("io.reactivex.rxjava3:rxjava:3.1.3")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
 }
