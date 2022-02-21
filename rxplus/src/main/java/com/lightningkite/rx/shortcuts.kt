@@ -525,8 +525,7 @@ infix fun <T : Any, B : Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T
  * An extension function on observables of type Optional<T> which wraps the regular flatMap.
  * This handles unwrapping the Optional before the mapper is called.
  */
-@JvmName("flatMapNotNull2")
-infix fun <T : Any, B : Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T) -> Observable<Optional<B>>?): Observable<Optional<B>> =
+infix fun <T : Any, B : Any> Observable<Optional<T>>.flatMapNotNull2(mapper: (T) -> Observable<Optional<B>>?): Observable<Optional<B>> =
     this.flatMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
 
 /**
@@ -535,8 +534,7 @@ infix fun <T : Any, B : Any> Observable<Optional<T>>.flatMapNotNull(mapper: (T) 
  * An extension function on observables of type Optional<T> which wraps the regular switchMap.
  * This handles unwrapping the Optional before the mapper is called.
  */
-@JvmName("switchMapNotNull2")
-infix fun <T : Any, B : Any> Observable<Optional<T>>.switchMapNotNull(mapper: (T) -> Observable<Optional<B>>?): Observable<Optional<B>> =
+infix fun <T : Any, B : Any> Observable<Optional<T>>.switchMapNotNull2(mapper: (T) -> Observable<Optional<B>>?): Observable<Optional<B>> =
     this.switchMap { it.kotlin?.let(mapper) ?: Observable.just(Optional.empty<B>()) }
 
 /**
