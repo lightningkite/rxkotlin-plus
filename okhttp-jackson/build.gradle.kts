@@ -17,7 +17,7 @@ repositories {
 val jacksonVersion = "2.13.1"
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.2.0")
+    testImplementation("org.mockito:mockito-core:4.3.1")
     api("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")

@@ -133,6 +133,8 @@ We have been using this pattern for Android apps for a long time at Lightning Ki
 
 A Gradle plugin that will read your Android layout XML files and automatically generate `ViewGenerator` classes for you, creating a full click-through design of your app that can be edited into a full app.
 
+[Read more here](view-generator-plugin/PrototypeGenerator.md)
+
 # Philosophy
 
 The entire goal of this repository is to make Android programming more convenient while keeping the code understandable to an outsider.  As such, we:

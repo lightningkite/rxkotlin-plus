@@ -251,7 +251,7 @@ private fun generateFile(
             val things = (viewNode.totalRequires(viewNodeMap).sortedBy { it.name })
             things.forEachIndexed { _, it ->
                 if ((it.type.contains("->") || it.type.contains("-]")) && !it.type.endsWith('?')) {
-                    line("val ${it.name}: ${if (pluginConfiguration.injectKhrysalisAnnotations) "@Escaping() " else ""}${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
+                    line("val ${it.name}: ${it.kotlinType}${(if (it.default != null) " = " + it.default else "")},")
                 } else if (pluginConfiguration.injectKhrysalisAnnotations && (it.type.contains("VG") || it.type.contains(
                         "ViewGenerator"
                     ))
