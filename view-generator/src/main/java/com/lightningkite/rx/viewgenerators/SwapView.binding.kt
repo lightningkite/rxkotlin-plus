@@ -29,6 +29,8 @@ fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     return this
 }
 
+
+
 /**
  * Displays the view generator at the top of the stack in the observable as the content of this view
  * Picks a default animation based on the change in stack size.
@@ -57,4 +59,24 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
         currentStackSize = newStackSize
     }.addTo(swapView.removed)
     return this
+}
+
+fun Observable<List<ViewGenTransition>>.showIn(swapView: SwapView, dependency: ActivityAccess) {
+    var currentData: ViewGenTransition? = null
+    var currentStackSize = 0
+    this.debounce(1L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribeBy { data ->
+        val newData = data.lastOrNull()
+        val newStackSize = data.size
+        if (currentData == newData || newData == null) return@subscribeBy
+        swapView.swap(
+            newData.viewGen.generate(dependency), when {
+                currentStackSize == 0 || newStackSize == 0 -> ViewTransitionUnidirectional.NONE
+                newStackSize > currentStackSize -> newData.transition.push
+                newStackSize < currentStackSize -> newData.transition.pop
+                else -> ViewTransitionUnidirectional.NONE
+            }
+        )
+        currentData = newData
+        currentStackSize = newStackSize
+    }.addTo(swapView.removed)
 }
