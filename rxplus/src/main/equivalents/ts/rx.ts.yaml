@@ -45,6 +45,78 @@
   receiver: io.reactivex.rxjava3.core.Observable
   template: ~this~.subscribe(~onNext~, ~onError~, ~onComplete~)
 
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~], ~2~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: [java.lang.Iterable, io.reactivex.rxjava3.functions.Function]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~], ~4~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~, ~4~], ~5~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~, ~4~, ~5~], ~6~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~, ~4~, ~5~, ~6~], ~7~)
+    imports:
+      combineLatest: rxjs
+
 # Operators
 
 - id: io.reactivex.rxjava3.core.Observable.onErrorReturnItem
