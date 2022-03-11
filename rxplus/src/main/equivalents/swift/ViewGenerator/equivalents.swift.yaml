@@ -1,0 +1,132 @@
+---
+
+- id: com.lightningkite.rx.viewgenerators.openMap
+  type: call
+  suppliedArguments: [latitude, longitude, label, zoom]
+  template:
+    pattern: "~this~.openMap(coordinate: CLLocationCoordinate2D(latitude: ~0~, longitude: ~1~), label: ~2~, zoom: ~3~)"
+    imports: [CoreLocation]
+
+- id: com.lightningkite.rx.viewgenerators.openMap
+  type: call
+  suppliedArguments: [latitude, longitude, label]
+  template:
+    pattern: "~this~.openMap(coordinate: CLLocationCoordinate2D(latitude: ~0~, longitude: ~1~), label: ~2~)"
+    imports: [CoreLocation]
+
+- id: com.lightningkite.rx.viewgenerators.openMap
+  type: call
+  suppliedArguments: [latitude, longitude, zoom]
+  template:
+    pattern: "~this~.openMap(coordinate: CLLocationCoordinate2D(latitude: ~0~, longitude: ~1~), zoom: ~3~)"
+    imports: [CoreLocation]
+
+- id: com.lightningkite.rx.viewgenerators.openMap
+  type: call
+  suppliedArguments: [latitude, longitude]
+  template:
+    pattern: "~this~.openMap(coordinate: CLLocationCoordinate2D(latitude: ~0~, longitude: ~1~))"
+    imports: [CoreLocation]
+
+- id: com.lightningkite.rx.viewgenerators.openEvent
+  type: call
+  template:
+    pattern: "~this~.openEvent(title: ~0~, description: ~1~, location: ~2~, start: (~3~).toDate(), end: (~4~).toDate())"
+    imports: [KhrysalisRuntime]
+
+- type: "type"
+  id: "com.lightningkite.rx.viewgenerators.SwapView"
+  template:
+    pattern: SwapView
+    imports: [RxSwiftPlus]
+
+- type: "type"
+  id: "com.google.android.exoplayer2.ui.PlayerView"
+  template:
+    pattern: ContainerView
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.backPressPop
+  type: call
+  template:
+    pattern: ~this~.backPressPop()
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.backPressDismiss
+  type: call
+  template:
+    pattern: ~this~.backPressDismiss()
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.push
+  type: call
+  template:
+    pattern: ~this~.push(~0~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.swap
+  type: call
+  template:
+    pattern: ~this~.swap(~0~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.pop
+  type: call
+  template:
+    pattern: ~this~.pop()
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.dismiss
+  type: call
+  template:
+    pattern: ~this~.dismiss()
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.popToPredicate
+  type: call
+  template:
+    pattern: '~this~.popTo(predicate: ~0~)'
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.root
+  type: call
+  template:
+    pattern: ~this~.root(~0~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.root
+  type: call
+  arguments: []
+  template:
+    pattern: ~this~.root()
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.reset
+  type: call
+  template:
+    pattern: ~this~.reset(~0~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.viewgenerators.delay
+  type: call
+  template: 'DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(~0~)), execute: ~1~)'
+
+- id: com.lightningkite.rx.viewgenerators.post
+  type: call
+  template: 'DispatchQueue.main.async(execute: ~0~)'
+
+- id: com.lightningkite.rx.viewgenerators.displayMetrics
+  type: get
+  template: '()'
+
+- id: android.util.DisplayMetrics
+  type: type
+  template: 'Void'
+
+- { id: android.util.DisplayMetrics.widthPixels, type: get, template: { pattern: 'Int(UIScreen.main.bounds.width * UIScreen.main.scale)', imports: [UIKit] } }
+- { id: android.util.DisplayMetrics.heightPixels, type: get, template: { pattern: 'Int(UIScreen.main.bounds.height * UIScreen.main.scale)', imports: [UIKit] } }
+- { id: android.util.DisplayMetrics.density, type: get, template: { pattern: 'UIScreen.main.scale', imports: [UIKit] } }
+- { id: android.util.DisplayMetrics.densityDpi, type: get, template: { pattern: 'UIScreen.main.scale', imports: [UIKit] } }
+- { id: android.util.DisplayMetrics.scaledDensity, type: get, template: { pattern: 'UIScreen.main.scale', imports: [UIKit] } }
+- { id: android.util.DisplayMetrics.xdpi, type: get, template: { pattern: 'UIScreen.main.scale', imports: [UIKit] } }
+- { id: android.util.DisplayMetrics.ydpi, type: get, template: { pattern: 'UIScreen.main.scale', imports: [UIKit] } }

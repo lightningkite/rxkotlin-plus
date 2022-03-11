@@ -1,0 +1,16 @@
+---
+- id: okhttp3.Response
+  type: type
+  template: HttpResponse
+
+- id: okhttp3.MultipartBody.Part
+  type: type
+  template: HttpBodyPart
+
+- id: okhttp3.MediaType
+  type: type
+  template: MediaType
+
+- id: okhttp3.RequestBody
+  type: type
+  template: HttpBody

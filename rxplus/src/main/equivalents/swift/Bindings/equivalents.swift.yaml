@@ -1,0 +1,35 @@
+---
+
+- id: com.lightningkite.rx.android.subscribeAutoDispose
+  type: call
+  template:
+    pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.subscribeAutoDisposeNullable
+  type: call
+  template:
+    pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.onClickNullable
+  type: call
+  template:
+    pattern: '~this~.onClick(~0~, action: ~2~)'
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.onLongClickNullable
+  type: call
+  template:
+    pattern: '~this~.onLongClick(~0~, action: ~2~)'
+    imports: [RxSwiftPlus]
+
+- id: com.jakewharton.rxbinding4.view.clicks
+  type: call
+  template:
+    pattern: '~this~.rx.click'
+
+- id: com.jakewharton.rxbinding4.view.longClicks
+  type: call
+  template:
+    pattern: '~this~.rx.longClick'

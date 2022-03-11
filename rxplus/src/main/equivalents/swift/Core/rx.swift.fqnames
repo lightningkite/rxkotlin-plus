@@ -1,0 +1,16 @@
+RxSwift
+io.reactivex.rxjava3.core
+io.reactivex.rxjava3.subjects
+io.reactivex.rxjava3.disposables
+io.reactivex.rxjava3.core.Maybe
+io.reactivex.rxjava3.core.Observable
+io.reactivex.rxjava3.core.Completable
+io.reactivex.rxjava3.core.Single
+io.reactivex.rxjava3.subjects.Subject
+io.reactivex.rxjava3.subjects.BehaviorSubject
+io.reactivex.rxjava3.subjects.PublishSubject
+io.reactivex.rxjava3.subjects.PublishSubject
+io.reactivex.rxjava3.disposables.Disposable
+io.reactivex.rxjava3.kotlin
+io.reactivex.rxjava3.kotlin.subscribeBy
+io.reactivex.rxjava3.kotlin.addTo

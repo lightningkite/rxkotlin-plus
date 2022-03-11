@@ -1,0 +1,342 @@
+
+- id: com.lightningkite.rx.android.subscribeAutoDispose
+  type: call
+  template:
+    pattern: '~this~.pipe(subscribeAutoDispose(~0~, ~1~))'
+    imports:
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.subscribeAutoDisposeNullable
+  type: call
+  template:
+    pattern: '~this~.pipe(subscribeAutoDispose(~0~, ~1~))'
+    imports:
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.onClick
+  type: call
+  template:
+    pattern: "onThrottledEventDo(~this~, 'click', ~1~)"
+    imports:
+      onThrottledEventDo: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.onClick
+  type: call
+  arguments: [Observable, Long, function]
+  template:
+    pattern: "onThrottledEventDoWith(~this~, 'click', ~0~, ~2~)"
+    imports:
+      onThrottledEventDoWith: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.onClickNullable
+  type: call
+  arguments: [Observable, Long, function]
+  template:
+    pattern: "onThrottledEventDoWith(~this~, 'click', ~0~, ~2~)"
+    imports:
+      onThrottledEventDoWith: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.onLongClick
+  type: call
+  template:
+    pattern: "onThrottledEventDo(~this~, 'contextmenu', ~1~)"
+    imports:
+      onThrottledEventDo: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.onLongClick
+  type: call
+  arguments: [Observable, Long, function]
+  template:
+    pattern: "onThrottledEventDoWith(~this~, 'contextmenu', ~0~, ~2~)"
+    imports:
+      onThrottledEventDoWith: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.onLongClickNullable
+  type: call
+  arguments: [Observable, Long, function]
+  template:
+    pattern: "onThrottledEventDoWith(~this~, 'contextmenu', ~0~, ~2~)"
+    imports:
+      onThrottledEventDoWith: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.removed
+  type: get
+  template:
+    pattern: "elementRemoved(~this~)"
+    imports:
+      elementRemoved: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.visible
+  type: get
+  reflectiveName:
+    pattern: viewVisible
+    imports:
+      viewVisible: '@lightningkite/rxjs-plus'
+  template: (~this~.style.visibility == "visible")
+
+- id: com.lightningkite.rx.android.visible
+  type: set
+  template: '~this~.style.visibility = ~value~ ? "visible" : ""'
+
+- id: com.lightningkite.rx.android.exists
+  type: get
+  reflectiveName:
+    pattern: viewExists
+    imports:
+      viewExists: '@lightningkite/rxjs-plus'
+  template: (!~this~.hidden)
+
+- id: com.lightningkite.rx.android.exists
+  type: set
+  template:
+    pattern: viewExists.set(~this~, ~value~)
+    imports:
+      viewExists: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  type: call
+  arguments: [EditText]
+  template:
+    pattern: '~this~.pipe(bind(~0~, "value", "input"))'
+    imports:
+      bind: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  type: call
+  arguments: [SeekBar]
+  template:
+    pattern: '~this~.pipe(bind(~0~, "valueAsNumber", "input"))'
+    imports:
+      bind: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  type: call
+  arguments: [RatingBar]
+  template:
+    pattern: '~this~.pipe(bind(~0~, "valueAsNumber", "input"))'
+    imports:
+      bind: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  type: call
+  receiver: Subject<Optional<LocalTime>>
+  arguments: [Button]
+  template:
+    pattern: '~this~.pipe(bind(~0~, "valueAsNumber", "input"))'
+    imports:
+      bind: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  type: call
+  arguments: [CompoundButton]
+  template:
+    pattern: '~this~.pipe(bind(~0~.input, "checked", "input"))'
+    imports:
+      bind: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bindNoUncheck
+  type: call
+  arguments: [CompoundButton]
+  template:
+    pattern: '~this~.pipe(bindNoUncheck(~0~.input))'
+    imports:
+      bindNoUncheck: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [RecyclerView, function]
+  template:
+    pattern: '~this~.pipe(showIn(~0~, ~1~))'
+    imports:
+      showIn: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [RecyclerView, function, function]
+  template:
+    pattern: '~this~.pipe(showInTyped(~0~, ~1~, ~2~))'
+    imports:
+      showInTyped: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [LinearLayout, function]
+  template:
+    pattern: '~this~.pipe(showIn(~0~, ~1~))'
+    imports:
+      showIn: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [LinearLayout, function, function]
+  template:
+    pattern: '~this~.pipe(showInTyped(~0~, ~1~, ~2~))'
+    imports:
+      showInTyped: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [Spinner, Subject, function]
+  suppliedArguments: [spinner, selected]
+  template:
+    pattern: '~this~.pipe(showInSelect(~0~, ~1~))'
+    imports:
+      showInSelect: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [Spinner, Subject, function]
+  suppliedArguments: [spinner, selected, toString]
+  template:
+    pattern: '~this~.pipe(showInSelect(~0~, ~1~, ~2~))'
+    imports:
+      showInSelect: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [AutoCompleteTextView, '*']
+  suppliedArguments: [autoCompleteTextView, onItemSelected]
+  template:
+    pattern: '~this~.pipe(showInInput(~*~))'
+    imports:
+      showInInput: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [AutoCompleteTextView, '*', '*']
+  suppliedArguments: [autoCompleteTextView, onItemSelected]
+  template:
+    pattern: '~this~.pipe(showInInput(~*~))'
+    imports:
+      showInInput: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  arguments: [ViewPager, Subject, function]
+  template:
+    pattern: '~this~.pipe(showInPager(~0~, ~1~, ~2~))'
+    imports:
+      showInPager: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  receiver: List
+  arguments: [ViewPager, Subject, function]
+  template:
+    pattern: 'of(~this~).pipe(showInPager(~0~, ~1~, ~2~))'
+    imports:
+      of: rxjs
+      showInPager: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.StringResource
+  type: type
+  template: string
+
+- id: com.lightningkite.rx.android.ColorResource
+  type: type
+  template: string
+
+- id: com.lightningkite.rx.android.DrawableResource
+  type: type
+  template: string
+
+- id: com.lightningkite.rx.android.showLoading
+  type: call
+  template:
+    pattern: ~this~.pipe(subscribeAutoDispose(~0~, hasClass("loading")))
+    imports:
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      hasClass: '@lightningkite/rxjs-plus'
+
+
+- id: com.lightningkite.rx.android.bind
+  receiver: Subject<Optional<LocalDate>>
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(x => x ? convert(x).toDate() : null, x => LocalDate.from(nativeJs(x))), subscribeAutoDispose(~0~, buttonDate("date", ~2~)))'
+    imports:
+      nativeJs: '@js-joda/core'
+      convert: '@js-joda/core'
+      LocalDate: '@js-joda/core'
+      mapSubject: '@lightningkite/rxjs-plus'
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      buttonDate: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  receiver: Subject<LocalDate>
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(x => convert(x).toDate(), x => LocalDate.from(nativeJs(x))), subscribeAutoDispose(~0~, buttonDate("date")))'
+    imports:
+      nativeJs: '@js-joda/core'
+      convert: '@js-joda/core'
+      LocalDate: '@js-joda/core'
+      mapSubject: '@lightningkite/rxjs-plus'
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      buttonDate: '@lightningkite/rxjs-plus'
+
+
+- id: com.lightningkite.rx.android.bind
+  receiver: Subject<Optional<LocalTime>>
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(x => x ? convert(LocalDateTime.of(LocalDate.now(), x)).toDate() : null, x => LocalTime.from(nativeJs(x))), subscribeAutoDispose(~0~, buttonDate("time", ~2~)))'
+    imports:
+      nativeJs: '@js-joda/core'
+      convert: '@js-joda/core'
+      LocalTime: '@js-joda/core'
+      LocalDateTime: '@js-joda/core'
+      LocalDate: '@js-joda/core'
+      mapSubject: '@lightningkite/rxjs-plus'
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      buttonDate: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  receiver: Subject<LocalTime>
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(x => convert(LocalDateTime.of(LocalDate.now(), x)).toDate(), x => LocalTime.from(nativeJs(x))), subscribeAutoDispose(~0~, buttonDate("time")))'
+    imports:
+      nativeJs: '@js-joda/core'
+      convert: '@js-joda/core'
+      LocalTime: '@js-joda/core'
+      LocalDateTime: '@js-joda/core'
+      LocalDate: '@js-joda/core'
+      mapSubject: '@lightningkite/rxjs-plus'
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      buttonDate: '@lightningkite/rxjs-plus'
+
+
+- id: com.lightningkite.rx.android.bind
+  receiver: Subject<Optional<LocalDateTime>>
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(x => x ? convert(x).toDate() : null, x => LocalDateTime.from(nativeJs(x))), subscribeAutoDispose(~0~, buttonDate("datetime-local", ~2~)))'
+    imports:
+      nativeJs: '@js-joda/core'
+      convert: '@js-joda/core'
+      LocalDateTime: '@js-joda/core'
+      mapSubject: '@lightningkite/rxjs-plus'
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      buttonDate: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  receiver: Subject<LocalDateTime>
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(x => convert(x).toDate(), x => LocalDateTime.from(nativeJs(x))), subscribeAutoDispose(~0~, buttonDate("datetime-local")))'
+    imports:
+      nativeJs: '@js-joda/core'
+      convert: '@js-joda/core'
+      LocalDateTime: '@js-joda/core'
+      mapSubject: '@lightningkite/rxjs-plus'
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      buttonDate: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.replace
+  receiver: View
+  type: call
+  template:
+    pattern: replaceWithStyles(~this~, ~0~)
+    imports:
+      replaceWithStyles: '@lightningkite/rxjs-plus'

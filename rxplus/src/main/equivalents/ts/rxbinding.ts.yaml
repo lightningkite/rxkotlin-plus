@@ -1,0 +1,6 @@
+- id: com.jakewharton.rxbinding4.view.clicks
+  type: call
+  template:
+    pattern: 'fromEvent(~this~, "click", ev => ev.preventDefault())'
+    imports:
+      fromEvent: rxjs
