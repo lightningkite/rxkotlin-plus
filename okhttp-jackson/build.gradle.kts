@@ -10,10 +10,6 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-repositories {
-    mavenCentral()
-}
-
 val jacksonVersion = "2.13.1"
 dependencies {
     testImplementation("junit:junit:4.13.2")

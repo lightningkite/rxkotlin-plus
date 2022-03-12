@@ -11,11 +11,6 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-repositories {
-    mavenCentral()
-    google()
-}
-
 android {
     compileSdk = 31
     defaultConfig {

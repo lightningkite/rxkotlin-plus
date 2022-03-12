@@ -17,3 +17,11 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/releases/")
+        google()
+    }
+}
