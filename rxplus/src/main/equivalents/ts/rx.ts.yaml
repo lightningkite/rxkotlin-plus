@@ -652,6 +652,36 @@
       onErrorResumeNext: rxjs/operators
       of: rxjs
 
+- id: io.reactivex.rxjava3.core.Single.onErrorResumeNext
+  type: call
+  arguments: [io.reactivex.rxjava3.core.SingleSource]
+  template:
+    pattern: ~this~.pipe(onErrorResumeNext(~0~))
+    imports:
+      onErrorResumeNext: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.onErrorResumeNext
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(~0~))
+    imports:
+      catchError: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.onErrorReturn
+  type: call
+  arguments: [io.reactivex.rxjava3.core.SingleSource]
+  template:
+    pattern: ~this~.pipe(onErrorResumeNext(~0~))
+    imports:
+      catchError: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.onErrorReturn
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(~0~))
+    imports:
+      catchError: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Single.error
   type: call
   template:
