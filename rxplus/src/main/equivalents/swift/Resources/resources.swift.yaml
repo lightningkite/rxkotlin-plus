@@ -291,3 +291,16 @@
   type: call
   reciever: Image
   template: '~this~.load()'
+
+
+- type: "type"
+  id: "com.google.android.exoplayer2.ui.PlayerView"
+  template:
+    pattern: ContainerView
+    imports: [RxSwiftPlus]
+
+- type: "type"
+  id: "com.google.android.exoplayer2.ui.StyledPlayerView"
+  template:
+    pattern: ContainerView
+    imports: [RxSwiftPlus]

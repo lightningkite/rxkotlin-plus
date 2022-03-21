@@ -1,0 +1,5 @@
+- id: com.lightningkite.rx.viewgenerators.SwapView
+  type: element
+  template: |
+    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" customClass="SwapView" customModule="RxSwiftPlus" placeholderIntrinsicWidth="50" placeholderIntrinsicHeight="50">
+    </view>

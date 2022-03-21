@@ -220,3 +220,11 @@
     pattern: 'videoElementSet(~this~, ~0~)'
     imports:
       videoElementSet: '@lightningkite/rxjs-plus'
+
+- id: com.google.android.exoplayer2.ui.PlayerView
+  type: type
+  template: HTMLVideoElement
+
+- id: com.google.android.exoplayer2.ui.StyledPlayerView
+  type: type
+  template: HTMLVideoElement

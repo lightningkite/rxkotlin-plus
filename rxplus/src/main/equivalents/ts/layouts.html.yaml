@@ -1,0 +1,7 @@
+- id: com.google.android.exoplayer2.ui.PlayerView
+  type: element
+  template: <video controls="true" crossorigin="anonymous" />
+
+- id: com.google.android.exoplayer2.ui.StyledPlayerView
+  type: element
+  template: <video controls="true" crossorigin="anonymous" />

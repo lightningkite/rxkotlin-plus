@@ -40,11 +40,6 @@
     pattern: SwapView
     imports: [RxSwiftPlus]
 
-- type: "type"
-  id: "com.google.android.exoplayer2.ui.PlayerView"
-  template:
-    pattern: ContainerView
-    imports: [RxSwiftPlus]
 
 - id: com.lightningkite.rx.viewgenerators.backPressPop
   type: call
