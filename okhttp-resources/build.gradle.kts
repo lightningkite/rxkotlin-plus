@@ -11,11 +11,6 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-repositories {
-    mavenCentral()
-    google()
-}
-
 android {
     compileSdk = 31
     defaultConfig {
@@ -35,7 +30,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    implementation("com.github.bumptech.glide:glide:4.13.0")
+    implementation("com.github.bumptech.glide:glide:4.13.1")
     api("com.squareup.okhttp3:okhttp:4.9.3")
 }
 

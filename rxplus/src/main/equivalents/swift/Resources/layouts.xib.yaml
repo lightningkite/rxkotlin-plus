@@ -1,0 +1,11 @@
+- id: com.google.android.exoplayer2.ui.PlayerView
+  type: element
+  template: |
+    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" customClass="VCContainerView" customModule="RxSwiftPlus" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="180">
+    </view>
+
+- id: com.google.android.exoplayer2.ui.StyledPlayerView
+  type: element
+  template: |
+    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" customClass="VCContainerView" customModule="RxSwiftPlus" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="180">
+    </view>

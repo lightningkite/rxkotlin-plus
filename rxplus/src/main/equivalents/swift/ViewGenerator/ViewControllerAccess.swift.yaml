@@ -1,0 +1,11 @@
+
+- id: com.lightningkite.rx.viewgenerators.ActivityAccess
+  type: type
+  template:
+    pattern: ViewControllerAccess
+    imports: [RxSwiftPlus]
+- id: com.lightningkite.rx.viewgenerators.ViewDependency
+  type: type
+  template:
+    pattern: ViewControllerAccess
+    imports: [RxSwiftPlus]

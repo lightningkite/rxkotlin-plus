@@ -21,11 +21,6 @@ gradlePlugin {
     }
 }
 
-repositories {
-    mavenCentral()
-    google()
-}
-
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
     kotlinOptions {
         jvmTarget = "1.8"
@@ -33,6 +28,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
 }
 
 val kotlinVersion: String by project
+val jacksonVersion = "2.13.1"
 dependencies {
     api(localGroovy())
     api(gradleApi())
@@ -45,9 +41,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
     api("org.apache.commons:commons-lang3:3.12.0")
-    api("com.fasterxml.jackson.core:jackson-databind:2.13.1")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.1")
+    api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
     api("net.jodah:xsylum:0.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder

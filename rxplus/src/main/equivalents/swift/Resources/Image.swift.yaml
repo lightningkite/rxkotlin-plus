@@ -1,0 +1,29 @@
+---
+- id: android.net.Uri
+  type: type
+  template: URL
+- id: android.net.Uri.parse
+  type: call
+  template: 'URL(string: ~0~)'
+
+- id: android.net.Uri.lastPathSegment
+  type: get
+  template: '~this~.absoluteString.substringAfterLast(delimiter: "/")'
+
+- id: android.graphics.BitmapFactory.decodeByteArray
+  type: call
+  template:
+    pattern: 'UIImage(data: ~0~)'
+    imports: [UIKit]
+
+- id: android.graphics.BitmapFactory.decodeByteArray
+  type: call
+  template:
+    pattern: 'UIImage(data: ~0~)'
+    imports: [UIKit]
+
+- id: android.graphics.BitmapFactory.decodeByteArray
+  type: call
+  template:
+    pattern: 'UIImage(data: ~0~)'
+    imports: [UIKit]

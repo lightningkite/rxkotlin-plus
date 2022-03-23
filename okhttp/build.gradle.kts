@@ -10,10 +10,6 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.3.1")

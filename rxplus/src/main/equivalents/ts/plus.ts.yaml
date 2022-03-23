@@ -1,0 +1,384 @@
+- id: com.lightningkite.rx.forever
+  type: call
+  template: ~this~
+
+- id: com.lightningkite.rx.subscribeByNullable
+  type: call
+  receiver: io.reactivex.rxjava3.core.Observable
+  template: ~this~.subscribe(~onNext~, ~onError~, ~onComplete~)
+
+- id: com.lightningkite.rx.subscribeByNullable
+  type: call
+  receiver: io.reactivex.rxjava3.core.Single
+  template: ~this~.subscribe(~onSuccess~, ~onError~)
+
+- id: com.lightningkite.rx.subscribeByNullable
+  type: call
+  receiver: io.reactivex.rxjava3.core.Maybe
+  template: ~this~.subscribe(~onSuccess~, ~onError~)
+
+- id: com.lightningkite.rx.isEqualTo
+  type: call
+  template:
+    pattern: ~this~.pipe(combineLatestWith(~0~), mapCall(safeEq))
+    imports:
+      combineLatestWith: rxjs
+      mapCall: '@lightningkite/rxjs-plus'
+      safeEq: '@lightningkite/khrysalis-runtime'
+
+- id: com.lightningkite.rx.notEqualTo
+  type: call
+  template:
+    pattern: ~this~.pipe(combineLatestWith(~0~), mapCall(safeEq), map(not))
+    imports:
+      combineLatestWith: rxjs
+      mapCall: '@lightningkite/rxjs-plus'
+      not: '@lightningkite/rxjs-plus'
+      safeEq: '@lightningkite/khrysalis-runtime'
+
+- id: com.lightningkite.rx.isEqualTo
+  receiver: Subject
+  type: call
+  template:
+    pattern: ~this~.pipe(subjectIsEqualTo(~0~))
+    imports:
+      subjectIsEqualTo: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.notEqualTo
+  type: call
+  template:
+    pattern: ~this~.pipe(subjectIsNotEqualTo(~0~))
+    imports:
+      subjectIsNotEqualTo: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.ValueSubject
+  type: type
+  template:
+    pattern: BehaviorSubject<~T0~>
+    imports:
+      BehaviorSubject: rxjs
+
+- id: com.lightningkite.rx.ValueSubject
+  type: call
+  hasExplicitTypeArguments: true
+  template:
+    pattern: new BehaviorSubject<~T0~>(~0~)
+    imports:
+      BehaviorSubject: rxjs
+
+- id: com.lightningkite.rx.ValueSubject
+  type: call
+  template:
+    pattern: new BehaviorSubject(~0~)
+    imports:
+      BehaviorSubject: rxjs
+
+- id: com.lightningkite.rx.HasValueSubject.value
+  type: set
+  template: ~this~.next(~value~)
+
+- id: com.lightningkite.rx.valueNullable
+  type: get
+  template: "~this~.value"
+
+- id: com.lightningkite.rx.valueNullable
+  type: set
+  template: "~this~.next(~value~)"
+
+- id: com.lightningkite.rx.get
+  type: call
+  receiver: HasValueSubject
+  template:
+    pattern: ~this~.pipe(subjectProperty(~0~))
+    imports:
+      subjectProperty: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.isIn
+  type: call
+  template:
+    pattern: ~0~.pipe(call("has", ~this~))
+    imports:
+      call: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.notIn
+  type: call
+  template:
+    pattern: ~0~.pipe(call("has", ~this~), map(not))
+    imports:
+      call: '@lightningkite/rxjs-plus'
+      not: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.contains
+  type: call
+  template:
+    pattern: ~this~.pipe(contains(~0~))
+    imports:
+      contains: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.doesNotContain
+  type: call
+  template:
+    pattern: ~this~.pipe(contains(~0~), mapReversible(not))
+    imports:
+      contains: '@lightningkite/rxjs-plus'
+      mapReversible: '@lightningkite/rxjs-plus'
+      not: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.and
+  type: call
+  template:
+    pattern: ~this~.pipe(combineLatestWith(~0~), mapCall(and))
+    imports:
+      combineLatestWith: rxjs
+      and: '@lightningkite/rxjs-plus'
+      mapCall: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.or
+  type: call
+  template:
+    pattern: ~this~.pipe(combineLatestWith(~0~), mapCall(or))
+    imports:
+      combineLatestWith: rxjs
+      or: '@lightningkite/rxjs-plus'
+      mapCall: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.not
+  type: call
+  template:
+    pattern: ~this~.pipe(mapReversible(not))
+    imports:
+      mapReversible: '@lightningkite/rxjs-plus'
+      not: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectString
+  type: call
+  receiver: Subject<Double>
+  template:
+    pattern: ~this~.pipe(floatToString)
+    imports:
+      floatToString: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectString
+  type: call
+  receiver: Subject<Int>
+  template:
+    pattern: ~this~.pipe(intToString)
+    imports:
+      intToString: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectString
+  type: call
+  receiver: Subject<Optional<Double>>
+  template:
+    pattern: ~this~.pipe(floatToStringNullable)
+    imports:
+      floatToStringNullable: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectString
+  type: call
+  receiver: Subject<Optional<Int>>
+  template:
+    pattern: ~this~.pipe(intToStringNullable)
+    imports:
+      intToStringNullable: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectInt
+  type: call
+  template:
+    pattern: ~this~.pipe(mapSubject(x => Math.floor(x), x => x))
+    imports:
+      mapSubject: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectFloat
+  type: call
+  template:
+    pattern: ~this~.pipe(mapSubject(x => x, x => Math.floor(x)))
+    imports:
+      mapSubject: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.plus
+  type: call
+  template:
+    pattern: ~this~.pipe(mapReversible(plusNumber(~0~)))
+    imports:
+      mapReversible: '@lightningkite/rxjs-plus'
+      plusNumber: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.minus
+  type: call
+  template:
+    pattern: ~this~.pipe(mapReversible(minusNumber(~0~)))
+    imports:
+      mapReversible: '@lightningkite/rxjs-plus'
+      minusNumber: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.times
+  type: call
+  template:
+    pattern: ~this~.pipe(mapReversible(timesNumber(~0~)))
+    imports:
+      mapReversible: '@lightningkite/rxjs-plus'
+      timesNumber: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.div
+  type: call
+  template:
+    pattern: ~this~.pipe(mapReversible(divNumber(~0~)))
+    imports:
+      mapReversible: '@lightningkite/rxjs-plus'
+      divNumber: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.map
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubject(~0~, ~1~))'
+    imports:
+      mapSubject: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.mapMaybeWrite
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubjectMaybeWrite(~0~, ~1~))'
+    imports:
+      mapSubjectMaybeWrite: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.mapWithExisting
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubjectWithExisting(~0~, ~1~))'
+    imports:
+      mapSubjectWithExisting: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.withWrite
+  type: call
+  template:
+    pattern: '~this~.pipe(withWrite(~0~))'
+    imports:
+      withWrite: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.notNull
+  type: call
+  template:
+    pattern: '~this~.pipe(filter(isNonNull))'
+    imports:
+      filter: rxjs
+      isNonNull: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.mapNotNull
+  type: call
+  template:
+    pattern: '~this~.pipe(map(~0~), filter(isNonNull))'
+    imports:
+      map: rxjs
+      filter: rxjs
+      isNonNull: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.mapNullable
+  type: call
+  template:
+    pattern: '~this~.pipe(map(~0~))'
+    imports:
+      map: rxjs
+
+- id: com.lightningkite.rx.mapToNullable
+  type: call
+  template:
+    pattern: '~this~.pipe(map(~0~))'
+    imports:
+      map: rxjs
+
+- id: com.lightningkite.rx.mapFromNullable
+  type: call
+  template:
+    pattern: '~this~.pipe(map(~0~))'
+    imports:
+      map: rxjs
+
+- id: com.lightningkite.rx.flatMapNotNull
+  type: call
+  template:
+    pattern: '~this~.pipe(mergeMapNotNull(~0~))'
+    imports:
+      mergeMapNotNull: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.switchMapNotNull
+  type: call
+  template:
+    pattern: '~this~.pipe(switchMapNotNull(~0~))'
+    imports:
+      switchMapNotNull: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.flatMapNotNull2
+  type: call
+  template:
+    pattern: '~this~.pipe(mergeMapNotNull(~0~))'
+    imports:
+      mergeMapNotNull: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.switchMapNotNull2
+  type: call
+  template:
+    pattern: '~this~.pipe(switchMapNotNull(~0~))'
+    imports:
+      switchMapNotNull: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.combineLatest
+  receiver: Observable
+  type: call
+  template:
+    pattern: '~this~.pipe(combineLatestWith(~0~), mapCall(~1~))'
+    imports:
+      combineLatestWith: rxjs
+      mapCall: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.combineLatest
+  receiver: List
+  type: call
+  template:
+    pattern: 'combineLatest(~this~, ~0~)'
+    imports:
+      combineLatest: rxjs
+
+- id: com.lightningkite.rx.combineLatest
+  receiver: List
+  arguments: []
+  type: call
+  template:
+    pattern: 'combineLatest(~this~)'
+    imports:
+      combineLatest: rxjs
+
+- id: com.lightningkite.rx.zip
+  type: call
+  template:
+    pattern: 'zip(~this~)'
+    imports:
+      zip: rxjs
+
+- id: com.lightningkite.rx.working
+  type: call
+  template:
+    pattern: '~this~.pipe(setOnWhileActive(~0~))'
+    imports:
+      setOnWhileActive: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectLocalDate
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubjectWithExisting(x => x.toLocalDate(), (a, b) => a.with(b)))'
+    imports:
+      mapSubjectWithExisting: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectLocalTime
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubjectWithExisting(x => x.toLocalTime(), (a, b) => a.with(b)))'
+    imports:
+      mapSubjectWithExisting: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.toSubjectLocalDateTime
+  type: call
+  template:
+    pattern: '~this~.pipe(mapSubjectWithExisting(x => x.toLocalDateTime(), (a, b) => a.with(b)))'
+    imports:
+      mapSubjectWithExisting: '@lightningkite/rxjs-plus'

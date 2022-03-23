@@ -1,0 +1,45 @@
+
+
+- id: okhttp3.MediaType.parse
+  type: call
+  template:
+    pattern: mediaTypeOrNull(~0~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.okhttp.toJsonString
+  type: call
+  template:
+    pattern: ~this~.toJsonString()
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.okhttp.toJsonRequestBody
+  type: call
+  template:
+    pattern: ~this~.toJsonRequestBody()
+    imports: [RxSwiftPlus]
+
+- id: okhttp3.MultipartBody.Companion
+  type: get
+  template:
+    pattern: MultipartBody
+    imports: [RxSwiftPlus]
+
+- id: okhttp3.MultipartBody
+  type: get
+  template:
+    pattern: MultipartBody
+    imports: [RxSwiftPlus]
+
+- id: okhttp3.MultipartBody.Part.Companion.createFormData
+  type: call
+  arguments: [String, String]
+  template:
+    pattern: 'MultipartBody.Part.value(name: ~0~, value: ~1~)'
+    imports: [RxSwiftPlus]
+
+- id: okhttp3.MultipartBody.Part.Companion.createFormData
+  type: call
+  arguments: [String, String, RequestBody]
+  template:
+    pattern: 'MultipartBody.Part.file(name: ~0~, filename: ~1~, body: ~2~)'
+    imports: [RxSwiftPlus]

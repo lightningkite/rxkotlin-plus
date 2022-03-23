@@ -1,0 +1,270 @@
+---
+- id: com.lightningkite.rx.viewgenerators.ActivityAccess
+  type: type
+  template: Window
+
+- id: com.lightningkite.rx.viewgenerators.getString
+  type: call
+  template: ~0~
+
+#- id: com.lightningkite.rx.viewgenerators.getColor
+#  type: call
+#  template: ~0~
+
+- id: com.lightningkite.rx.viewgenerators.openUrl
+  type: call
+  template: window.open(~0~, "_blank")
+
+- id: com.lightningkite.rx.viewgenerators.openUrl
+  type: call
+  suppliedArguments: [url, newWindow]
+  template: 'window.open(~0~, ~newWindow~ ? "_blank" : "_self")'
+
+- id: com.lightningkite.rx.viewgenerators.openAndroidAppOrStore
+  type: call
+  template: window.open("https://play.google.com/store/apps/details?id=" + ~0~, "_blank")
+
+- id: com.lightningkite.rx.viewgenerators.openIosStore
+  type: call
+  template: window.open("https://apps.apple.com/us/app/app/id" + ~0~, "_blank")
+
+- id: com.lightningkite.rx.viewgenerators.openIosStore
+  type: call
+  template: window.open("https://apps.apple.com/us/app/app/id" + ~0~, "_blank")
+
+- id: com.lightningkite.rx.viewgenerators.openMap
+  type: call
+  template: window.open(`https://www.google.com/maps/search/?api=1&query=${~0~},${~1~}`, "_blank")
+
+- id: com.lightningkite.rx.viewgenerators.requestImagesGallery
+  type: call
+  template:
+    pattern: 'openFiles("image/*")'
+    imports:
+      openFiles: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestImageGallery
+  type: call
+  template:
+    pattern: 'openFile("image/*")'
+    imports:
+      openFile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestImageCamera
+  type: call
+  template:
+    pattern: 'openFile("image/*", ~0~)'
+    imports:
+      openFile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestVideoGallery
+  type: call
+  template:
+    pattern: 'openFile("video/*")'
+    imports:
+      openFile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestVideosGallery
+  type: call
+  template:
+    pattern: 'openFiles("video/*")'
+    imports:
+      openFiles: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestVideoCamera
+  type: call
+  template:
+    pattern: 'openFile("video/*", ~0~)'
+    imports:
+      openFile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestMediasGallery
+  type: call
+  template:
+    pattern: 'openFiles("video/*,image/*")'
+    imports:
+      openFiles: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestMediaGallery
+  type: call
+  template:
+    pattern: 'openFile("video/*,image/*")'
+    imports:
+      openFile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestFile
+  type: call
+  template:
+    pattern: 'openFile("*")'
+    imports:
+      openFile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestFiles
+  type: call
+  template:
+    pattern: 'openFiles("*")'
+    imports:
+      openFiles: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.getMimeType
+  type: call
+  template: '~0~.type'
+
+- id: com.lightningkite.rx.viewgenerators.getFileName
+  type: call
+  template: '~0~.name'
+
+- id: com.lightningkite.rx.viewgenerators.ApplicationAccess.foreground
+  type: get
+  template:
+    pattern: of(true)
+    imports:
+      of: 'rxjs'
+
+- id: com.lightningkite.rx.viewgenerators.ApplicationAccess.softInputActive
+  type: get
+  template:
+    pattern: new BehaviorSubject(false)
+    imports:
+      BehaviorSubject: 'rxjs'
+
+- id: com.lightningkite.rx.viewgenerators.displayMetrics
+  type: get
+  template: 'undefined'
+
+- id: android.util.DisplayMetrics
+  type: type
+  template: 'void'
+
+- { id: android.util.DisplayMetrics.widthPixels, type: get, template: 'window.innerWidth' }
+- { id: android.util.DisplayMetrics.heightPixels, type: get, template: 'window.innerHeight' }
+- { id: android.util.DisplayMetrics.density, type: get, template: '1' }
+- { id: android.util.DisplayMetrics.densityDpi, type: get, template: '96' }
+- { id: android.util.DisplayMetrics.scaledDensity, type: get, template: '1' }
+- { id: android.util.DisplayMetrics.xdpi, type: get, template: '96' }
+- { id: android.util.DisplayMetrics.ydpi, type: get, template: '96' }
+
+- id: com.lightningkite.rx.viewgenerators.delay
+  type: call
+  template: 'setTimeout(~1~, ~0~)'
+
+- id: com.lightningkite.rx.viewgenerators.post
+  type: call
+  template: 'setTimeout(~1~)'
+
+
+- id: com.lightningkite.rx.viewgenerators.backPressPop
+  type: call
+  template:
+    pattern: xStackBackPressPop(~this~)
+    imports:
+      xStackBackPressPop: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.backPressDismiss
+  type: call
+  template:
+    pattern: xStackBackPressDismiss(~this~)
+    imports:
+      xStackBackPressDismiss: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.push
+  type: call
+  template:
+    pattern: xStackPush(~this~, ~0~)
+    imports:
+      xStackPush: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.swap
+  type: call
+  template:
+    pattern: xStackSwap(~this~, ~0~)
+    imports:
+      xStackSwap: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.pop
+  type: call
+  template:
+    pattern: xStackPop(~this~)
+    imports:
+      xStackPop: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.dismiss
+  type: call
+  template:
+    pattern: xStackDismiss(~this~)
+    imports:
+      xStackDismiss: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.popToPredicate
+  type: call
+  template:
+    pattern: 'xStackPopToPredicate(~this~, ~0~)'
+    imports:
+      xStackPopToPredicate: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.root
+  type: call
+  template:
+    pattern: xStackRoot(~this~, ~0~)
+    imports:
+      xStackRoot: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.root
+  type: call
+  template:
+    pattern: xStackRoot(~this~)
+    imports:
+      xStackRoot: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.reset
+  type: call
+  template:
+    pattern: xStackReset(~this~, ~0~)
+    imports:
+      xStackReset: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.showIn
+  type: call
+  arguments: [SwapView, ActivityAccess, '*']
+  template:
+    pattern: '~this~.pipe(showInSwap(~0~))'
+    imports:
+      showInSwap: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.requestLocation
+  type: call
+  template:
+    pattern: requestLocation(~*~)
+    imports:
+      requestLocation: '@lightningkite/rxjs-plus'
+- id: com.lightningkite.rx.viewgenerators.downloadFile
+  type: call
+  template:
+    pattern: downloadFile(~*~)
+    imports:
+      downloadFile: '@lightningkite/rxjs-plus'
+- id: com.lightningkite.rx.viewgenerators.downloadFileData
+  type: call
+  template:
+    pattern: downloadFileData(~*~)
+    imports:
+      downloadFileData: '@lightningkite/rxjs-plus'
+- id: com.lightningkite.rx.viewgenerators.getColor
+  type: call
+  template:
+    pattern: getColor(~*~)
+    imports:
+      getColor: '@lightningkite/rxjs-plus'
+- id: com.lightningkite.rx.viewgenerators.openEvent
+  type: call
+  template:
+    pattern: openEvent(~0~, ~1~, ~2~, convert(~3~).toDate(), convert(~4~).toDate())
+    imports:
+      openEvent: '@lightningkite/rxjs-plus'
+      convert: '@js-joda/core'
+- id: com.lightningkite.rx.viewgenerators.share
+  type: call
+  template:
+    pattern: share(~*~)
+    imports:
+      share: '@lightningkite/rxjs-plus'

@@ -10,10 +10,6 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.3.1")
@@ -40,3 +36,16 @@ standardPublishing {
         }
     }
 }
+
+sourceSets.forEach {
+    val dirSet = objects.sourceDirectorySet("equivalents", "Khrysalis Equivalents")
+    dirSet.srcDirs(project.projectDir.resolve("src/${it.name}/equivalents"))
+    it.extensions.add("equivalents", dirSet)
+    project.tasks.create("equivalentsJar${it.name.capitalize()}", org.gradle.jvm.tasks.Jar::class.java) {
+        this.group = "khrysalis"
+        this.archiveClassifier.set("equivalents")
+        this.from(dirSet)
+    }
+}
+
+tasks.getByName("equivalentsJarMain").published = true

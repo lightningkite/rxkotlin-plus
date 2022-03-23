@@ -1,0 +1,341 @@
+---
+
+- type: "type"
+  id: "com.lightningkite.rx.viewgenerators.StackSubject"
+  template:
+    pattern: "ValueSubject<Array<~T0~>>"
+    imports: [RxSwiftPlus]
+
+- type: "type"
+  id: "com.lightningkite.rx.viewgenerators.ViewGeneratorStack"
+  template:
+    pattern: "ValueSubject<Array<ViewGenerator>>"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "io.reactivex.rxjava3.kotlin.addTo"
+  template:
+    pattern: "~this~.disposed(by: ~0~)"
+    imports: [RxSwift]
+
+- type: "call"
+  id: "com.lightningkite.rx.makeSubject"
+  arguments:
+    - "io.reactivex.rxjava3.core.Observable"
+    - "io.reactivex.rxjava3.core.Observer"
+  template:
+    pattern: "ValueSubjectDelegate(values: ~observable~, valueSink: ~observer~)"
+    imports: [RxSwiftPlus]
+
+- type: "get"
+  id: "com.lightningkite.rx.kotlin"
+  template: "~this~"
+
+- type: "get"
+  id: "com.lightningkite.rx.optional"
+  template: "~this~"
+
+- type: "call"
+  id: "com.lightningkite.rx.get"
+  template: "~this~.get(~0~)"
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onError, onComplete, onNext]
+  template:
+    pattern: "~this~.subscribe(onNext: ~onNext~, onError: ~onError~, onCompleted: ~onComplete~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onError, onComplete]
+  template:
+    pattern: "~this~.subscribe(onError: ~onError~, onCompleted: ~onComplete~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onError, onNext]
+  template:
+    pattern: "~this~.subscribe(onNext: ~onNext~, onError: ~onError~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onError]
+  template:
+    pattern: "~this~.subscribe(onError: ~onError~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onComplete, onNext]
+  template:
+    pattern: "~this~.subscribe(onNext: ~onNext~, onCompleted: ~onComplete~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onError, onNext]
+  template:
+    pattern: "~this~.subscribe(onNext: ~onNext~, onError: ~onError~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onNext]
+  template:
+    pattern: "~this~.subscribe(onNext: ~onNext~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onError, onSuccess]
+  template:
+    pattern: "~this~.subscribe(onError: ~onError~, onSuccess: ~onSuccess~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.subscribeByNullable"
+  suppliedArguments: [onSuccess]
+  template:
+    pattern: "~this~.subscribe(onSuccess: ~onSuccess~)"
+    imports: [RxSwiftPlus]
+
+
+
+- type: "call"
+  id: "com.lightningkite.rx.isEqualTo"
+  template:
+    pattern: "(~this~ == ~0~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.notEqualTo"
+  template:
+    pattern: "(~this~ != ~0~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.isIn"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "io.reactivex.rxjava3.core.Observable"
+  template:
+    pattern: "~other~.contains(~this~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.notIn"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "io.reactivex.rxjava3.core.Observable"
+  template:
+    pattern: "(!~other~.contains(~this~))"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.contains"
+  template:
+    pattern: "~this~.contains(~0~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.doesNotContain"
+  template:
+    pattern: "~this~.doesNotContain(~0~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.and"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "io.reactivex.rxjava3.core.Observable"
+  template:
+    pattern: "(~this~ && ~other~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.or"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "io.reactivex.rxjava3.core.Observable"
+  template:
+    pattern: "(~this~ || ~other~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.not"
+  receiver: "io.reactivex.rxjava3.subjects.Subject"
+  template:
+    pattern: "(!~this~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.plus"
+  template:
+    pattern: "(~this~ + ~amount~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.times"
+  template:
+    pattern: "(~this~ * ~amount~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.minus"
+  template:
+    pattern: "(~this~ - ~amount~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.div"
+  template:
+    pattern: "(~this~ / ~amount~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.mapNotNull"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.compactMap(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.mapFromNullable"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.map(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.mapNullable"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.map(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.mapToNullable"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.map(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.flatMapNotNull"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.flatMapNotNull(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.switchMapNotNull"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.flatMapLatestNotNull(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.flatMapNotNull2"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.flatMapNotNull2(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.switchMapNotNull2"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.flatMapLatestNotNull2(~mapper~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.combineLatest"
+  receiver: "io.reactivex.rxjava3.core.Observable"
+  arguments:
+    - "io.reactivex.rxjava3.core.Observable"
+    - "kotlin.Function2"
+  template:
+    pattern: "~this~.combineLatest(~observable~, ~function~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.combineLatest"
+  receiver: "kotlin.collections.List"
+  arguments:
+    - "kotlin.Function1"
+  template:
+    pattern: "~this~.combineLatest().map(~combine~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.combineLatest"
+  receiver: "kotlin.collections.List"
+  template:
+    pattern: "~this~.combineLatest()"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.zip"
+  receiver: "kotlin.collections.List"
+  template:
+    pattern: "Single.zip(~this~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.working"
+  receiver: "io.reactivex.rxjava3.core.Single"
+  arguments:
+    - "io.reactivex.rxjava3.subjects.Subject"
+  template:
+    pattern: "~this~.working(~property~)"
+    imports: [RxSwiftPlus]
+
+- type: "call"
+  id: "com.lightningkite.rx.working"
+  receiver: "io.reactivex.rxjava3.core.Maybe"
+  arguments:
+    - "io.reactivex.rxjava3.subjects.Subject"
+  template:
+    pattern: "~this~.working(~property~)"
+    imports: [RxSwiftPlus]
+
+
+- type: "call"
+  id: "com.lightningkite.rx.toSubjectString"
+  template:
+    pattern: "~this~.toSubjectString()"
+    imports: [RxSwiftPlus]
+
+
+- type: "get"
+  id: "com.lightningkite.rx.valueNullable"
+  template:
+    pattern: "~this~.value"
+    imports: [RxSwiftPlus]
+
+
+- type: "set"
+  id: "com.lightningkite.rx.valueNullable"
+  template:
+    pattern: "~this~.value = ~value~"
+    imports: [RxSwiftPlus]
+
