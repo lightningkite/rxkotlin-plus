@@ -11,6 +11,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.ViewFlipper
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -29,7 +30,7 @@ import java.util.*
  */
 fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): SOURCE {
     defaults(viewFlipper, color)
-    subscribeBy { it ->
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
         viewFlipper.displayedChild = if (it) 1 else 0
     }.addTo(viewFlipper.removed)
     return this

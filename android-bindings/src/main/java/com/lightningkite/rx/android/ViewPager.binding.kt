@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.lightningkite.rx.*
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
@@ -37,12 +38,12 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
             container.removeView(`object` as View)
         }
     }
-    subscribeBy { list ->
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy { list ->
         lastSubmitted = list
         viewPager.adapter!!.notifyDataSetChanged()
         viewPager.currentItem
     }.addTo(viewPager.removed)
-    showIndex.subscribeBy{ value ->
+    showIndex.observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
         viewPager.currentItem = value
     }.addTo(viewPager.removed)
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -81,7 +82,7 @@ fun <T: Any> List<T>.showIn(
             container.removeView(`object` as View)
         }
     }
-    showIndex.subscribeBy{ value ->
+    showIndex.observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
         viewPager.currentItem = value
     }.addTo(viewPager.removed)
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

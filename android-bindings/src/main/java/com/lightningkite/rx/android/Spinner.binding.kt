@@ -3,6 +3,7 @@ package com.lightningkite.rx.android
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -51,7 +52,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .subscribeBy { index ->
+        .observeOn(AndroidSchedulers.mainThread()).subscribeBy { index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)
@@ -95,7 +96,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
             val v = (convertView as? TextView) ?: TextView(spinner.context).apply {
                 val event = PublishSubject.create<T>()
                 spinner.spinnerTextStyle?.apply(this)
-                event.switchMap(toString).subscribeBy {
+                event.switchMap(toString).observeOn(AndroidSchedulers.mainThread()).subscribeBy {
                     text = it
                 }.addTo(removed)
                 setRemovedCondition(spinner.removed)
@@ -118,7 +119,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .subscribeBy { index ->
+        .observeOn(AndroidSchedulers.mainThread()).subscribeBy { index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)

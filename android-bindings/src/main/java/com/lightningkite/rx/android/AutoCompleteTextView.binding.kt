@@ -4,6 +4,7 @@ import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.kotlin.addTo
@@ -43,7 +44,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     var lastPublishedResults: List<T> = listOf()
     autoCompleteTextView.setAdapter(object : BaseAdapter(), Filterable {
         init {
-            subscribeBy {
+            observeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribeBy {
                 val copy = it.toList()
                 autoCompleteTextView.post {
                     lastPublishedResults = copy

@@ -27,7 +27,7 @@ import kotlin.reflect.KMutableProperty1
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    subscribeBy {
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -44,7 +44,7 @@ fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vi
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    subscribeBy {
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -61,7 +61,7 @@ fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vie
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    subscribeBy {
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -78,7 +78,7 @@ fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispos
  * values.subscribeAutoDispose(textView, TextView::setText)
  */
 fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: KMutableProperty1<VIEW, TYPE>): SOURCE {
-    subscribeBy {
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
@@ -95,7 +95,7 @@ fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispos
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    subscribeByNullable {
+    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -112,7 +112,7 @@ fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAuto
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    subscribeByNullable {
+    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -129,7 +129,7 @@ fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoD
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    subscribeByNullable {
+    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -146,7 +146,7 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribe
  * values.subscribeAutoDispose(textView, TextView::setText)
  */
 fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: KMutableProperty1<VIEW, TYPE?>): SOURCE {
-    subscribeByNullable {
+    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
