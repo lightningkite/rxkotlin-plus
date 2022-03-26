@@ -631,7 +631,7 @@ fun <Element : Any> Maybe<Element>.working(property: Subject<Boolean>): Maybe<El
 /**
  * Subscribes only to the observable while [shouldListen]'s most recent value is true.
  */
-fun <Element: Any> Observable<Element>.subscribeWhile(shouldListen: Observable<Boolean>): Observable<Element> {
+fun <Element: Any> Observable<Element>.onlyWhile(shouldListen: Observable<Boolean>): Observable<Element> {
     return shouldListen.switchMap {
         if(it) this
         else Observable.never()
