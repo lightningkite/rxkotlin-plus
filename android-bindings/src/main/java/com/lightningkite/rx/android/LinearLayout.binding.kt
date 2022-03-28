@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -24,7 +25,7 @@ fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
     makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
-    subscribeBy { value ->
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
         //Fix view count
         val excessViews = existingViews.size - value.size
         if (excessViews > 0) {

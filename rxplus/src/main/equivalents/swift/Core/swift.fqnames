@@ -43,3 +43,6 @@ com.lightningkite.rx.switchMapNotNull
 com.lightningkite.rx.combineLatest
 com.lightningkite.rx.zip
 com.lightningkite.rx.working
+com.lightningkite.rx.bind
+com.lightningkite.rx.ValueSubject
+com.lightningkite.rx.showIn

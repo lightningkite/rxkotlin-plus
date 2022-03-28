@@ -3,6 +3,7 @@ package com.lightningkite.rx.android
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
@@ -16,7 +17,7 @@ import io.reactivex.rxjava3.subjects.Subject
  * name.bind(editTextView)
  */
 fun <SOURCE: Subject<String>> SOURCE.bind(editText: EditText): SOURCE {
-    subscribeBy { value ->
+    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
         if (value != editText.text.toString()) {
             editText.setText(value)
         }

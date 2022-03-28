@@ -6,6 +6,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.kotlin.addTo
@@ -34,7 +35,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     var lastPublished: List<T> = listOf()
     recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
             }.addTo(recyclerView.removed)
@@ -80,7 +81,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     var lastPublished: List<T> = listOf()
     recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
             }.addTo(recyclerView.removed)

@@ -469,6 +469,46 @@ operator fun Subject<Float>.times(amount: Float): Subject<Float> {
 }
 
 /**
+ * Returns a Subject of type Int whose value is the value of this plus the provided amount
+ */
+operator fun Subject<Int>.minus(amount: Int): Subject<Int> {
+    return map(
+        read = { it - amount },
+        write = { it + amount }
+    )
+}
+
+/**
+ * Returns a Subject of type Int whose value is the value of this multiplied by the provided value
+ */
+operator fun Subject<Int>.div(amount: Int): Subject<Int> {
+    return map(
+        read = { it / amount },
+        write = { it * amount }
+    )
+}
+
+/**
+ * Returns a Subject of type Float whose value is the value of this plus by the provided amount
+ */
+operator fun Subject<Float>.minus(amount: Float): Subject<Float> {
+    return map(
+        read = { it - amount },
+        write = { it + amount }
+    )
+}
+
+/**
+ * Returns a Subject of type Float whose value is the value of this multiplied by the provided value
+ */
+operator fun Subject<Float>.div(amount: Float): Subject<Float> {
+    return map(
+        read = { it / amount },
+        write = { it * amount }
+    )
+}
+
+/**
  * Returns an Observable of type B with a mapper that can fail and returns null. On failures the return Observable is empty.
  */
 infix fun <T : Any, B : Any> Observable<T>.mapNotNull(mapper: (T) -> B?): Observable<B> =
@@ -586,4 +626,14 @@ fun <Element : Any> Maybe<Element>.working(property: Subject<Boolean>): Maybe<El
     return this
         .doOnSubscribe { property.onNext(true) }
         .doFinally { property.onNext(false) }
+}
+
+/**
+ * Subscribes only to the observable while [shouldListen]'s most recent value is true.
+ */
+fun <Element: Any> Observable<Element>.onlyWhile(shouldListen: Observable<Boolean>): Observable<Element> {
+    return shouldListen.switchMap {
+        if(it) this
+        else Observable.never()
+    }
 }

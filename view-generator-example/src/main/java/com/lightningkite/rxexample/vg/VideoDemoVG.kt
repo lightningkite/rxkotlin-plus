@@ -11,6 +11,7 @@ package com.lightningkite.rxexample.vg
 import android.view.View
 import android.widget.ImageView
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.lightningkite.rx.android.resources.Video
 import com.lightningkite.rx.android.resources.VideoReference
 import com.lightningkite.rx.android.resources.VideoRemoteUrl
@@ -50,8 +51,8 @@ class VideoDemoVG(
         val view = xml.root
 
         //--- Set Up xml.video
-        currentVideo.subscribeAutoDispose<Observable<Optional<Video>>, PlayerView, Optional<Video>>(xml.video) {
-            xml.video.setVideo(it.kotlin)
+        currentVideo.subscribeAutoDispose(xml.video) {
+            setVideo(it.kotlin)
         }
 
         //--- Set Up xml.play (overwritten on flow generation)
