@@ -169,7 +169,7 @@ fun <T : Any, B : Any> Observable<T>.switchMapMutable(transformation: (T) -> Sub
         private var hasCompleted = false
         override fun subscribeActual(observer: Observer<in B>) {
             hasObservers = true
-            this@switchMapMutable.switchMap(transformation).subscribe(observer)
+            this@switchMapMutable.map(transformation).doOnNext { lastValue = it }.switchMap{it}.subscribe(observer)
         }
 
         override fun onSubscribe(d: Disposable) { lastValue?.onSubscribe(d) }
