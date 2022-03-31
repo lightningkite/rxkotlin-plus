@@ -18,6 +18,7 @@ import com.lightningkite.rxexample.databinding.SelectDemoBinding
 class SelectDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
 
     val options: List<ViewGenerator> = listOf(
+        ListDemoVG(stack),
         BasicExampleVG(),
         VideoDemoVG(),
         WebsocketDemoVG(),
