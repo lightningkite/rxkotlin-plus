@@ -13,13 +13,12 @@ import com.lightningkite.rx.android.bindFloat
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rxexample.databinding.SliderDemoBinding
-import com.lightningkite.rx.android.subscribeAutoDispose
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.plus
 import com.lightningkite.rx.toSubjectFloat
 import io.reactivex.rxjava3.core.Observable
 
 class SliderDemoVG() : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Slider Demo")
 
     val ratio: ValueSubject<Float> = ValueSubject(0f)
     val percent: Subject<Int> = ratio.map(
@@ -44,10 +43,10 @@ class SliderDemoVG() : ViewGenerator {
             xml.slider
         )
         }
-        percent.subscribeAutoDispose(xml.valueDisplay) { xml.valueDisplay.text = it.toString() }
+        percent.into(xml.valueDisplay) { xml.valueDisplay.text = it.toString() }
         xml.progress.run {
             xml.progress.max =
-                10000; ratio.subscribeAutoDispose<Observable<Float>, ProgressBar, Float>(
+                10000; ratio.into(
             xml.progress
         ) { xml.progress.progress = (it * 10000).toInt() }
         }
@@ -57,28 +56,28 @@ class SliderDemoVG() : ViewGenerator {
         run {
             xml.ratingDisplayStarsSmall.numStars = 5; obsRatingInt.toSubjectFloat().bind(xml.ratingDisplayStarsSmall)
         }
-        obsRatingInt.subscribeAutoDispose(xml.ratingDisplayNumber) { xml.ratingDisplayNumber.text = it.toString() }
+        obsRatingInt.into(xml.ratingDisplayNumber) { xml.ratingDisplayNumber.text = it.toString() }
 
         xml.ratingFloat.run {
             xml.ratingFloat.stepSize = 0.01f
             xml.ratingFloat.numStars =
-                5; obsRatingFloat.subscribeAutoDispose(
+                5; obsRatingFloat.into(
             xml.ratingFloat
         ) { xml.ratingFloat.rating = it }
         }
         xml.ratingDisplayStarsFloat.run {
             xml.ratingDisplayStarsFloat.numStars =
-                5; obsRatingFloat.subscribeAutoDispose(
+                5; obsRatingFloat.into(
             xml.ratingDisplayStarsFloat
         ) { xml.ratingDisplayStarsFloat.rating = it }
         }
         xml.ratingDisplayStarsSmallFloat.run {
             xml.ratingDisplayStarsSmallFloat.numStars =
-                5; obsRatingFloat.subscribeAutoDispose(
+                5; obsRatingFloat.into(
             xml.ratingDisplayStarsSmallFloat
         ) { xml.ratingDisplayStarsSmallFloat.rating = it }
         }
-        obsRatingFloat.subscribeAutoDispose(xml.ratingDisplayNumberFloat) {
+        obsRatingFloat.into(xml.ratingDisplayNumberFloat) {
             xml.ratingDisplayNumberFloat.text = it.toString()
         }
 

@@ -14,7 +14,7 @@ fun <SOURCE: Subject<Float>> SOURCE.bind(
     ratingBar: RatingBar
 ): SOURCE {
     var suppress = false
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    observeOn(RequireMainThread).subscribeBy { value ->
         if (!suppress) {
             suppress = true
             ratingBar.rating = value

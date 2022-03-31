@@ -2,10 +2,16 @@ package com.lightningkite.rx.viewgenerators
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 
 /**
  * Shows a single view with animated transitions to other views.
@@ -37,32 +43,28 @@ class SwapView @JvmOverloads constructor(
     /**
      * Swaps from the current view to another one with the given [transition].
      */
-    fun swap(to: View?, transition: ViewTransitionUnidirectional) {
+    fun swap(to: View?, transition: () -> Transition?) {
         val oldView = currentView
         var newView = to
         hasCurrentView = newView != null
+
         if (newView == null) {
             newView = View(context)
         } else {
             visibility = View.VISIBLE
         }
 
+        transition()?.let {
+            TransitionManager.beginDelayedTransition(this, it)
+        }
         addView(
             newView, FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
+        removeView(oldView)
 
-        transition.enter.invoke(newView).start()
-        if (oldView != null){
-            transition.exit.invoke(oldView).withEndAction {
-                removeView(oldView)
-                if(to == null && !hasCurrentView) {
-                    visibility = View.GONE
-                }
-            }
-        }
         currentView = newView
         post {
             runKeyboardUpdate(newView, oldView)

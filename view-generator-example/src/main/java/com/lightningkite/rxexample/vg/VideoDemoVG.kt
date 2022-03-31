@@ -36,10 +36,6 @@ class VideoDemoVG(
     //--- Extends (overwritten on flow generation)
 ) : ViewGenerator {
 
-
-    //--- Title (overwritten on flow generation)
-    override val titleString: ViewString get() = ViewStringRaw("Video Demo")
-
     //--- Properties
     val currentVideo =
         ValueSubject<Optional<Video>>(VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4").optional)
@@ -51,7 +47,7 @@ class VideoDemoVG(
         val view = xml.root
 
         //--- Set Up xml.video
-        currentVideo.subscribeAutoDispose(xml.video) {
+        currentVideo.into(xml.video) {
             setVideo(it.kotlin)
         }
 

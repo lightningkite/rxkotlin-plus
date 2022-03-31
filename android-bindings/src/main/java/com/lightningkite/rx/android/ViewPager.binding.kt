@@ -38,12 +38,12 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
             container.removeView(`object` as View)
         }
     }
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { list ->
+    observeOn(RequireMainThread).subscribeBy { list ->
         lastSubmitted = list
         viewPager.adapter!!.notifyDataSetChanged()
         viewPager.currentItem
     }.addTo(viewPager.removed)
-    showIndex.observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    showIndex.observeOn(RequireMainThread).subscribeBy { value ->
         viewPager.currentItem = value
     }.addTo(viewPager.removed)
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -82,7 +82,7 @@ fun <T: Any> List<T>.showIn(
             container.removeView(`object` as View)
         }
     }
-    showIndex.observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    showIndex.observeOn(RequireMainThread).subscribeBy { value ->
         viewPager.currentItem = value
     }.addTo(viewPager.removed)
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

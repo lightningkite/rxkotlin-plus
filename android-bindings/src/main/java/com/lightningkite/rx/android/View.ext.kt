@@ -27,7 +27,7 @@ import kotlin.reflect.KMutableProperty1
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -44,7 +44,7 @@ fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vi
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -61,7 +61,7 @@ fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vie
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -78,7 +78,7 @@ fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispos
  * values.subscribeAutoDispose(textView, TextView::setText)
  */
 fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: KMutableProperty1<VIEW, TYPE>): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
@@ -95,7 +95,7 @@ fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispos
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -112,7 +112,7 @@ fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAuto
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -129,7 +129,7 @@ fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoD
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -146,11 +146,131 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribe
  * values.subscribeAutoDispose(textView, TextView::setText)
  */
 fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: KMutableProperty1<VIEW, TYPE?>): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
 }
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = Single.just<String>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value: Maybe<String> ...
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = ValueSubject<String>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view's property.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter will be called with the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = ValueSubject<String>("Hi")
+ * values.subscribeAutoDispose(textView, TextView::setText)
+ */
+fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: KMutableProperty1<VIEW, TYPE>): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value = Single.just<Optional<String>>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
+ * One way binding of this to a view. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value: Maybe<Optional<String>> ...
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
+ * One way binding of this to a view. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value = ValueSubject<Optional<String>>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
+ * One way binding of this to a view's property. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter will be called with the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value = ValueSubject<Optional<String>>("Hi")
+ * values.subscribeAutoDispose(textView, TextView::setText)
+ */
+fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: KMutableProperty1<VIEW, TYPE?>): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
 
 /**
  * Subscribes to the view clicks observable which is fired any time the view is clicked. The action provided will be called on click.

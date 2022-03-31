@@ -44,7 +44,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     var lastPublishedResults: List<T> = listOf()
     autoCompleteTextView.setAdapter(object : BaseAdapter(), Filterable {
         init {
-            observeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+            observeOn(RequireMainThread).observeOn(RequireMainThread).subscribeBy {
                 val copy = it.toList()
                 autoCompleteTextView.post {
                     lastPublishedResults = copy

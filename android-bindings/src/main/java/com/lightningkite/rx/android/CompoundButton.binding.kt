@@ -15,7 +15,7 @@ import io.reactivex.rxjava3.subjects.Subject
  */
 fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+    observeOn(RequireMainThread).subscribeBy { it ->
         lastKnownValue = it
         if (it != compoundButton.isChecked) {
             compoundButton.isChecked = it
@@ -39,7 +39,7 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOU
  */
 fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+    observeOn(RequireMainThread).subscribeBy { it ->
         lastKnownValue = it
         if (it != compoundButton.isChecked) {
             compoundButton.isChecked = it

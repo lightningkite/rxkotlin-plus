@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.Subject
 
 /**
@@ -80,11 +81,11 @@ interface ActivityAccess {
     /**
      * Requests permissions, but with a callback response.
      */
-    fun requestPermissions(permission: Array<String>, onResult: (Map<String, Int>) -> Unit)
+    fun requestPermissions(permission: Array<String>): Single<Set<String>>
 
     /**
      * Requests a permission, but with a callback response.
      */
-    fun requestPermission(permission: String, onResult: (Boolean) -> Unit)
+    fun requestPermission(permission: String): Single<Boolean>
 
 }

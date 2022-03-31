@@ -31,10 +31,6 @@ class WebsocketDemoVG(
     //--- Extends (overwritten on flow generation)
 ) : ViewGenerator {
 
-
-    //--- Title (overwritten on flow generation)
-    override val titleString: ViewString get() = ViewStringRaw("Websocket Demo")
-
     //--- Data
     val socket = HttpClient.webSocket("wss://echo.websocket.org").replay(1).refCount()
     val text: ValueSubject<String> = ValueSubject("")
@@ -60,8 +56,7 @@ class WebsocketDemoVG(
             val cellView = cellXml.root
 
             //--- Set Up cellXml.label (overwritten on flow generation)
-            Observable.just("Some Text")
-                .subscribeAutoDispose<Observable<String>, TextView, String>(cellXml.label, TextView::setText)
+            Observable.just("Some Text").into(cellXml.label, TextView::setText)
             //--- End Make Subview For xml.items (overwritten on flow generation)
             return@label cellView
         }

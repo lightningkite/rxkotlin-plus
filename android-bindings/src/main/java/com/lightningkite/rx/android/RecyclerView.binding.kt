@@ -35,7 +35,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     var lastPublished: List<T> = listOf()
     recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+            observeOn(RequireMainThread).subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
             }.addTo(recyclerView.removed)
@@ -81,7 +81,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     var lastPublished: List<T> = listOf()
     recyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+            observeOn(RequireMainThread).subscribeBy { it ->
                 lastPublished = it
                 this.notifyDataSetChanged()
             }.addTo(recyclerView.removed)

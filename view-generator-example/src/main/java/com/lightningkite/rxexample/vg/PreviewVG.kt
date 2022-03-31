@@ -15,8 +15,6 @@ import com.lightningkite.rx.android.showIn
 import io.reactivex.rxjava3.core.Observable
 
 class PreviewVG : ViewGenerator {
-    override val titleString: ViewString
-        get() = ViewStringRaw("Preview")
 
     class XmlPreview(val name: String, val make: (ActivityAccess) -> View)
 

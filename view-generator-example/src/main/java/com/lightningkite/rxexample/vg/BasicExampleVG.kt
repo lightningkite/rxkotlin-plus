@@ -13,12 +13,10 @@ import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rx.android.onClick
 import com.lightningkite.rxexample.databinding.ExampleContentBinding
-import com.lightningkite.rx.android.subscribeAutoDispose
+import com.lightningkite.rx.android.into
 import io.reactivex.rxjava3.core.Observable
 
 class BasicExampleVG : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Basic Example")
-
     val number: ValueSubject<Int> = ValueSubject(0)
     val chained: ValueSubject<ValueSubject<Int>> = ValueSubject(ValueSubject(0))
 
@@ -31,10 +29,10 @@ class BasicExampleVG : ViewGenerator {
         val view = xml.root
         xml.exampleContentIncrement.onClick{ this.increment() }
         number.map { it -> it.toString() }
-            .subscribeAutoDispose(xml.exampleContentNumber, TextView::setText)
+            .into(xml.exampleContentNumber, TextView::setText)
         xml.chainedIncrement.onClick { this.chained.value.value = this.chained.value.value + 1 }
         chained.flatMap { it -> it }.map { it -> it.toString() }
-            .subscribeAutoDispose(xml.chainedNumber, TextView::setText)
+            .into(xml.chainedNumber, TextView::setText)
         xml.scrollToTop.onClick { xml.scrollView.smoothScrollTo(0,0) }
         return view
     }

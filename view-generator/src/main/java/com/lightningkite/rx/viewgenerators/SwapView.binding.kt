@@ -1,5 +1,7 @@
 package com.lightningkite.rx.viewgenerators
 
+import androidx.transition.Transition
+import androidx.transition.Fade
 import io.reactivex.rxjava3.kotlin.addTo
 import com.lightningkite.rx.android.removed
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -15,7 +17,7 @@ import java.util.concurrent.TimeUnit
 fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     swapView: SwapView,
     dependency: ActivityAccess,
-    transition: ViewTransitionUnidirectional = ViewTransitionUnidirectional.FADE
+    transition: () -> Transition? = { Fade() }
 ): SOURCE {
     var currentData: ViewGenerator? = null
     this.subscribeBy { datas ->

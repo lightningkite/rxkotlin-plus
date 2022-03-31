@@ -24,7 +24,7 @@ fun ActivityAccess.geocode(
                 emitter.tryOnError(e)
             }
         }.start()
-    }.observeOn(AndroidSchedulers.mainThread())
+    }
 }
 
 /**
@@ -48,5 +48,5 @@ fun ActivityAccess.geocode(
                 emitter.tryOnError(e)
             }
         }.start()
-    }.observeOn(AndroidSchedulers.mainThread())
+    }
 }

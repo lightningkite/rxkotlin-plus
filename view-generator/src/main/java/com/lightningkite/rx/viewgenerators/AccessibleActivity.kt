@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.util.*
 
@@ -88,7 +89,7 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
     /**
      * Requests a bunch of permissions and returns a map of permissions that were previously ungranted and their new status.
      */
-    override fun requestPermissions(permission: Array<String>, onResult: (Map<String, Int>) -> Unit) {
+    override fun requestPermissions(permission: Array<String>): Single<Set<String>> = Single.create { em ->
         val ungranted = permission.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
@@ -96,31 +97,33 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
         if (ungranted.isNotEmpty()) {
             val generated: Int = (Math.random() * 0xFFFF).toInt()
 
-            requestReturns[generated] = onResult
+            requestReturns[generated] = { em.onSuccess(permission.filter {
+                ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+            }.toSet()) }
 
             ActivityCompat.requestPermissions(this, ungranted.toTypedArray(), generated)
 
         } else {
-            onResult(emptyMap())
+            em.onSuccess(permission.filter {
+                ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+            }.toSet())
         }
     }
 
     /**
      * Requests a single permissions and returns whether it was granted or not.
      */
-    override fun requestPermission(permission: String, onResult: (Boolean) -> Unit) {
+    override fun requestPermission(permission: String): Single<Boolean> = Single.create<Boolean> { em ->
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-
             val generated: Int = (Math.random() * 0xFFFF).toInt()
             requestReturns[generated] = {
-                onResult(it[permission] == PackageManager.PERMISSION_GRANTED)
+                em.onSuccess(it[permission] == PackageManager.PERMISSION_GRANTED)
             }
             ActivityCompat.requestPermissions(this, arrayOf(permission), generated)
-
         } else {
-            onResult(true)
+            em.onSuccess(true)
         }
-    }
+    }.cache()
 
     @TargetApi(23)
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

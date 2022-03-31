@@ -8,6 +8,14 @@ All are available in Maven Central under `com.lightningkite.rx`.
 
 MIT License
 
+# Examples
+
+There's a full sample project in [view-generator-example](https://github.com/lightningkite/rxkotlin-plus/tree/master/view-generator-example/src/main/java/com/lightningkite/rxexample).
+
+One view I'd point out in particular is the [login demonstration](), which shows how to make a typical login page.
+
+In addition, check out our [cheat sheet](cheat-sheet.md) page for a bunch of individual feature examples!
+
 # Packages
 
 ## rxplus

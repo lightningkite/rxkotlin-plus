@@ -17,14 +17,12 @@ import java.time.format.*
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rxexample.databinding.DateButtonDemoBinding
-import com.lightningkite.rx.android.subscribeAutoDispose
+import com.lightningkite.rx.android.into
 import io.reactivex.rxjava3.core.Observable
 import java.util.*
 import java.time.*
 
 class DateButtonDemoVG() : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("ZonedDateTime Button Demo")
-
     val date: ValueSubject<ZonedDateTime> = ValueSubject(ZonedDateTime.now())
 
     override fun generate(dependency: ActivityAccess): View {
@@ -32,7 +30,7 @@ class DateButtonDemoVG() : ViewGenerator {
         val view = xml.root
 
         date.map { it -> it.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM)) }
-            .subscribeAutoDispose<Observable<String>, TextView, String>(xml.text, TextView::setText)
+            .into<Observable<String>, TextView, String>(xml.text, TextView::setText)
         date.toSubjectLocalDate().bind(xml.dateButton)
         date.toSubjectLocalTime().bind(xml.timeButton)
 

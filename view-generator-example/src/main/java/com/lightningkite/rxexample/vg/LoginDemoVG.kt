@@ -3,21 +3,18 @@ package com.lightningkite.rxexample.vg
 
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ViewFlipper
 import com.lightningkite.rxexample.R
 import com.lightningkite.rxexample.databinding.LoginDemoBinding
 import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.bind
-import com.lightningkite.rx.android.bindString
-import com.lightningkite.rx.android.onClick
+import com.lightningkite.rx.android.*
 import com.lightningkite.rx.android.resources.ViewStringRaw
-import com.lightningkite.rx.android.showLoading
 import com.lightningkite.rx.viewgenerators.*
 import io.reactivex.rxjava3.subjects.Subject
 
 class LoginDemoVG(
     val stack: ViewGeneratorStack
 ) : ViewGenerator {
-    override val titleString: ViewStringRaw get() = ViewStringRaw("Log In Demo")
 
     val username = ValueSubject("")
     val password = ValueSubject("")
@@ -29,11 +26,11 @@ class LoginDemoVG(
         val xml = LoginDemoBinding.inflate(dependency.activity.layoutInflater)
         val view = xml.root
 
-        username.bind<Subject<String>>(xml.username)
-        password.bind<Subject<String>>(xml.password)
-        verifyPassword.bind<Subject<String>>(xml.verifyPassword)
-        agree.bind<Subject<Boolean>>(xml.agree)
-        loading.showLoading(xml.submitLoading)
+        username.bind(xml.username)
+        password.bind(xml.password)
+        verifyPassword.bind(xml.verifyPassword)
+        agree.bind(xml.agree)
+        loading.into(xml.submitLoading, ViewFlipper::showLoading)
         xml.submit.onClick {
             this.submit()
         }

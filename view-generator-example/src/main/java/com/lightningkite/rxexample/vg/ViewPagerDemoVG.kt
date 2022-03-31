@@ -13,7 +13,6 @@ import com.lightningkite.rxexample.databinding.ViewPagerDemoBinding
 import com.lightningkite.rx.android.showIn
 
 class ViewPagerDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("View Pager Demo")
 
     val items: List<String> = listOf(
         "First",

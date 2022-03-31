@@ -25,7 +25,7 @@ fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
     makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    observeOn(RequireMainThread).subscribeBy { value ->
         //Fix view count
         val excessViews = existingViews.size - value.size
         if (excessViews > 0) {

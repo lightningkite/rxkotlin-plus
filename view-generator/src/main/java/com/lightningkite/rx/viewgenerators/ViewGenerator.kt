@@ -10,13 +10,6 @@ import com.lightningkite.rx.android.resources.ViewStringRaw
  * Holds data and can render itself to an Android [View] that stays updated.
  */
 interface ViewGenerator {
-
-    /**
-     * The title of the view.
-     */
-    val titleString: ViewString
-        get() = ViewStringRaw("")
-
     /**
      * Generates a view representing this object, given access to the activity.
      */

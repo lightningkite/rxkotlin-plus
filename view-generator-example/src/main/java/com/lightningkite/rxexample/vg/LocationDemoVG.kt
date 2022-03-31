@@ -13,14 +13,13 @@ import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rx.android.onClick
 import com.lightningkite.rxexample.databinding.LocationDemoBinding
-import com.lightningkite.rx.android.subscribeAutoDispose
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.mapFromNullable
 import com.lightningkite.rx.optional
 import io.reactivex.rxjava3.core.Observable
 import java.util.*
 
 class LocationDemoVG : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Location Demo")
 
     val locationInfo = ValueSubject<Optional<Location>>(Optional.empty())
 
@@ -40,7 +39,7 @@ class LocationDemoVG : ViewGenerator {
             } else {
                 return@mapFromNullable "Nothing yet"
             }
-        }.subscribeAutoDispose(xml.locationDisplay, TextView::setText)
+        }.into(xml.locationDisplay, TextView::setText)
         return view
     }
 }

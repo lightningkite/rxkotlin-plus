@@ -18,7 +18,7 @@ fun <SOURCE: Subject<Int>> SOURCE.bind(
     seekBar: SeekBar
 ): SOURCE {
     var suppress = false
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    observeOn(RequireMainThread).subscribeBy { value ->
         if (!suppress) {
             suppress = true
             seekBar.progress = value

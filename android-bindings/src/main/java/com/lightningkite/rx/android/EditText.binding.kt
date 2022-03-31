@@ -17,7 +17,7 @@ import io.reactivex.rxjava3.subjects.Subject
  * name.bind(editTextView)
  */
 fun <SOURCE: Subject<String>> SOURCE.bind(editText: EditText): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    observeOn(RequireMainThread).subscribeBy { value ->
         if (value != editText.text.toString()) {
             editText.setText(value)
         }

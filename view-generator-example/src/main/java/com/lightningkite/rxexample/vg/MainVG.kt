@@ -15,11 +15,9 @@ import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rx.android.onClick
 import com.lightningkite.rxexample.databinding.MainBinding
-import com.lightningkite.rx.android.subscribeAutoDispose
+import com.lightningkite.rx.android.into
 
 class MainVG : ViewGenerator, EntryPoint {
-    override val titleString: ViewString get() = ViewStringRaw("Main")
-
     val stack: StackSubject<ViewGenerator> = ValueSubject(listOf<ViewGenerator>())
     override val mainStack: StackSubject<ViewGenerator>?
         get() = stack
@@ -34,9 +32,9 @@ class MainVG : ViewGenerator, EntryPoint {
         val view = xml.root
 
         stack.showIn(xml.mainContent, dependency)
-        stack.map { it -> it.lastOrNull()?.titleString?.get(dependency.context) ?: "" }
-            .subscribeAutoDispose<Observable<String>, TextView, String>(xml.title, TextView::setText)
-        shouldBackBeShown.subscribeAutoDispose(xml.mainBack, View::visible)
+        stack.map { it -> it.lastOrNull()?.let { it::class.simpleName } ?: "" }
+            .into(xml.title, TextView::setText)
+        shouldBackBeShown.into(xml.mainBack, View::visible)
         xml.mainBack.onClick { this.stack.pop() }
 
         return view

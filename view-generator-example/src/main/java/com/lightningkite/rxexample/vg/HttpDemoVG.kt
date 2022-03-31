@@ -21,6 +21,7 @@ import com.lightningkite.rxexample.databinding.ComponentTextBinding
 import com.lightningkite.rxexample.databinding.HttpDemoBinding
 import com.lightningkite.rx.android.*
 import io.reactivex.rxjava3.core.Observable
+import kotlinx.serialization.Serializable
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
@@ -29,11 +30,8 @@ class HttpDemoVG(
     //--- Extends (overwritten on flow generation)
 ) : ViewGenerator {
 
-
-    //--- Title (overwritten on flow generation)
-    override val titleString: ViewString get() = ViewStringRaw("Http Demo")
-    
     //--- Data
+    @Serializable
     data class Post(val userId: Long, val id: Long, val title: String, val body: String)
 
     //--- Generate Start (overwritten on flow generation)
@@ -47,7 +45,7 @@ class HttpDemoVG(
         //--- Set Up xml.progress
         xml.progress.run {
             xml.progress.max =
-                10000; call.map { it.approximate }.startWithItem(0f).subscribeAutoDispose(
+                10000; call.map { it.approximate }.startWithItem(0f).into(
             xml.progress
         ) { xml.progress.progress = (it * 10000).toInt() }
         }
@@ -57,17 +55,16 @@ class HttpDemoVG(
         call
             .mapNotNull { it.response }
             .startWithItem(listOf(Post(0, 0, "Loading...", "-")))
-            .showIn(xml.items
-            ) label@{ observable ->
+            .showIn(xml.items) { observable ->
                 //--- Make Subview For xml.items
                 val cellXml = ComponentTextBinding.inflate(dependency.layoutInflater)
                 val cellView = cellXml.root
 
                 //--- Set Up cellXml.label
                 observable.map { it -> it.title }
-                    .subscribeAutoDispose<Observable<String>, TextView, String>(cellXml.label, TextView::setText)
+                    .into(cellXml.label, TextView::setText)
                 //--- End Make Subview For xml.items
-                return@label cellView
+                cellView
             }
 
         //--- Generate End (overwritten on flow generation)

@@ -25,7 +25,7 @@ fun <T : Any> TabLayout.bind(
     for (tab in tabs) {
         addTab(newTab().setText(tab.let(toString)))
     }
-    selected.observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    selected.observeOn(RequireMainThread).subscribeBy { value ->
         val index = tabs.indexOf(value)
         if (index != -1) {
             this.getTabAt(index)?.select()

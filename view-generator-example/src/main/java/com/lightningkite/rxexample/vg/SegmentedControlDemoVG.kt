@@ -10,7 +10,6 @@ import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rxexample.databinding.SegmentedControlDemoBinding
 
 class SegmentedControlDemoVG() : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Segmented Control Demo")
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = SegmentedControlDemoBinding.inflate(dependency.layoutInflater)

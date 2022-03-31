@@ -11,14 +11,12 @@ import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rxexample.databinding.ControlsDemoBinding
 import com.lightningkite.rx.android.showIn
-import com.lightningkite.rx.android.subscribeAutoDispose
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.toSubjectString
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.Subject
 
 class ControlsDemoVG() : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Controls Demo")
-
     val text: ValueSubject<String> = ValueSubject("")
     val options: ValueSubject<List<String>> =
         ValueSubject(listOf("Apple", "Banana", "Chili Pepper", "Dragon Fruit"))
@@ -33,7 +31,7 @@ class ControlsDemoVG() : ViewGenerator {
             .bind(xml.editableText)
             .bind(xml.editableAutoText)
             .bind(xml.editableTextBig)
-            .subscribeAutoDispose(xml.editableTextCopy, TextView::setText)
+            .into(xml.editableTextCopy, TextView::setText)
         options
             .showIn(xml.editableAutoText, this.text)
             .showIn(xml.spinner, text)

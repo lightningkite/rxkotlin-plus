@@ -16,7 +16,6 @@ import com.lightningkite.rxexample.databinding.ComponentTestBinding
 import com.lightningkite.rxexample.databinding.SelectDemoBinding
 
 class SelectDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Select Demo")
 
     val options: List<ViewGenerator> = listOf(
         BasicExampleVG(),
@@ -48,10 +47,10 @@ class SelectDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
         Observable.just(options).showIn(xml.list){ obs: Observable<ViewGenerator> ->
             val xml = ComponentTestBinding.inflate(dependency.layoutInflater)
             val view = xml.root
-            obs.subscribeAutoDispose(xml.label) { setText(it.titleString) }
+            obs.into(xml.label) { text = it::class.java.simpleName ?: "" }
             xml.button.clicks()
                 .flatMap { obs.take(1) }
-                .subscribeAutoDispose(view) { selectVG(it) }
+                .into(view) { selectVG(it) }
             view
         }
 

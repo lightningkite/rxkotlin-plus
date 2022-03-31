@@ -287,13 +287,6 @@ private fun generateFile(
                 }
             }
             line()
-            line("${CodeSection.sectionMarker} Title ${CodeSection.overwriteMarker}")
-            line(
-                """override val titleString: ViewString = ViewStringRaw("${
-                    viewName.replace(Regex("[A-Z]")) { " " + it.value }
-                        .trim()
-                }")""")
-            line()
             line("${CodeSection.sectionMarker} Generate Start ${CodeSection.overwriteMarker}")
             line("""override fun generate(dependency: ActivityAccess): View {""")
             line()
