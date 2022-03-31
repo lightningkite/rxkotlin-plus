@@ -2,16 +2,13 @@ package com.lightningkite.rx.viewgenerators
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
-import androidx.core.app.ActivityOptionsCompat
-import androidx.transition.Slide
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
+import android.widget.TextView
+import androidx.core.view.descendants
+import androidx.transition.*
 
 /**
  * Shows a single view with animated transitions to other views.
@@ -55,7 +52,40 @@ class SwapView @JvmOverloads constructor(
         }
 
         transition()?.let {
-            TransitionManager.beginDelayedTransition(this, it)
+            val oldElements = (oldView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
+            val newElements = (newView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
+            val sharedTransitionNames: Set<String> = oldElements.intersect(newElements)
+            val sharedViews = (((oldView as? ViewGroup)?.descendants?.filter { it.transitionName in sharedTransitionNames } ?: sequenceOf()) +
+            ((newView as? ViewGroup)?.descendants?.filter { it.transitionName in sharedTransitionNames } ?: sequenceOf())).toSet()
+
+            sharedViews.forEach {
+                generateSequence(it.parent as? ViewGroup) { it.parent as? ViewGroup }
+                    .takeWhile { it != this }
+                    .forEach { isTransitionGroup = false }
+            }
+            println("Shared elements: ${sharedViews.joinToString()}")
+            TransitionManager.beginDelayedTransition(this, TransitionSet().apply {
+                ordering = TransitionSet.ORDERING_TOGETHER
+                addTransition(TransitionSet().apply {
+                    ordering = TransitionSet.ORDERING_TOGETHER
+                    addTransition(ChangeBounds())
+                    addTransition(ChangeTransform())
+                    addTransition(ChangeImageTransform())
+                    addTransition(ChangeClipBounds())
+                    for (v in sharedViews) {
+                        addTarget(v)
+                    }
+                })
+                addTransition(it.apply {
+                    for (v in sharedViews) {
+                        println("Excluded $v from normal transition $this")
+                        println("Parent groups are ${generateSequence(v) { it.parent as? View }.filterIsInstance<ViewGroup>().joinToString() { it.isTransitionGroup.toString() }}")
+                        excludeTarget(v, true)
+                    }
+//                    excludeTarget(TextView::class.java, true)
+//                    addTarget(TextView::class.java)
+                })
+            })
         }
         addView(
             newView, FrameLayout.LayoutParams(
