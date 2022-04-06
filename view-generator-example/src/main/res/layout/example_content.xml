@@ -18,8 +18,8 @@
                 android:layout_margin="8dp"
                 android:background="@color/colorAccent"
                 android:padding="4dp"
-                android:transitionName="title"
                 android:text="@string/welcome"
+                android:transitionName="title"
                 />
 
         <TextView

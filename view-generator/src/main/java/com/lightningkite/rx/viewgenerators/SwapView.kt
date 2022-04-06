@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.descendants
 import androidx.transition.*
 
@@ -66,22 +67,28 @@ class SwapView @JvmOverloads constructor(
             println("Shared elements: ${sharedViews.joinToString()}")
             TransitionManager.beginDelayedTransition(this, TransitionSet().apply {
                 ordering = TransitionSet.ORDERING_TOGETHER
-                addTransition(TransitionSet().apply {
-                    ordering = TransitionSet.ORDERING_TOGETHER
-                    addTransition(ChangeBounds())
-                    addTransition(ChangeTransform())
-                    addTransition(ChangeImageTransform())
-                    addTransition(ChangeClipBounds())
-                    for (v in sharedViews) {
-                        addTarget(v)
-                    }
-                })
+//                addTransition(TransitionSet().apply {
+//                    ordering = TransitionSet.ORDERING_TOGETHER
+//                    addTransition(ChangeBounds())
+//                    addTransition(ChangeTransform())
+//                    addTransition(ChangeImageTransform())
+//                    addTransition(ChangeClipBounds())
+//                    for (v in sharedViews) {
+//                        addTarget(v)
+//                    }
+//                })
                 addTransition(it.apply {
-                    for (v in sharedViews) {
-                        println("Excluded $v from normal transition $this")
-                        println("Parent groups are ${generateSequence(v) { it.parent as? View }.filterIsInstance<ViewGroup>().joinToString() { it.isTransitionGroup.toString() }}")
-                        excludeTarget(v, true)
+                    fun process(view: View) {
+                        if(view in sharedViews) {
+                            // pass
+                        } else if(view is ViewGroup && view.isTransitionGroup) {
+                            view.children.forEach { process(it) }
+                        } else {
+                            addTarget(view)
+                        }
                     }
+                    oldView?.let { process(it) }
+                    process(newView)
 //                    excludeTarget(TextView::class.java, true)
 //                    addTarget(TextView::class.java)
                 })
