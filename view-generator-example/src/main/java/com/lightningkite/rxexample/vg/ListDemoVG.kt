@@ -19,7 +19,7 @@ import kotlin.random.Random
 
 class ListDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
 
-    val data = ValueSubject(listOf<Int>())
+    val data = ValueSubject(listOf<Int>(20, 40, 60, 80, 100))
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = ListDemoBinding.inflate(dependency.layoutInflater)

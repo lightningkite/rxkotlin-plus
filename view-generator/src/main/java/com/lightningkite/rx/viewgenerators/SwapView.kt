@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.view.descendants
-import androidx.transition.*
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
 
 /**
  * Shows a single view with animated transitions to other views.
@@ -41,7 +44,7 @@ class SwapView @JvmOverloads constructor(
     /**
      * Swaps from the current view to another one with the given [transition].
      */
-    fun swap(to: View?, transition: () -> Transition?) {
+    fun swap(to: View?, transition: TransitionTriple) {
         val oldView = currentView
         var newView = to
         hasCurrentView = newView != null
@@ -52,55 +55,58 @@ class SwapView @JvmOverloads constructor(
             visibility = View.VISIBLE
         }
 
-        transition()?.let {
-            val oldElements = (oldView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
-            val newElements = (newView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
-            val sharedTransitionNames: Set<String> = oldElements.intersect(newElements)
-            val sharedViews = (((oldView as? ViewGroup)?.descendants?.filter { it.transitionName in sharedTransitionNames } ?: sequenceOf()) +
-            ((newView as? ViewGroup)?.descendants?.filter { it.transitionName in sharedTransitionNames } ?: sequenceOf())).toSet()
-
-            sharedViews.forEach {
-                generateSequence(it.parent as? ViewGroup) { it.parent as? ViewGroup }
-                    .takeWhile { it != this }
-                    .forEach { isTransitionGroup = false }
+        val oldElements = (oldView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
+        val newElements = (newView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
+        val sharedNames = oldElements.intersect(newElements)
+        fun View.unshared(list: MutableList<View> = ArrayList<View>()): List<View> {
+            when {
+                this.transitionName in sharedNames -> {
+                    return list
+                }
+                this is RecyclerView -> list.add(this)
+                this is ViewGroup -> {
+                    if (this.isTransitionGroup) list.add(this)
+                    else this.children.forEach { it.unshared(list) }
+                }
+                else -> {
+                    list.add(this)
+                }
             }
-            println("Shared elements: ${sharedViews.joinToString()}")
-            TransitionManager.beginDelayedTransition(this, TransitionSet().apply {
-                ordering = TransitionSet.ORDERING_TOGETHER
-//                addTransition(TransitionSet().apply {
-//                    ordering = TransitionSet.ORDERING_TOGETHER
-//                    addTransition(ChangeBounds())
-//                    addTransition(ChangeTransform())
-//                    addTransition(ChangeImageTransform())
-//                    addTransition(ChangeClipBounds())
-//                    for (v in sharedViews) {
-//                        addTarget(v)
-//                    }
-//                })
-                addTransition(it.apply {
-                    fun process(view: View) {
-                        if(view in sharedViews) {
-                            // pass
-                        } else if(view is ViewGroup && view.isTransitionGroup) {
-                            view.children.forEach { process(it) }
-                        } else {
-                            addTarget(view)
-                        }
-                    }
-                    oldView?.let { process(it) }
-                    process(newView)
-//                    excludeTarget(TextView::class.java, true)
-//                    addTarget(TextView::class.java)
-                })
-            })
+            return list
         }
+
+        val newUnshared = newView.unshared()
+        val oldUnshared = oldView?.unshared()
+
+        TransitionManager.beginDelayedTransition(this, TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            transition.takeIf { sharedNames.isNotEmpty() }?.shared?.invoke()?.apply {
+                setMatchOrder(Transition.MATCH_NAME, Transition.MATCH_INSTANCE)
+                sharedNames.forEach {
+                    addTarget(it)
+                }
+            }?.let { addTransition(it) }
+            newUnshared.takeIf { it.isNotEmpty() }?.let {
+                transition.enter.invoke()?.apply {
+                    setMatchOrder(Transition.MATCH_INSTANCE)
+                    newUnshared.forEach { addTarget(it) }
+                }?.let { addTransition(it) }
+            }
+            oldUnshared?.takeIf { it.isNotEmpty() }?.let { oldUnshared ->
+                transition.exit.invoke()?.apply {
+                    setMatchOrder(Transition.MATCH_INSTANCE)
+                    oldUnshared.forEach { addTarget(it) }
+                }?.let { addTransition(it) }
+            }
+        })
+
+        removeView(oldView)
         addView(
             newView, FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
-        removeView(oldView)
 
         currentView = newView
         post {
@@ -108,4 +114,3 @@ class SwapView @JvmOverloads constructor(
         }
     }
 }
-

@@ -33,8 +33,11 @@ import java.util.*
 @Suppress("NAME_SHADOWING")
 class VideoDemoVG(
     //--- Dependencies (overwritten on flow generation)
-    //--- Extends (overwritten on flow generation)
-) : ViewGenerator {
+    //--- Extends
+) : ViewGenerator, UsesCustomTransition {
+
+    //--- Transition
+    override val transition: StackTransition = StackTransition.PULL_UP
 
     //--- Properties
     val currentVideo =

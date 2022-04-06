@@ -1,11 +1,9 @@
 package com.lightningkite.rx.viewgenerators
 
-import androidx.transition.Transition
-import androidx.transition.Fade
-import io.reactivex.rxjava3.kotlin.addTo
 import com.lightningkite.rx.android.removed
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.util.concurrent.TimeUnit
 
@@ -17,7 +15,7 @@ import java.util.concurrent.TimeUnit
 fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     swapView: SwapView,
     dependency: ActivityAccess,
-    transition: () -> Transition? = { Fade() }
+    transition: TransitionTriple = TransitionTriple.FADE
 ): SOURCE {
     var currentData: ViewGenerator? = null
     this.subscribeBy { datas ->
@@ -39,7 +37,7 @@ fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
 fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
     swapView: SwapView,
     dependency: ActivityAccess,
-    viewTransition: ViewTransition = ViewTransition.PUSH_POP
+    stackTransition: StackTransition = StackTransition.PUSH_POP
 ): SOURCE {
     var currentData: ViewGenerator? = null
     var currentStackSize = 0
@@ -49,10 +47,11 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
         if (currentData == newData) return@subscribeBy
         swapView.swap(
             newData?.generate(dependency), when {
-                currentStackSize == 0 || newStackSize == 0 -> viewTransition.neutral
-                newStackSize > currentStackSize -> viewTransition.push
-                newStackSize < currentStackSize -> viewTransition.pop
-                else -> viewTransition.neutral
+                currentStackSize == 0 -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.push
+                newStackSize == 0 -> (currentData as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop
+                newStackSize > currentStackSize -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.push
+                newStackSize < currentStackSize -> (currentData as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop
+                else -> (newData as? UsesCustomTransition)?.transition?.neutral ?: stackTransition.neutral
             }
         )
         currentData = newData
@@ -60,3 +59,4 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
     }.addTo(swapView.removed)
     return this
 }
+
