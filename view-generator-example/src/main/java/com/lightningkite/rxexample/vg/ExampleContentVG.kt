@@ -70,12 +70,14 @@ class ExampleContentVG : ViewGenerator {
                     text = "Scroll to Top"
                     onClick { scrollToTop.onNext(Unit) }
                 }
-            )).apply { scrollToTop.into(this) { smoothScrollTo(0, 0) } }.applyDefaultPadding()
+            ).applyDefaultPadding()
+        ).apply { scrollToTop.into(this) { smoothScrollTo(0, 0) } }
     }
 }
 
-private class Preview: DslPreview {
-    constructor(context: Context):super(context) {}
-    constructor(context: Context, attrs: AttributeSet?):super(context, attrs) {}
+private class Preview : DslPreview {
+    constructor(context: Context) : super(context) {}
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
+
     override val vg get() = ExampleContentVG()
 }

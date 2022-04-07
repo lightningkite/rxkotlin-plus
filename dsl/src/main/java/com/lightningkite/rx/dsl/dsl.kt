@@ -144,7 +144,7 @@ fun ViewDsl.f(vararg elements: View) = FrameLayout(context).apply {
     })
 }
 fun ViewDsl.scroll(view: View) = ScrollView(context).apply {
-    addView(view, view.flparams)
+    addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
 }
 
 fun ViewDsl.gLSurface() = GLSurfaceView(context).applyDefaultSpacing()
