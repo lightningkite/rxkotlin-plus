@@ -309,8 +309,9 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNulla
  * Subscribes to the view clicks observable which is fired any time the view is clicked. The action provided will be called on click.
  * disabledMilliseconds is the time before it can be pressed again.
  */
-fun View.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
+fun <V: View> V.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit): V {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+    return this
 }
 
 /**

@@ -41,6 +41,7 @@ dependencies {
     api(project(":view-generator"))
     api(project(":okhttp"))
     api(project(":okhttp-resources"))
+    api(project(":dsl"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
