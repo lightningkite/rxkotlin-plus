@@ -20,7 +20,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
  * values.showIn(autoCompleteView, result, { it })
  */
 @JvmName("showInWithObserver")
-fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     autoCompleteTextView: AutoCompleteTextView,
     onItemSelected: Observer<T>,
     toString: (T) -> String = { it.toString() }
@@ -36,7 +36,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
  * val result = ""
  * values.showIn(autoCompleteView,{ result = it }, { it })
  */
-fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
     autoCompleteTextView: AutoCompleteTextView,
     onItemSelected: (T) -> Unit = { autoCompleteTextView.setText(toString(it)) },
     toString: (T) -> String = { it.toString() }

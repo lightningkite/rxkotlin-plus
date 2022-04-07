@@ -3,19 +3,13 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import io.reactivex.rxjava3.core.Observable
-import com.lightningkite.rx.viewgenerators.StackSubject
 import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.bindString
-import com.lightningkite.rx.android.visible
-
-import com.lightningkite.rx.viewgenerators.EntryPoint
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
-import com.lightningkite.rx.android.onClick
-import com.lightningkite.rxexample.databinding.MainBinding
 import com.lightningkite.rx.android.into
+import com.lightningkite.rx.android.visible
+import com.lightningkite.rx.viewgenerators.*
+import com.lightningkite.rx.viewgenerators.transition.StackTransition
+import com.lightningkite.rxexample.databinding.MainBinding
+import io.reactivex.rxjava3.core.Observable
 
 class MainVG : ViewGenerator, EntryPoint {
     val stack: StackSubject<ViewGenerator> = ValueSubject(listOf<ViewGenerator>())
@@ -35,7 +29,7 @@ class MainVG : ViewGenerator, EntryPoint {
         stack.map { it -> it.lastOrNull()?.let { it::class.simpleName } ?: "" }
             .into(xml.title, TextView::setText)
         shouldBackBeShown.into(xml.mainBack, View::visible)
-        xml.mainBack.onClick { this.stack.pop() }
+        xml.mainBack.setOnClickListener { this.stack.pop() }
 
         return view
     }

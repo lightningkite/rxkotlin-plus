@@ -10,25 +10,21 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.android.into
+import com.lightningkite.rx.android.showIn
+import com.lightningkite.rx.mapNotNull
 import com.lightningkite.rx.okhttp.HttpClient
 import com.lightningkite.rx.okhttp.readJson
-
-import com.lightningkite.rx.mapNotNull
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
+import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.viewgenerators.ViewGenerator
+import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.ComponentTextBinding
 import com.lightningkite.rxexample.databinding.HttpDemoBinding
-import com.lightningkite.rx.android.*
-import io.reactivex.rxjava3.core.Observable
 import kotlinx.serialization.Serializable
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
-class HttpDemoVG(
-    //--- Dependencies (overwritten on flow generation)
-    //--- Extends (overwritten on flow generation)
-) : ViewGenerator {
+class HttpDemoVG : ViewGenerator {
 
     //--- Data
     @Serializable
@@ -38,9 +34,11 @@ class HttpDemoVG(
     override fun generate(dependency: ActivityAccess): View {
         val xml = HttpDemoBinding.inflate(dependency.layoutInflater)
         val view = xml.root
-        
+
         //--- Call
-        val call = HttpClient.callWithProgress("https://jsonplaceholder.typicode.com/posts/", parse = { it.readJson<List<Post>>() })
+        val call = HttpClient.callWithProgress(
+            "https://jsonplaceholder.typicode.com/posts/",
+            parse = { it.readJson<List<Post>>() })
 
         //--- Set Up xml.progress
         xml.progress.run {
@@ -68,14 +66,14 @@ class HttpDemoVG(
             }
 
         //--- Generate End (overwritten on flow generation)
-        
+
         return view
     }
-    
+
     //--- Init
 
     init {
-    //--- Init End
+        //--- Init End
     }
 
     //--- Actions

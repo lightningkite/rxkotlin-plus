@@ -1,16 +1,15 @@
 //! This file will translate using Khrysalis.
 package com.lightningkite.rxexample.vg
 
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ViewFlipper
-import com.lightningkite.rxexample.R
-import com.lightningkite.rxexample.databinding.LoginDemoBinding
 import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.*
+import com.lightningkite.rx.android.bind
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.resources.ViewStringRaw
+import com.lightningkite.rx.android.showLoading
 import com.lightningkite.rx.viewgenerators.*
-import io.reactivex.rxjava3.subjects.Subject
+import com.lightningkite.rxexample.databinding.LoginDemoBinding
 
 class LoginDemoVG(
     val stack: ViewGeneratorStack
@@ -31,7 +30,7 @@ class LoginDemoVG(
         verifyPassword.bind(xml.verifyPassword)
         agree.bind(xml.agree)
         loading.into(xml.submitLoading, ViewFlipper::showLoading)
-        xml.submit.onClick {
+        xml.submit.setOnClickListener {
             this.submit()
         }
 
@@ -39,23 +38,23 @@ class LoginDemoVG(
     }
 
     fun submit() {
-        if(username.value.isBlank()) {
+        if (username.value.isBlank()) {
             showDialog(ViewStringRaw("Username cannot be blank"))
             return
         }
-        if(password.value.isBlank()) {
+        if (password.value.isBlank()) {
             showDialog(ViewStringRaw("Password cannot be blank"))
             return
         }
-        if(verifyPassword.value.isBlank()) {
+        if (verifyPassword.value.isBlank()) {
             showDialog(ViewStringRaw("Verify Password cannot be blank"))
             return
         }
-        if(password.value != verifyPassword.value) {
+        if (password.value != verifyPassword.value) {
             showDialog(ViewStringRaw("Passwords don't match"))
             return
         }
-        if(!agree.value) {
+        if (!agree.value) {
             showDialog(ViewStringRaw("You must agree to the terms"))
             return
         }

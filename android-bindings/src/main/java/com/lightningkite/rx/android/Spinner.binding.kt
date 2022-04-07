@@ -23,7 +23,7 @@ var butterflySpinnerRow: Int = android.R.layout.simple_spinner_item
  * val result = PublishSubject<String>()
  * values.showIn(spinnerView, result, { it })
  */
-fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
     spinner: Spinner,
     selected: Subject<T>,
     toString: (T) -> String = { it.toString() }
@@ -83,7 +83,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
  * val result = PublishSubject<String>()
  * values.showIn(spinnerView, result, { ValueSubject(it) })
  */
-fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
+fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showInObservable(
     spinner: Spinner,
     selected: Subject<T>,
     toString: (T) -> Observable<String>

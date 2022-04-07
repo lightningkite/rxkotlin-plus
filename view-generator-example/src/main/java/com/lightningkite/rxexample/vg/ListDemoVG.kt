@@ -3,16 +3,13 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.jakewharton.rxbinding4.view.clicks
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import io.reactivex.rxjava3.core.Observable
-import com.lightningkite.rx.viewgenerators.StackSubject
 import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.*
-import com.lightningkite.rx.viewgenerators.EntryPoint
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
-import com.lightningkite.rx.android.onClick
+import com.lightningkite.rx.android.into
+import com.lightningkite.rx.android.showIn
+import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.viewgenerators.StackSubject
+import com.lightningkite.rx.viewgenerators.ViewGenerator
+import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.ComponentTextBinding
 import com.lightningkite.rxexample.databinding.ListDemoBinding
 import kotlin.random.Random
@@ -31,7 +28,7 @@ class ListDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
             cell.root
         }
 
-        xml.addItem.onClick {
+        xml.addItem.setOnClickListener {
             data.value = (data.value + Random.nextInt(1, 100)).sorted()
         }
 

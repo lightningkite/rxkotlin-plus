@@ -2,15 +2,14 @@
 package com.lightningkite.rxexample.vg
 
 import android.view.View
+import com.lightningkite.rx.ValueSubject
+import com.lightningkite.rx.android.showIn
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.StackSubject
-import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.bind
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
+import com.lightningkite.rx.viewgenerators.ViewGenerator
+import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.ComponentTestBinding
 import com.lightningkite.rxexample.databinding.ViewPagerDemoBinding
-import com.lightningkite.rx.android.showIn
 
 class ViewPagerDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
 

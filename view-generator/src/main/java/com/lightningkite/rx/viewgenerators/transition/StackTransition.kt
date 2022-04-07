@@ -1,7 +1,7 @@
-package com.lightningkite.rx.viewgenerators
+package com.lightningkite.rx.viewgenerators.transition
 
+import android.content.res.Resources
 import android.view.Gravity
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.transition.*
 
@@ -14,6 +14,22 @@ object TransitionGenerators {
     }
     val none: () -> Transition? = { null }
     val fade: () -> Transition? = { Fade() }
+    val growFade: () -> Transition? = {
+        TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            addTransition(Scale(0.75f))
+            addTransition(Offset(0f, -50f * Resources.getSystem().displayMetrics.density))
+            addTransition(Fade())
+        }
+    }
+    val shrinkFade: () -> Transition? = {
+        TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            addTransition(Scale(1.33f))
+            addTransition(Offset(0f, -50f * Resources.getSystem().displayMetrics.density))
+            addTransition(Fade())
+        }
+    }
     fun slide(direction: Int): () -> Transition? = {
         SlideFixed(direction).apply {
             interpolator = decelerate
@@ -35,6 +51,8 @@ data class TransitionTriple(
         val PULL_UP = with(TransitionGenerators) { TransitionTriple(slide(Gravity.BOTTOM), slide(Gravity.TOP), shared) }
         val FADE = with(TransitionGenerators) { TransitionTriple(fade, fade, shared) }
         val NONE = with(TransitionGenerators) { TransitionTriple(none, none, none) }
+        val GROW_FADE = with(TransitionGenerators) { TransitionTriple(growFade, growFade, shared) }
+        val SHRINK_FADE = with(TransitionGenerators) { TransitionTriple(growFade, growFade, shared) }
     }
 }
 
@@ -63,8 +81,14 @@ data class StackTransition(
         val FADE_IN_OUT = StackTransition(TransitionTriple.FADE, TransitionTriple.FADE, TransitionTriple.FADE)
 
         /**
+         * A modal-y transition, where the view fades in and grows.
+         */
+        val MODAL = StackTransition(TransitionTriple.GROW_FADE, TransitionTriple.SHRINK_FADE, TransitionTriple.FADE)
+
+        /**
          * Don't animate.
          */
         val NONE = StackTransition(TransitionTriple.NONE, TransitionTriple.NONE, TransitionTriple.NONE)
     }
 }
+

@@ -1,4 +1,4 @@
-package com.lightningkite.rx.viewgenerators
+package com.lightningkite.rx.viewgenerators.transition
 
 import android.animation.*
 import android.os.Build

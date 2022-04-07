@@ -10,29 +10,28 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import com.lightningkite.rx.okhttp.ConnectedWebSocket
+import com.lightningkite.rx.ValueSubject
+import com.lightningkite.rx.android.bind
+import com.lightningkite.rx.android.into
+import com.lightningkite.rx.android.removed
+import com.lightningkite.rx.android.showIn
 import com.lightningkite.rx.okhttp.HttpClient
 import com.lightningkite.rx.okhttp.WebSocketFrame
-import com.lightningkite.rx.ValueSubject
-import io.reactivex.rxjava3.kotlin.addTo
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
+import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.viewgenerators.ViewGenerator
+import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.ComponentTextBinding
 import com.lightningkite.rxexample.databinding.WebsocketDemoBinding
-import com.lightningkite.rx.android.*
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.subjects.Subject
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
-class WebsocketDemoVG(
-    //--- Dependencies (overwritten on flow generation)
-    //--- Extends (overwritten on flow generation)
-) : ViewGenerator {
+class WebsocketDemoVG : ViewGenerator {
 
     //--- Data
-    val socket = HttpClient.webSocket("wss://echo.websocket.org").replay(1).refCount()
+    val socket = HttpClient.webSocket("wss://ws.ifelse.io").replay(1).refCount()
     val text: ValueSubject<String> = ValueSubject("")
 
     //--- Generate Start (overwritten on flow generation)
@@ -42,33 +41,30 @@ class WebsocketDemoVG(
 
         //--- Set Up xml.items
         val itemsList = ArrayList<WebSocketFrame>()
-        WebSocketFrame()
         socket.switchMap { it -> it.read }.map { it ->
             println("Adding item")
             itemsList.add(it)
             while (itemsList.size > 20) {
                 itemsList.removeAt(0)
             }
-            return@map itemsList as List<WebSocketFrame>
-        }.startWithItem(itemsList).retry().showIn(xml.items, makeView = label@{ observable ->
+            return@map itemsList
+        }.startWithItem(itemsList).retry().showIn(xml.items) { observable ->
             //--- Make Subview For xml.items (overwritten on flow generation)
             val cellXml = ComponentTextBinding.inflate(dependency.layoutInflater)
             val cellView = cellXml.root
 
-            //--- Set Up cellXml.label (overwritten on flow generation)
-            Observable.just("Some Text").into(cellXml.label, TextView::setText)
+            //--- Set Up cellXml.label
+            observable.map { it.text ?: "<Binary>" }.into(cellXml.label, TextView::setText)
             //--- End Make Subview For xml.items (overwritten on flow generation)
-            return@label cellView
+            cellView
         }
-        )
 
         //--- Set Up xml.input
         text.bind<Subject<String>>(xml.input)
 
         //--- Set Up xml.submit
-        xml.submit.onClick {
-            this.socket.take(1).subscribe { it -> it.write.onNext(WebSocketFrame(text = this.text.value)) }
-                .addTo(xml.submit.removed)
+        xml.submit.setOnClickListener {
+            this.socket.firstOrError().into(xml.submit) { it -> it.write.onNext(WebSocketFrame(text = text.value)) }
         }
 
         //--- Generate End (overwritten on flow generation)

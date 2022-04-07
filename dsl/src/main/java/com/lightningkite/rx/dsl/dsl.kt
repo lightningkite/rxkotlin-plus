@@ -8,7 +8,9 @@ import android.webkit.WebView
 import android.widget.*
 import androidx.annotation.GravityInt
 import androidx.annotation.StringRes
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.*
+import com.airbnb.paris.extensions.style
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.onClick
 import com.lightningkite.rx.android.resources.StringResource
@@ -150,46 +152,26 @@ fun ViewDsl.scroll(view: View) = ScrollView(context).apply {
 fun ViewDsl.gLSurface() = GLSurfaceView(context).applyDefaultSpacing()
 fun ViewDsl.viewFlipper() = ViewFlipper(context).applyDefaultSpacing()
 
-fun ViewDsl.surface(style: Int = 0) = SurfaceView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.texture(style: Int = 0) = TextureView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.view(style: Int = 0) = View(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.web(style: Int = 0) = WebView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.adapterViewFlipper(style: Int = 0) = AdapterViewFlipper(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.autoCompleteText(style: Int = 0) = AutoCompleteTextView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.button(style: Int = 0) = Button(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.calendar(style: Int = 0) = CalendarView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.checkBox(style: Int = 0) = CheckBox(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.checkedText(style: Int = 0) = CheckedTextView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.chronometer(style: Int = 0) = Chronometer(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.datePicker(style: Int = 0) = DatePicker(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.editText(style: Int = 0) = EditText(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.expandableListView(style: Int = 0) = ExpandableListView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.imageButton(style: Int = 0) = ImageButton(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.image(style: Int = 0) = ImageView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.listView(style: Int = 0) = ListView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.multiAutoCompleteText(style: Int = 0) = MultiAutoCompleteTextView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.numberPicker(style: Int = 0) = NumberPicker(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.progressBar(style: Int = 0) = ProgressBar(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.quickContactBadge(style: Int = 0) = QuickContactBadge(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.radioButton(style: Int = 0) = RadioButton(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.ratingBar(style: Int = 0) = RatingBar(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.search(style: Int = 0) = SearchView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.seekBar(style: Int = 0) = SeekBar(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.space(style: Int = 0) = Space(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.spinner(style: Int = 0) = Spinner(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.stack(style: Int = 0) = StackView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.switch(style: Int = 0) = Switch(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.text(style: Int = 0) = TextView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.timePicker(style: Int = 0) = TimePicker(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.toggleButton(style: Int = 0) = ToggleButton(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-fun ViewDsl.video(style: Int = 0) = VideoView(if(style == 0) context else ContextThemeWrapper(context, style), null, 0).applyDefaultSpacing()
-
-//fun <T: TextView> T.text(text: String) = apply { setText(text) }
-//fun <T: TextView> T.text(@StringRes text: StringResource) = apply { setText(text) }
-//fun <T: TextView> T.text(text: ViewString) = apply { setText(text) }
-//@JvmName("textString") fun <T: TextView> T.text(text: Observable<String>) = apply { text.into(this, TextView::setText) }
-//@JvmName("textResource") fun <T: TextView> T.text(text: Observable<StringResource>) = apply { text.into(this, TextView::setText) }
-//@JvmName("textViewString") fun <T: TextView> T.text(text: Observable<ViewString>) = apply { text.into(this, TextView::setText) }
-
+inline fun ViewDsl.surface(setup: SurfaceView.()->Unit = {}) = SurfaceView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.texture(setup: TextureView.()->Unit = {}) = TextureView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.view(setup: View.()->Unit = {}) = View(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.web(setup: WebView.()->Unit = {}) = WebView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.autoCompleteText(setup: AutoCompleteTextView.()->Unit = {}) = AutoCompleteTextView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.button(setup: Button.()->Unit = {}) = Button(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.checkBox(setup: CheckBox.()->Unit = {}) = CheckBox(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.checkedText(setup: CheckedTextView.()->Unit = {}) = CheckedTextView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.editText(setup: EditText.()->Unit = {}) = EditText(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.imageButton(setup: ImageButton.()->Unit = {}) = ImageButton(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.image(setup: ImageView.()->Unit = {}) = ImageView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.progressBar(setup: ProgressBar.()->Unit = {}) = ProgressBar(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.radioButton(setup: RadioButton.()->Unit = {}) = RadioButton(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.ratingBar(setup: RatingBar.()->Unit = {}) = RatingBar(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.seekBar(setup: SeekBar.()->Unit = {}) = SeekBar(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.space(setup: Space.()->Unit = {}) = Space(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.spinner(setup: Spinner.()->Unit = {}) = Spinner(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.switch(setup: Switch.()->Unit = {}) = Switch(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.text(setup: TextView.()->Unit = {}) = TextView(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.toggleButton(setup: ToggleButton.()->Unit = {}) = ToggleButton(context).applyDefaultSpacing().apply(setup)
+inline fun ViewDsl.video(setup: VideoView.()->Unit = {}) = VideoView(context).applyDefaultSpacing().apply(setup)
 
 fun ActivityAccess.dsl(make: ViewDsl.()->View): View = ViewDsl(context).let(make)

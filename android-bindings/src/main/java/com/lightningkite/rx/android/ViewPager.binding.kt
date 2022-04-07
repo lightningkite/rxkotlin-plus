@@ -20,7 +20,7 @@ import io.reactivex.rxjava3.kotlin.addTo
  * val showing = ValueSubject(0)
  * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
-fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     viewPager: ViewPager,
     showIndex: Subject<Int> = ValueSubject(0),
     makeView: (Observable<T>)->View

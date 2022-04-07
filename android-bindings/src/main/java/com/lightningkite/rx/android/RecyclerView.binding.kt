@@ -59,7 +59,7 @@ internal open class ObservableRVA<T: Any>(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView) { obs -> ... return view }
  */
-fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView: RecyclerView,
     makeView: (Observable<T>) -> View
 ): SOURCE {
@@ -86,7 +86,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView, {item -> if(item < 5) 0 else 1 } ) { type, obs -> ... return view }
  */
-fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView: RecyclerView,
     determineType: (T)->Int,
     makeView: (Int, Observable<T>) -> View
@@ -112,7 +112,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView) { obs -> ... return view }
  */
-fun <SOURCE: Observable<List<T>>, T: Any, ID: Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView: RecyclerView,
     getId: (T)->ID,
     makeView: (Observable<T>) -> View
@@ -146,7 +146,7 @@ fun <SOURCE: Observable<List<T>>, T: Any, ID: Any> SOURCE.showIn(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView, {item -> if(item < 5) 0 else 1 } ) { type, obs -> ... return view }
  */
-fun <SOURCE: Observable<List<T>>, T: Any, ID: Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView: RecyclerView,
     getId: (T)->ID,
     determineType: (T)->Int,

@@ -26,6 +26,7 @@ android {
 dependencies {
     api(project(":android-resources"))
     api(project(":view-generator"))
+    api("com.airbnb.android:paris:2.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

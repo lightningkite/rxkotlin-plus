@@ -9,35 +9,22 @@ package com.lightningkite.rxexample.vg
 //--- Imports
 
 import android.view.View
-import android.widget.ImageView
-import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.lightningkite.rx.ValueSubject
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.resources.Video
 import com.lightningkite.rx.android.resources.VideoReference
 import com.lightningkite.rx.android.resources.VideoRemoteUrl
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.bind
-import com.lightningkite.rx.android.bindVideoThumbnail
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.*
-import com.lightningkite.rx.android.resources.*
-import com.lightningkite.rxexample.databinding.VideoDemoBinding
+import com.lightningkite.rx.android.resources.setVideo
 import com.lightningkite.rx.kotlin
 import com.lightningkite.rx.optional
-import io.reactivex.rxjava3.core.Observable
+import com.lightningkite.rx.viewgenerators.*
+import com.lightningkite.rxexample.databinding.VideoDemoBinding
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.util.*
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
-class VideoDemoVG(
-    //--- Dependencies (overwritten on flow generation)
-    //--- Extends
-) : ViewGenerator, UsesCustomTransition {
-
-    //--- Transition
-    override val transition: StackTransition = StackTransition.PULL_UP
+class VideoDemoVG : ViewGenerator {
 
     //--- Properties
     val currentVideo =
@@ -55,24 +42,24 @@ class VideoDemoVG(
         }
 
         //--- Set Up xml.play (overwritten on flow generation)
-        xml.play.onClick { this.playClick() }
+        xml.play.setOnClickListener { this.playClick() }
 
         //--- Set Up xml.gallery
-        xml.gallery.onClick {
+        xml.gallery.setOnClickListener {
             dependency.requestVideoGallery().subscribeBy {
                 currentVideo.value = VideoReference(it).optional
             }
         }
 
         //--- Set Up xml.camera
-        xml.camera.onClick {
+        xml.camera.setOnClickListener {
             dependency.requestVideoCamera().subscribeBy {
                 currentVideo.value = VideoReference(it).optional
             }
         }
 
         //--- Set Up xml.galleryMulti
-        xml.galleryMulti.onClick {
+        xml.galleryMulti.setOnClickListener {
             dependency.requestVideosGallery().subscribeBy {
                 it.firstOrNull()?.let {
                     currentVideo.value = VideoReference(it).optional

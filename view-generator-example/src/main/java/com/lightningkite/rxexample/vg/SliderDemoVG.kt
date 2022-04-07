@@ -2,23 +2,19 @@
 package com.lightningkite.rxexample.vg
 
 import android.view.View
-import android.widget.ProgressBar
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import io.reactivex.rxjava3.subjects.Subject
 import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.map
 import com.lightningkite.rx.android.bind
-import com.lightningkite.rx.android.bindFloat
-
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
-import com.lightningkite.rxexample.databinding.SliderDemoBinding
 import com.lightningkite.rx.android.into
+import com.lightningkite.rx.map
 import com.lightningkite.rx.plus
 import com.lightningkite.rx.toSubjectFloat
-import io.reactivex.rxjava3.core.Observable
+import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.viewgenerators.ViewGenerator
+import com.lightningkite.rx.viewgenerators.layoutInflater
+import com.lightningkite.rxexample.databinding.SliderDemoBinding
+import io.reactivex.rxjava3.subjects.Subject
 
-class SliderDemoVG() : ViewGenerator {
+class SliderDemoVG : ViewGenerator {
 
     val ratio: ValueSubject<Float> = ValueSubject(0f)
     val percent: Subject<Int> = ratio.map(

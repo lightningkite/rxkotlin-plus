@@ -1,12 +1,37 @@
 package com.lightningkite.rx.viewgenerators
 
+import android.view.View
 import com.lightningkite.rx.android.removed
+import com.lightningkite.rx.viewgenerators.transition.StackTransition
+import com.lightningkite.rx.viewgenerators.transition.TransitionTriple
+import com.lightningkite.rx.viewgenerators.transition.UsesCustomTransition
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.util.concurrent.TimeUnit
 
+
+/**
+ * Displays the Observable's view generator as the content of this view.
+ * Uses a single animation.
+ */
+fun <T: Any, SOURCE : Observable<T>> SOURCE.showIn(
+    swapView: SwapView,
+    transition: TransitionTriple = TransitionTriple.FADE,
+    makeView: (T)->View,
+): SOURCE {
+    var currentData: T? = null
+    this.subscribeBy { datas ->
+        post {
+            val newData = datas
+            if (currentData == newData) return@post
+            swapView.swap(makeView(newData), transition)
+            currentData = newData
+        }
+    }.addTo(swapView.removed)
+    return this
+}
 
 /**
  * Displays the Observable's view generator as the content of this view.

@@ -309,6 +309,7 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNulla
  * Subscribes to the view clicks observable which is fired any time the view is clicked. The action provided will be called on click.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.clicks"))
 fun <V: View> V.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit): V {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
     return this
@@ -321,6 +322,7 @@ fun <V: View> V.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit): V {
  * immediately available.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.clicks"))
 fun <T: Any> View.onClick(observable:Observable<T>, disabledMilliseconds:Long = 500L, action: (T)->Unit) {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)
 }
@@ -332,6 +334,7 @@ fun <T: Any> View.onClick(observable:Observable<T>, disabledMilliseconds:Long = 
  * immediately available. Unwrapping the optional is automatically handled.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.clicks"))
 fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, disabledMilliseconds:Long = 500L, action: (T?)->Unit) {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)
 }
@@ -340,6 +343,7 @@ fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, disabledMi
  * Subscribes to the view longClicks observable which is fired any time the view is longPressed. The action provided will be called on click.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.longClicks"))
 fun View.onLongClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
     longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
 }
@@ -351,6 +355,7 @@ fun View.onLongClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
  * immediately available.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.longClicks"))
 fun <T: Any> View.onLongClick(observable:Observable<T>, disabledMilliseconds:Long = 500L, action: (T)->Unit){
     longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)
 }
@@ -362,6 +367,7 @@ fun <T: Any> View.onLongClick(observable:Observable<T>, disabledMilliseconds:Lon
  * immediately available. Unwrapping the optional is automatically handled.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.longClicks"))
 fun <T: Any> View.onLongClickNullable(observable:Observable<Optional<T>>, disabledMilliseconds:Long = 500L, action: (T?)->Unit){
     longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)
 }

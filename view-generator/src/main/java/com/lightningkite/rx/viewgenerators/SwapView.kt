@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
+import com.lightningkite.rx.viewgenerators.transition.TransitionTriple
 
 /**
  * Shows a single view with animated transitions to other views.
