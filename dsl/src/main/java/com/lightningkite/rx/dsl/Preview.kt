@@ -15,18 +15,18 @@ import com.lightningkite.rx.viewgenerators.ViewGenerator
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 
-abstract class VgPreview(context: Context, val vg: ViewGenerator) : FrameLayout(context) {
+@RxKotlinViewDsl abstract class VgPreview(context: Context, val vg: ViewGenerator) : FrameLayout(context) {
     init {
         addView(vg.generate(PreviewActivityAccess(context)), FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 }
-abstract class DslPreview(context: Context, val generate: (dsl: ViewDsl) -> View) : FrameLayout(context) {
+@RxKotlinViewDsl abstract class DslPreview(context: Context, val generate: (dsl: ViewDsl) -> View) : FrameLayout(context) {
     init {
         addView(generate(ViewDsl(context)), FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 }
 
-class PreviewActivityAccess(override val context: Context): ActivityAccess {
+private class PreviewActivityAccess(override val context: Context): ActivityAccess {
     override val activity: Activity get() = throw NotImplementedError()
     override val savedInstanceState: Bundle? get() = null
     override val onResume: Observable<Unit> = Observable.never()
