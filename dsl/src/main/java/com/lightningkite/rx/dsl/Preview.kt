@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -14,13 +15,14 @@ import com.lightningkite.rx.viewgenerators.ViewGenerator
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 
-abstract class DslPreview: FrameLayout {
-    abstract val vg: ViewGenerator
-    constructor(context: Context):super(context) {}
-    constructor(context: Context, attrs: AttributeSet?):super(context, attrs) {}
+abstract class VgPreview(context: Context, val vg: ViewGenerator) : FrameLayout(context) {
     init {
         addView(vg.generate(PreviewActivityAccess(context)), FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-        addView(TextView(context).apply { text = "Preview"; alpha = 0.25f }, FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+    }
+}
+abstract class DslPreview(context: Context, val generate: (dsl: ViewDsl) -> View) : FrameLayout(context) {
+    init {
+        addView(generate(ViewDsl(context)), FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 }
 

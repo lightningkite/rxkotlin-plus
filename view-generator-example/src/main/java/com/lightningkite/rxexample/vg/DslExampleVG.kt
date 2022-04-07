@@ -75,9 +75,4 @@ class DslExampleVG : ViewGenerator {
     }
 }
 
-private class Preview : DslPreview {
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    override val vg get() = DslExampleVG()
-}
+private class Preview(context: Context) : VgPreview(context, DslExampleVG())
