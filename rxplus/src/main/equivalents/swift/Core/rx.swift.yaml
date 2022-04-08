@@ -391,7 +391,6 @@
 
 # Single
 
-
 - id: io.reactivex.rxjava3.core.Single
   type: type
   typeArgumentNames: [Element]
@@ -467,96 +466,86 @@
     pattern: '~this~.zip(~0~, ~1~, ~2~, resultSelector: ~3~)'
     imports: [RxSwift]
 
-#- id: io.reactivex.rxjava3.core.Single.map
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxMap(~0~))
-#    imports:
-#      map: rxjs/operators as rxMap
-#
-#- id: io.reactivex.rxjava3.core.Single.delay
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxDelay(~0~))
-#    imports:
-#      delay: rxjs/operators as rxDelay
-#
-#- id: io.reactivex.rxjava3.core.Single.flatMap
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxFlatMap(~0~))
-#    imports:
-#      flatMap: rxjs/operators as rxFlatMap
-#
-#- id: io.reactivex.rxjava3.core.Single.subscribeOn
-#  type: call
-#  template: ~this~
-#
-#- id: io.reactivex.rxjava3.core.Single.scheduleOn
-#  type: call
-#  template: ~this~
-#
-#- id: io.reactivex.rxjava3.core.Single.create
-#  type: call
-#  template:
-#    pattern: Observable(~0~)
-#    imports:
-#      Observable: rxjs
-#
-#- id: io.reactivex.rxjava3.core.Single.create
-#  type: call
-#  hasExplicitTypeArguments: true
-#  template:
-#    pattern: Observable<~T0~>(~0~)
-#    imports:
-#      Observable: rxjs
-#
-#- id: io.reactivex.rxjava3.core.Single.just
-#  type: call
-#  template:
-#    pattern: rxOf(~0~)
-#    imports:
-#      of: rxjs as rxOf
-#
-#
-#- id: io.reactivex.rxjava3.core.Single.doFinally
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxFinalize(~0~))
-#    imports:
-#      finalize: rxjs/operators as rxFinalize
-#
-#- id: io.reactivex.rxjava3.core.Single.doOnError
-#  type: call
-#  template:
-#    pattern: rxTap(undefined, ~0~)(ud~this~)
-#    imports:
-#      tap: rxjs/operators as rxTap
-#
-#- id: io.reactivex.rxjava3.core.Single.doOnSuccess
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxTap(~0~))
-#    imports:
-#      tap: rxjs/operators as rxTap
-#
-#- id: io.reactivex.rxjava3.core.Single.toObservable
-#  type: call
-#  template: ~this~
-
-# SingleEmitter
-
-#- id: io.reactivex.rxjava3.core.SingleEmitter
-#  type: type
-#  template: Observer<~T0~>
-#
-#- id: io.reactivex.rxjava3.core.SingleEmitter.onSuccess
-#  type: call
-#  template: ~this~.next(~0~); ~this~.complete()
 #
 - id: io.reactivex.rxjava3.core.SingleEmitter.onError
   type: call
   template: ~this~.onFailure(~0~)
+
+
+# Completable
+
+- id: io.reactivex.rxjava3.core.Completable
+  type: type
+  template:
+    pattern: Completable
+    imports:
+      - RxSwift
+
+#- id: io.reactivex.rxjava3.core.Completable.subscribe
+#  type: call
+#  arguments: [io.reactivex.rxjava3.core.Observer]
+#  template: ~this~.subscribe(~0~)
+
+- id: io.reactivex.rxjava3.core.Completable.subscribe
+  type: call
+  template: '~this~.subscribe(onSuccess: ~0~, onError: ~1~)'
+
+- id: io.reactivex.rxjava3.core.Completable.subscribe
+  type: call
+  arguments: [io.reactivex.rxjava3.functions.Consumer]
+  template: '~this~.subscribe(onSuccess: ~0~)'
+
+- id: io.reactivex.rxjava3.kotlin.subscribeBy
+  type: call
+  suppliedArguments: [onSuccess, onError]
+  receiver: io.reactivex.rxjava3.core.Completable
+  template: '~this~.subscribe(onSuccess: ~onSuccess~, onError: ~onError~)'
+
+- id: io.reactivex.rxjava3.kotlin.subscribeBy
+  type: call
+  suppliedArguments: [onSuccess]
+  receiver: io.reactivex.rxjava3.core.Completable
+  template: '~this~.subscribe(onSuccess: ~onSuccess~)'
+
+- id: io.reactivex.rxjava3.kotlin.subscribeBy
+  type: call
+  suppliedArguments: [onError]
+  receiver: io.reactivex.rxjava3.core.Completable
+  template: '~this~.subscribe(onError: ~onError~)'
+
+## Operators for Completable
+
+- id: io.reactivex.rxjava3.core.Completable.delay
+  type: call
+  template:
+    pattern: '~this~.delay(.milliseconds(Int(~0~)), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.zip
+  type: call
+  template:
+    pattern: '~this~.zip(~0~, resultSelector: ~1~)'
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.zip
+  type: call
+  arguments: [CompletableSource, CompletableSource, BiFunction]
+  template:
+    pattern: '~this~.zip(~0~, ~1~, resultSelector: ~2~)'
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.zip
+  type: call
+  arguments: [CompletableSource, CompletableSource, CompletableSource, BiFunction]
+  template:
+    pattern: '~this~.zip(~0~, ~1~, ~2~, resultSelector: ~3~)'
+    imports: [RxSwift]
+
+#
+- id: io.reactivex.rxjava3.core.CompletableEmitter.onError
+  type: call
+  template: ~this~.onFailure(~0~)
+  
 
 # Maybe
 

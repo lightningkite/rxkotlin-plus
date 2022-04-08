@@ -3,7 +3,6 @@
 package com.lightningkite.rxexample.vg
 
 import android.content.Context
-import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import com.airbnb.paris.extensions.style
@@ -13,6 +12,7 @@ import com.lightningkite.rx.dsl.*
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
 import com.lightningkite.rxexample.R
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 class DslExampleVG : ViewGenerator {
@@ -27,7 +27,7 @@ class DslExampleVG : ViewGenerator {
     override fun generate(dependency: ActivityAccess): View = dependency.dsl {
         fun quickButton(text: String) = button { style(R.style.ButtonPrimary); this.text = text }
         scroll(
-            vtl(
+            columnStart(
                 text {
                     style(R.style.Header)
                     setText(R.string.welcome)
@@ -38,7 +38,7 @@ class DslExampleVG : ViewGenerator {
                     style(R.style.Body)
                     setText(R.string.welcome_message)
                 },
-                hc(
+                rowCenter(
                     text {
                         style(R.style.Body)
                         number.map { it -> it.toString() }.into(this, TextView::setText)
@@ -49,7 +49,7 @@ class DslExampleVG : ViewGenerator {
                         setOnClickListener { increment() }
                     }
                 ).matchWidth(),
-                hc(
+                rowCenter(
                     text {
                         style(R.style.Body)
                         chained.flatMap { it -> it }.map { it -> it.toString() }.into(this, TextView::setText)
@@ -61,7 +61,7 @@ class DslExampleVG : ViewGenerator {
                     }
                 ).matchWidth(),
                 image { setImageResource(R.drawable.reason_expertise) }.width(100).height(50),
-                vtf(
+                columnFill(
                     quickButton("First"),
                     quickButton("Second"),
                     quickButton("Third"),
@@ -73,6 +73,8 @@ class DslExampleVG : ViewGenerator {
                 }
             ).applyDefaultPadding()
         ).apply { scrollToTop.into(this) { smoothScrollTo(0, 0) } }
+
+        Completable.complete().subscribe
     }
 }
 
