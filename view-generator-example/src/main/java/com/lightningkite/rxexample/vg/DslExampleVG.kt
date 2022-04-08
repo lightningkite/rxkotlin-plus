@@ -73,8 +73,6 @@ class DslExampleVG : ViewGenerator {
                 }
             ).applyDefaultPadding()
         ).apply { scrollToTop.into(this) { smoothScrollTo(0, 0) } }
-
-        Completable.complete().subscribe
     }
 }
 
