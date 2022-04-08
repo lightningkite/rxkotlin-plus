@@ -15,12 +15,12 @@ import com.lightningkite.rx.viewgenerators.ViewGenerator
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 
-@RxKotlinViewDsl abstract class VgPreview(context: Context, val vg: ViewGenerator) : FrameLayout(context) {
+@RxKotlinViewDsl abstract class VgPreview(context: Context, attrs: AttributeSet? = null, val vg: ViewGenerator) : FrameLayout(context, attrs) {
     init {
         addView(vg.generate(PreviewActivityAccess(context)), FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }
 }
-@RxKotlinViewDsl abstract class DslPreview(context: Context, val generate: (dsl: ViewDsl) -> View) : FrameLayout(context) {
+@RxKotlinViewDsl abstract class DslPreview(context: Context, attrs: AttributeSet? = null, val generate: (dsl: ViewDsl) -> View) : FrameLayout(context, attrs) {
     init {
         addView(generate(ViewDsl(context)), FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
     }

@@ -3,6 +3,7 @@
 package com.lightningkite.rxexample.vg
 
 import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import com.airbnb.paris.extensions.style
@@ -76,4 +77,4 @@ class DslExampleVG : ViewGenerator {
     }
 }
 
-private class Preview(context: Context) : VgPreview(context, DslExampleVG())
+private class Preview(context: Context, attrs: AttributeSet? = null) : VgPreview(context, attrs, DslExampleVG())
