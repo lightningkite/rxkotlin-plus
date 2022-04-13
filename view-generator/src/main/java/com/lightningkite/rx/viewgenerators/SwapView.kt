@@ -99,6 +99,17 @@ class SwapView @JvmOverloads constructor(
                     oldUnshared.forEach { addTarget(it) }
                 }?.let { addTransition(it) }
             }
+            addListener(object : Transition.TransitionListener{
+                override fun onTransitionEnd(transition: Transition) {
+                    if(to == null && !hasCurrentView) {
+                        this@SwapView.visibility = View.GONE
+                    }
+                }
+                override fun onTransitionStart(transition: Transition) = Unit
+                override fun onTransitionCancel(transition: Transition) = Unit
+                override fun onTransitionPause(transition: Transition)  = Unit
+                override fun onTransitionResume(transition: Transition)  = Unit
+            })
         })
 
         removeView(oldView)

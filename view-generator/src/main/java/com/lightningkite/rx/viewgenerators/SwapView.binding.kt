@@ -72,7 +72,7 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
         if (currentData == newData) return@subscribeBy
         swapView.swap(
             newData?.generate(dependency), when {
-                currentStackSize == 0 -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.push
+                currentStackSize == 0 -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.neutral
                 newStackSize == 0 -> (currentData as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop
                 newStackSize > currentStackSize -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.push
                 newStackSize < currentStackSize -> (currentData as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop
