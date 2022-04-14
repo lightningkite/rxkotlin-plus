@@ -12,9 +12,9 @@ object TransitionGenerators {
     val shared: () -> Transition? = {
         AutoTransition()
     }
-    val none: () -> Transition? = { null }
-    val fade: () -> Transition? = { Fade() }
-    val growFade: () -> Transition? = {
+    val none: TransitionGenerator = { null }
+    val fade: TransitionGenerator = { Fade() }
+    val growFade: TransitionGenerator = {
         TransitionSet().apply {
             ordering = TransitionSet.ORDERING_TOGETHER
             addTransition(Scale(1.33f))
@@ -22,7 +22,15 @@ object TransitionGenerators {
             addTransition(Fade())
         }
     }
-    val shrinkFade: () -> Transition? = {
+    val growFadeOut: TransitionGenerator = {
+        TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            addTransition(Scale(1.33f))
+            addTransition(Offset(0f, 50f * Resources.getSystem().displayMetrics.density))
+            addTransition(Fade())
+        }
+    }
+    val shrinkFade: TransitionGenerator = {
         TransitionSet().apply {
             ordering = TransitionSet.ORDERING_TOGETHER
             addTransition(Scale(0.75f))
@@ -30,7 +38,15 @@ object TransitionGenerators {
             addTransition(Fade())
         }
     }
-    fun slide(direction: Int): () -> Transition? = {
+    val shrinkFadeOut: TransitionGenerator = {
+        TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            addTransition(Scale(0.75f))
+            addTransition(Offset(0f, 50f * Resources.getSystem().displayMetrics.density))
+            addTransition(Fade())
+        }
+    }
+    fun slide(direction: Int): TransitionGenerator = {
         SlideFixed(direction).apply {
             interpolator = decelerate
             propagation = null
@@ -39,9 +55,9 @@ object TransitionGenerators {
 }
 
 data class TransitionTriple(
-    val enter: () -> Transition?,
-    val exit: () -> Transition?,
-    val shared: () -> Transition?
+    val enter: TransitionGenerator,
+    val exit: TransitionGenerator,
+    val shared: TransitionGenerator
 ) {
     companion object {
         val PUSH = with(TransitionGenerators) { TransitionTriple(slide(Gravity.RIGHT), slide(Gravity.LEFT), shared) }
@@ -51,8 +67,8 @@ data class TransitionTriple(
         val PULL_UP = with(TransitionGenerators) { TransitionTriple(slide(Gravity.BOTTOM), slide(Gravity.TOP), shared) }
         val FADE = with(TransitionGenerators) { TransitionTriple(fade, fade, shared) }
         val NONE = with(TransitionGenerators) { TransitionTriple(none, none, none) }
-        val GROW_FADE = with(TransitionGenerators) { TransitionTriple(growFade, growFade, shared) }
-        val SHRINK_FADE = with(TransitionGenerators) { TransitionTriple(shrinkFade, shrinkFade, shared) }
+        val GROW_FADE = with(TransitionGenerators) { TransitionTriple(growFade, growFadeOut, shared) }
+        val SHRINK_FADE = with(TransitionGenerators) { TransitionTriple(shrinkFade, shrinkFadeOut, shared) }
     }
 }
 
