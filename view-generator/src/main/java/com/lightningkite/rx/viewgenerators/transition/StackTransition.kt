@@ -17,7 +17,7 @@ object TransitionGenerators {
     val growFade: () -> Transition? = {
         TransitionSet().apply {
             ordering = TransitionSet.ORDERING_TOGETHER
-            addTransition(Scale(0.75f))
+            addTransition(Scale(1.33f))
             addTransition(Offset(0f, -50f * Resources.getSystem().displayMetrics.density))
             addTransition(Fade())
         }
@@ -25,7 +25,7 @@ object TransitionGenerators {
     val shrinkFade: () -> Transition? = {
         TransitionSet().apply {
             ordering = TransitionSet.ORDERING_TOGETHER
-            addTransition(Scale(1.33f))
+            addTransition(Scale(0.75f))
             addTransition(Offset(0f, -50f * Resources.getSystem().displayMetrics.density))
             addTransition(Fade())
         }
@@ -52,7 +52,7 @@ data class TransitionTriple(
         val FADE = with(TransitionGenerators) { TransitionTriple(fade, fade, shared) }
         val NONE = with(TransitionGenerators) { TransitionTriple(none, none, none) }
         val GROW_FADE = with(TransitionGenerators) { TransitionTriple(growFade, growFade, shared) }
-        val SHRINK_FADE = with(TransitionGenerators) { TransitionTriple(growFade, growFade, shared) }
+        val SHRINK_FADE = with(TransitionGenerators) { TransitionTriple(shrinkFade, shrinkFade, shared) }
     }
 }
 
@@ -83,7 +83,7 @@ data class StackTransition(
         /**
          * A modal-y transition, where the view fades in and grows.
          */
-        val MODAL = StackTransition(TransitionTriple.GROW_FADE, TransitionTriple.SHRINK_FADE, TransitionTriple.FADE)
+        val MODAL = StackTransition(TransitionTriple.GROW_FADE, TransitionTriple.SHRINK_FADE, TransitionTriple.GROW_FADE)
 
         /**
          * Don't animate.

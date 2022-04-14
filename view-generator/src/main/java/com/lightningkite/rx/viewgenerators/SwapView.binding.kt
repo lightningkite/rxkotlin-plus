@@ -22,12 +22,11 @@ fun <T: Any, SOURCE : Observable<T>> SOURCE.showIn(
     makeView: (T)->View,
 ): SOURCE {
     var currentData: T? = null
-    this.subscribeBy { datas ->
+    this.subscribeBy { value ->
         post {
-            val newData = datas
-            if (currentData == newData) return@post
-            swapView.swap(makeView(newData), transition)
-            currentData = newData
+            if (currentData == value) return@post
+            swapView.swap(makeView(value), transition)
+            currentData = value
         }
     }.addTo(swapView.removed)
     return this
@@ -72,7 +71,7 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
         if (currentData == newData) return@subscribeBy
         swapView.swap(
             newData?.generate(dependency), when {
-                currentStackSize == 0 -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.neutral
+                currentStackSize == 0 -> (newData as? UsesCustomTransition)?.transition?.neutral ?: stackTransition.neutral
                 newStackSize == 0 -> (currentData as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop
                 newStackSize > currentStackSize -> (newData as? UsesCustomTransition)?.transition?.push ?: stackTransition.push
                 newStackSize < currentStackSize -> (currentData as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop
