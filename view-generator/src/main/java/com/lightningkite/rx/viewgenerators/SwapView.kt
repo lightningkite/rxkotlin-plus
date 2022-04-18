@@ -6,6 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.FrameLayout
+import androidx.core.view.children
+import androidx.core.view.descendants
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionSet
+import com.lightningkite.rx.viewgenerators.transition.TransitionTriple
 
 /**
  * Shows a single view with animated transitions to other views.
@@ -37,16 +45,74 @@ class SwapView @JvmOverloads constructor(
     /**
      * Swaps from the current view to another one with the given [transition].
      */
-    fun swap(to: View?, transition: ViewTransitionUnidirectional) {
+    fun swap(to: View?, transition: TransitionTriple) {
         val oldView = currentView
         var newView = to
         hasCurrentView = newView != null
+
         if (newView == null) {
             newView = View(context)
         } else {
             visibility = View.VISIBLE
         }
 
+        val oldElements = (oldView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
+        val newElements = (newView as? ViewGroup)?.descendants?.mapNotNull { it.transitionName }?.toSet() ?: setOf()
+        val sharedNames = oldElements.intersect(newElements)
+        fun View.unshared(list: MutableList<View> = ArrayList<View>()): List<View> {
+            when {
+                this.transitionName in sharedNames -> {
+                    return list
+                }
+                this is RecyclerView -> list.add(this)
+                this is ViewGroup -> {
+                    if (this.isTransitionGroup) list.add(this)
+                    else this.children.forEach { it.unshared(list) }
+                }
+                else -> {
+                    list.add(this)
+                }
+            }
+            return list
+        }
+
+        val newUnshared = newView.unshared()
+        val oldUnshared = oldView?.unshared()
+
+        TransitionManager.beginDelayedTransition(this, TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            transition.takeIf { sharedNames.isNotEmpty() }?.shared?.invoke()?.apply {
+                setMatchOrder(Transition.MATCH_NAME, Transition.MATCH_INSTANCE)
+                sharedNames.forEach {
+                    addTarget(it)
+                }
+            }?.let { addTransition(it) }
+            newUnshared.takeIf { it.isNotEmpty() }?.let {
+                transition.enter.invoke()?.apply {
+                    setMatchOrder(Transition.MATCH_INSTANCE)
+                    newUnshared.forEach { addTarget(it) }
+                }?.let { addTransition(it) }
+            }
+            oldUnshared?.takeIf { it.isNotEmpty() }?.let { oldUnshared ->
+                transition.exit.invoke()?.apply {
+                    setMatchOrder(Transition.MATCH_INSTANCE)
+                    oldUnshared.forEach { addTarget(it) }
+                }?.let { addTransition(it) }
+            }
+            addListener(object : Transition.TransitionListener{
+                override fun onTransitionEnd(transition: Transition) {
+                    if(to == null && !hasCurrentView) {
+                        this@SwapView.visibility = View.GONE
+                    }
+                }
+                override fun onTransitionStart(transition: Transition) = Unit
+                override fun onTransitionCancel(transition: Transition) = Unit
+                override fun onTransitionPause(transition: Transition)  = Unit
+                override fun onTransitionResume(transition: Transition)  = Unit
+            })
+        })
+
+        removeView(oldView)
         addView(
             newView, FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -54,19 +120,9 @@ class SwapView @JvmOverloads constructor(
             )
         )
 
-        transition.enter.invoke(newView).start()
-        if (oldView != null){
-            transition.exit.invoke(oldView).withEndAction {
-                removeView(oldView)
-                if(to == null && !hasCurrentView) {
-                    visibility = View.GONE
-                }
-            }
-        }
         currentView = newView
         post {
             runKeyboardUpdate(newView, oldView)
         }
     }
 }
-

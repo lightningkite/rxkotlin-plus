@@ -20,12 +20,12 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: Behavior
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(linearLayoutView) { obs -> ... return view }
  */
-fun <SOURCE: Observable<List<T>>, T : Any> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showIn(
     linearLayout: LinearLayout,
     makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { value ->
+    observeOn(RequireMainThread).subscribeBy { value ->
         //Fix view count
         val excessViews = existingViews.size - value.size
         if (excessViews > 0) {

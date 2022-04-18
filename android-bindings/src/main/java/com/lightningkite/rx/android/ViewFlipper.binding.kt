@@ -28,13 +28,28 @@ import java.util.*
  * val value = ValueSubject<Boolean>(false)
  * value.showLoading(viewFlipper)
  */
+@Deprecated("Simplified to use subscribeAutoDispose", ReplaceWith("this.subscribeAutoDispose(viewFlipper, ViewFlipper::showLoading)", "com.lightningkite.rx.android.showLoading", "com.lightningkite.rx.android.subscribeAutoDispose"))
 fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): SOURCE {
     defaults(viewFlipper, color)
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+    observeOn(RequireMainThread).subscribeBy { it ->
         viewFlipper.displayedChild = if (it) 1 else 0
     }.addTo(viewFlipper.removed)
     return this
 }
+
+/**
+ * Shows the progress indicator if set to true.
+ *
+ * Used best with `subscribeAutoDispose` like so:
+ *
+ * isWorking.subscribeAutoDispose(viewFlipper, ViewFlipper::showLoading)
+ */
+var ViewFlipper.showLoading: Boolean
+    get() = displayedChild == 1
+    set(value) {
+        defaults(this, null)
+        displayedChild = if (value) 1 else 0
+    }
 
 private fun defaults(view: ViewFlipper, color: ColorResource?) {
     if (view.inAnimation == null)

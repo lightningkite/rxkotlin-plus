@@ -9,43 +9,33 @@ package com.lightningkite.rxexample.vg
 //--- Imports
 
 import android.view.View
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import java.time.*
 import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.*
-import com.lightningkite.rx.android.resources.*
 import com.lightningkite.rxexample.databinding.ExternalTestBinding
+import java.time.ZonedDateTime
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
-class ExternalTestVG(
-    //--- Dependencies (overwritten on flow generation)
-    //--- Extends (overwritten on flow generation)
-) : ViewGenerator {
-    
-    
-    //--- Title (overwritten on flow generation)
-    override val titleString: ViewString get() = ViewStringRaw("External Test")
-    
+class ExternalTestVG : ViewGenerator {
+
     //--- Generate Start (overwritten on flow generation)
     override fun generate(dependency: ActivityAccess): View {
         val xml = ExternalTestBinding.inflate(dependency.layoutInflater)
         val view = xml.root
-        
+
         //--- Set Up xml.scrollView (overwritten on flow generation)
-        
+
         //--- Set Up xml.openMap
-        xml.openMap.onClick {
+        xml.openMap.setOnClickListener {
             dependency.openMap(41.7269, -111.8432, "Lightning Kite", 14f)
         }
 
         //--- Set Up xml.openWeb
-        xml.openWeb.onClick {
+        xml.openWeb.setOnClickListener {
             dependency.openUrl("https://lightningkite.com")
         }
 
         //--- Set Up xml.openEvent
-        xml.openEvent.onClick {
+        xml.openEvent.setOnClickListener {
             dependency.openEvent(
                 title = "A Virtual Lunch with LK",
                 description = "Come eat virtual food with us!",
@@ -56,10 +46,10 @@ class ExternalTestVG(
         }
 
         //--- Generate End (overwritten on flow generation)
-        
+
         return view
     }
-    
+
     //--- Init
 
     init {

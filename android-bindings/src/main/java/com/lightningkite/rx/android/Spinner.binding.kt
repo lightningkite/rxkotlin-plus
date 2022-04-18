@@ -23,7 +23,7 @@ var butterflySpinnerRow: Int = android.R.layout.simple_spinner_item
  * val result = PublishSubject<String>()
  * values.showIn(spinnerView, result, { it })
  */
-fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
+fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
     spinner: Spinner,
     selected: Subject<T>,
     toString: (T) -> String = { it.toString() }
@@ -52,7 +52,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .observeOn(AndroidSchedulers.mainThread()).subscribeBy { index ->
+        .observeOn(RequireMainThread).subscribeBy { index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)
@@ -83,7 +83,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
  * val result = PublishSubject<String>()
  * values.showIn(spinnerView, result, { ValueSubject(it) })
  */
-fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
+fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showInObservable(
     spinner: Spinner,
     selected: Subject<T>,
     toString: (T) -> Observable<String>
@@ -96,7 +96,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
             val v = (convertView as? TextView) ?: TextView(spinner.context).apply {
                 val event = PublishSubject.create<T>()
                 spinner.spinnerTextStyle?.apply(this)
-                event.switchMap(toString).observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+                event.switchMap(toString).observeOn(RequireMainThread).subscribeBy {
                     text = it
                 }.addTo(removed)
                 setRemovedCondition(spinner.removed)
@@ -119,7 +119,7 @@ fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showInObservable(
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .observeOn(AndroidSchedulers.mainThread()).subscribeBy { index ->
+        .observeOn(RequireMainThread).subscribeBy { index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)

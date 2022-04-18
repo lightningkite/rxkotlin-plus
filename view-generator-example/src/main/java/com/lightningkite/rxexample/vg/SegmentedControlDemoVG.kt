@@ -2,15 +2,14 @@
 package com.lightningkite.rxexample.vg
 
 import android.view.View
-import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.ValueSubject
 import com.lightningkite.rx.android.bind
-import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
+import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.viewgenerators.ViewGenerator
+import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.SegmentedControlDemoBinding
 
-class SegmentedControlDemoVG() : ViewGenerator {
-    override val titleString: ViewString get() = ViewStringRaw("Segmented Control Demo")
+class SegmentedControlDemoVG : ViewGenerator {
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = SegmentedControlDemoBinding.inflate(dependency.layoutInflater)

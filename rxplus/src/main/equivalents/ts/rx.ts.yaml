@@ -746,6 +746,147 @@
   template: ~this~.error(~0~)
 
 
+# Completable
+
+
+- id: io.reactivex.rxjava3.core.Completable
+  type: type
+  template:
+    pattern: Observable<never>
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable
+  type: typeRef
+  template:
+    pattern: Observable
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.observeOn
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Completable.subscribe
+  type: call
+  arguments: [io.reactivex.rxjava3.core.Observer]
+  template: ~this~.subscribe(~0~)
+
+- id: io.reactivex.rxjava3.core.Completable.subscribe
+  type: call
+  template: ~this~.subscribe(undefined, ~1~, ~0~)
+
+- id: io.reactivex.rxjava3.kotlin.subscribeBy
+  type: call
+  receiver: io.reactivex.rxjava3.core.Completable
+  template: ~this~.subscribe(~onError~, ~onComplete~)
+
+# Operators for Completable
+- id: io.reactivex.rxjava3.core.Completable.toObservable
+  type: call
+  template: ~this~
+- id: io.reactivex.rxjava3.core.Completable.toSingle
+  type: call
+  template: ~this~
+- id: io.reactivex.rxjava3.core.Completable.toMaybe
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Observable.ignoreElements
+  type: call
+  template:
+    pattern: ~this~.pipe(ignoreElements())
+    imports:
+      ignoreElements: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.ignoreElement
+  type: call
+  template:
+    pattern: ~this~.pipe(ignoreElements())
+    imports:
+      ignoreElements: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Maybe.ignoreElement
+  type: call
+  template:
+    pattern: ~this~.pipe(ignoreElements())
+    imports:
+      ignoreElements: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.retry
+  type: call
+  template:
+    pattern: ~this~.pipe(retry(~0~))
+    imports:
+      retry: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.retry
+  type: call
+  arguments: []
+  template:
+    pattern: ~this~.pipe(retry())
+    imports:
+      retry: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.delay
+  type: call
+  template:
+    pattern: ~this~.pipe(delay(~0~))
+    imports:
+      delay: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.flatMap
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.subscribeOn
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Completable.scheduleOn
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Completable.create
+  type: call
+  template:
+    pattern: new Observable(~0~)
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.create
+  type: call
+  hasExplicitTypeArguments: true
+  template:
+    pattern: new Observable<~T0~>(~0~)
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.complete
+  type: call
+  template:
+    pattern: EMPTY
+    imports:
+      EMPTY: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.zip
+  type: call
+  template:
+    pattern: zip(...~0~)
+    imports:
+      zip: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.concat
+  type: call
+  template:
+    pattern: concat(...~0~)
+    imports:
+      concat: rxjs
+
+
 # Maybe
 
 

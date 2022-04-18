@@ -12,17 +12,6 @@ import com.lightningkite.rx.android.resources.ImageRemoteUrl
 import java.time.ZonedDateTime
 
 /**
- * Starts an intent with a direct callback.
- */
-fun ActivityAccess.startIntent(
-    intent: Intent,
-    options: Bundle = android.os.Bundle(),
-    onResult: (Int, Intent?) -> Unit = { _, _ -> }
-) {
-    activity.startActivityForResult(intent, prepareOnResult(onResult = onResult), options)
-}
-
-/**
  * Open a sharing dialog.
  */
 fun ActivityAccess.share(title: String, message: String? = null, url: String? = null, image: Image? = null) {
@@ -48,18 +37,9 @@ fun ActivityAccess.share(title: String, message: String? = null, url: String? = 
  * Open a URL
  */
 fun ActivityAccess.openUrl(url: String, newWindow: Boolean = true): Boolean {
-    val mgr = context.packageManager
     val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
-    val list = mgr.queryIntentActivities(
-        intent,
-        PackageManager.MATCH_DEFAULT_ONLY
-    )
-    return if (list.size > 0) {
-        startIntent(intent = intent)
-        true
-    } else {
-        false
-    }
+    startIntent(intent = intent)
+    return true
 }
 
 /**

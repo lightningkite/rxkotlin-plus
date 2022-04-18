@@ -67,3 +67,6 @@ com.lightningkite.rx.viewgenerators.lastDialog
 com.lightningkite.rx.viewgenerators.showDialogEvent
 com.lightningkite.rx.viewgenerators.DialogRequest
 com.lightningkite.rx.viewgenerators.showDialog
+com.lightningkite.rx.viewgenerators.transition.StackTransition
+com.lightningkite.rx.viewgenerators.transition.TransitionTriple
+com.lightningkite.rx.viewgenerators.transition.UsesCustomTransition

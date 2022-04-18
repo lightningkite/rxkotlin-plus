@@ -16,8 +16,6 @@ com.lightningkite.rx.android.SpinnerTextStyle
 com.lightningkite.rx.android.spinnerTextStyle
 com.lightningkite.rx.android.spinnerTextStyleMap
 com.lightningkite.rx.android.SpinnerStyleInterceptor
-com.lightningkite.rx.android.subscribeAutoDispose
-com.lightningkite.rx.android.subscribeAutoDisposeNullable
 com.lightningkite.rx.android.onClick
 com.lightningkite.rx.android.onClickNullable
 com.lightningkite.rx.android.onLongClick

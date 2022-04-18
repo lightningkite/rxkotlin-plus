@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.PointF
 import android.media.MediaMetadataRetriever
 import android.os.Build
+import com.lightningkite.rx.android.RequireMainThread
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -51,5 +52,4 @@ fun Video.thumbnail(context: Context, timeMs: Long = 2000L, size: PointF? = null
         }
     }
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
 }

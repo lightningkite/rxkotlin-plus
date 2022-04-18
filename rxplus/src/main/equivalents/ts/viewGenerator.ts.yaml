@@ -225,11 +225,27 @@
 
 - id: com.lightningkite.rx.viewgenerators.showIn
   type: call
-  arguments: [SwapView, ActivityAccess, '*']
+  arguments: [SwapView, ActivityAccess, StackTransition]
   template:
-    pattern: '~this~.pipe(showInSwap(~0~))'
+    pattern: '~this~.pipe(showInSwapCustom(~0~, ~1~, ~2~))'
+    imports:
+      showInSwapCustom: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.showIn
+  type: call
+  arguments: [SwapView, ActivityAccess, TransitionTriple]
+  template:
+    pattern: '~this~.pipe(showInSwap(~0~, ~1~, ~2~))'
     imports:
       showInSwap: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.showIn
+  type: call
+  arguments: [SwapView, TransitionTriple, "*"]
+  template:
+    pattern: '~this~.pipe(showAnyInSwap(~0~, ~1~, ~2~))'
+    imports:
+      showAnyInSwap: '@lightningkite/rxjs-plus'
 
 - id: com.lightningkite.rx.viewgenerators.requestLocation
   type: call
@@ -268,3 +284,7 @@
     pattern: share(~*~)
     imports:
       share: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.viewgenerators.SwapView
+  type: type
+  template: HTMLDivElement

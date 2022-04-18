@@ -7,6 +7,7 @@ import com.jakewharton.rxbinding4.view.longClicks
 import com.lightningkite.rx.kotlin
 import com.lightningkite.rx.subscribeByNullable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -23,11 +24,28 @@ import kotlin.reflect.KMutableProperty1
  * The setter provided is meant to manage changes to the view according to the value of this.
  *
  * Example:
+ * val value = Completable.complete()
+ * values.subscribeAutoDispose(textView){ action() }
+ */
+fun <SOURCE: Completable, VIEW: View> SOURCE.subscribeAutoDispose(view: VIEW, action: VIEW.()->Unit = {}): SOURCE {
+    observeOn(RequireMainThread).subscribeBy {
+        action(view)
+    }.addTo(view.removed)
+    return this
+}
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Example:
  * val value = Single.just<String>("Hi")
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -44,7 +62,7 @@ fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vi
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -61,7 +79,7 @@ fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(vie
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -78,7 +96,7 @@ fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispos
  * values.subscribeAutoDispose(textView, TextView::setText)
  */
 fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispose(view: VIEW, setter: KMutableProperty1<VIEW, TYPE>): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    observeOn(RequireMainThread).subscribeBy {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
@@ -95,7 +113,7 @@ fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDispos
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -112,7 +130,7 @@ fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAuto
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -129,7 +147,7 @@ fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoD
  * values.subscribeAutoDispose(textView){ setText(it) }
  */
 fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -146,18 +164,155 @@ fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribe
  * values.subscribeAutoDispose(textView, TextView::setText)
  */
 fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.subscribeAutoDisposeNullable(view: VIEW, setter: KMutableProperty1<VIEW, TYPE?>): SOURCE {
-    observeOn(AndroidSchedulers.mainThread()).subscribeByNullable {
+    observeOn(RequireMainThread).subscribeByNullable {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
 }
 
 /**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = Completable.complete()
+ * values.subscribeAutoDispose(textView){ action() }
+ */
+fun <SOURCE: Completable, VIEW: View> SOURCE.into(view: VIEW, action: VIEW.()->Unit = {}): SOURCE
+    = subscribeAutoDispose(view, action)
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = Single.just<String>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Single<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value: Maybe<String> ...
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Maybe<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = ValueSubject<String>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: VIEW.(TYPE)->Unit): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view's property.
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter will be called with the value of this.
+ *
+ * Purely an alias for [subscribeAutoDispose]
+ *
+ * Example:
+ * val value = ValueSubject<String>("Hi")
+ * values.subscribeAutoDispose(textView, TextView::setText)
+ */
+fun <SOURCE: Observable<TYPE>, VIEW: View, TYPE: Any> SOURCE.into(view: VIEW, setter: KMutableProperty1<VIEW, TYPE>): SOURCE
+    = subscribeAutoDispose(view, setter)
+
+/**
+ * One way binding of this to a view. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value = Single.just<Optional<String>>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Single<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
+ * One way binding of this to a view. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value: Maybe<Optional<String>> ...
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Maybe<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
+ * One way binding of this to a view. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter provided is meant to manage changes to the view according to the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value = ValueSubject<Optional<String>>("Hi")
+ * values.subscribeAutoDispose(textView){ setText(it) }
+ */
+fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: VIEW.(TYPE?)->Unit): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
+ * One way binding of this to a view's property. Unwrapping of the Optional is automatically handled
+ * <p>
+ * subscribeAutoDispose will subscribe to this, and add the disposable to the views removed CompositeDisposable.
+ * The setter will be called with the value of this.
+ *
+ * Purely an alias for [subscribeAutoDisposeNullable].
+ *
+ * Example:
+ * val value = ValueSubject<Optional<String>>("Hi")
+ * values.subscribeAutoDispose(textView, TextView::setText)
+ */
+fun <SOURCE: Observable<Optional<TYPE>>, VIEW: View, TYPE: Any> SOURCE.intoNullable(view: VIEW, setter: KMutableProperty1<VIEW, TYPE?>): SOURCE
+    = subscribeAutoDisposeNullable(view, setter)
+
+/**
  * Subscribes to the view clicks observable which is fired any time the view is clicked. The action provided will be called on click.
  * disabledMilliseconds is the time before it can be pressed again.
  */
-fun View.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
+@Deprecated("Just do it directly instead.", ReplaceWith("this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.clicks"))
+fun <V: View> V.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit): V {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
+    return this
 }
 
 /**
@@ -167,6 +322,7 @@ fun View.onClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
  * immediately available.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.clicks"))
 fun <T: Any> View.onClick(observable:Observable<T>, disabledMilliseconds:Long = 500L, action: (T)->Unit) {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)
 }
@@ -178,6 +334,7 @@ fun <T: Any> View.onClick(observable:Observable<T>, disabledMilliseconds:Long = 
  * immediately available. Unwrapping the optional is automatically handled.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.clicks"))
 fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, disabledMilliseconds:Long = 500L, action: (T?)->Unit) {
     clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it.kotlin) }.addTo(this.removed)
 }
@@ -186,6 +343,7 @@ fun <T: Any> View.onClickNullable(observable:Observable<Optional<T>>, disabledMi
  * Subscribes to the view longClicks observable which is fired any time the view is longPressed. The action provided will be called on click.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.longClicks"))
 fun View.onLongClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
     longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)
 }
@@ -197,6 +355,7 @@ fun View.onLongClick(disabledMilliseconds:Long = 500L, action: ()->Unit) {
  * immediately available.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.longClicks"))
 fun <T: Any> View.onLongClick(observable:Observable<T>, disabledMilliseconds:Long = 500L, action: (T)->Unit){
     longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)
 }
@@ -208,6 +367,7 @@ fun <T: Any> View.onLongClick(observable:Observable<T>, disabledMilliseconds:Lon
  * immediately available. Unwrapping the optional is automatically handled.
  * disabledMilliseconds is the time before it can be pressed again.
  */
+@Deprecated("Just do it directly instead.", ReplaceWith("this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)", "com.jakewharton.rxbinding4.view.longClicks"))
 fun <T: Any> View.onLongClickNullable(observable:Observable<Optional<T>>, disabledMilliseconds:Long = 500L, action: (T?)->Unit){
     longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it.kotlin) }.addTo(this.removed)
 }

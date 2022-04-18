@@ -13,6 +13,20 @@
     imports:
       subscribeAutoDispose: '@lightningkite/rxjs-plus'
 
+- id: com.lightningkite.rx.android.into
+  type: call
+  template:
+    pattern: '~this~.pipe(subscribeAutoDispose(~0~, ~1~))'
+    imports:
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.intoNullable
+  type: call
+  template:
+    pattern: '~this~.pipe(subscribeAutoDispose(~0~, ~1~))'
+    imports:
+      subscribeAutoDispose: '@lightningkite/rxjs-plus'
+
 - id: com.lightningkite.rx.android.onClick
   type: call
   template:

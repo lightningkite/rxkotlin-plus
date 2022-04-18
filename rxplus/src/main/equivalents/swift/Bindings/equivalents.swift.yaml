@@ -12,6 +12,18 @@
     pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
     imports: [RxSwiftPlus]
 
+- id: com.lightningkite.rx.android.into
+  type: call
+  template:
+    pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.intoNullable
+  type: call
+  template:
+    pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
+    imports: [RxSwiftPlus]
+
 - id: com.lightningkite.rx.android.onClickNullable
   type: call
   template:

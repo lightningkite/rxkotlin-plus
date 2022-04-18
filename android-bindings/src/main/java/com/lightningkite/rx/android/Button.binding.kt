@@ -34,11 +34,11 @@ fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
         button: Button,
         formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
 ): SOURCE {
-    this.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    this.observeOn(RequireMainThread).subscribeBy {
         button.text = formatter.format(it)
     }.addTo(button.removed)
     button.setOnClickListener {
-        this.firstElement().observeOn(AndroidSchedulers.mainThread()).subscribeBy { start ->
+        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
             button.context.dateSelectorDialog(start) {
                 this.onNext(it)
             }
@@ -63,12 +63,12 @@ fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bind(
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT),
     nullText: String
 ): SOURCE {
-    this.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    this.observeOn(RequireMainThread).subscribeBy {
         button.text = it.kotlin?.let { formatter.format(it) } ?: nullText
     }.addTo(button.removed)
 
     button.setOnClickListener {
-        this.firstElement().observeOn(AndroidSchedulers.mainThread()).subscribeBy { start ->
+        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
             button.context.dateSelectorDialog(start.kotlin ?: LocalDate.now()) {
                 this.onNext(it.optional)
             }
@@ -96,11 +96,11 @@ fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
     button: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 ): SOURCE {
-    this.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    this.observeOn(RequireMainThread).subscribeBy {
         button.text = formatter.format(it)
     }.addTo(button.removed)
     button.setOnClickListener {
-        this.firstElement().observeOn(AndroidSchedulers.mainThread()).subscribeBy { start ->
+        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
             button.context.timeSelectorDialog(start) {
                 this.onNext(it)
             }
@@ -125,12 +125,12 @@ fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bind(
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT),
     nullText: String
 ): SOURCE {
-    this.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    this.observeOn(RequireMainThread).subscribeBy {
         button.text = it.kotlin?.let { formatter.format(it) } ?: nullText
     }.addTo(button.removed)
 
     button.setOnClickListener {
-        this.firstElement().observeOn(AndroidSchedulers.mainThread()).subscribeBy { start ->
+        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
             button.context.timeSelectorDialog(start.kotlin ?: LocalTime.now()) {
                 this.onNext(it.optional)
             }
@@ -158,12 +158,12 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
     button: Button,
     formatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
 ): SOURCE {
-    this.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    this.observeOn(RequireMainThread).subscribeBy {
         button.text = formatter.format(it)
     }.addTo(button.removed)
 
     button.setOnClickListener {
-        this.firstElement().observeOn(AndroidSchedulers.mainThread()).subscribeBy { start ->
+        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
             button.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 button.context.timeSelectorDialog(start.toLocalTime()) { t ->
                     this.onNext(LocalDateTime.of(d, t))
@@ -191,12 +191,12 @@ fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
     formatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
     nullText: String
 ): SOURCE {
-    this.observeOn(AndroidSchedulers.mainThread()).subscribeBy {
+    this.observeOn(RequireMainThread).subscribeBy {
         button.text = it.kotlin?.let { formatter.format(it) } ?: nullText
     }.addTo(button.removed)
 
     button.setOnClickListener {
-        this.firstElement().observeOn(AndroidSchedulers.mainThread()).subscribeBy {  element ->
+        this.firstElement().observeOn(RequireMainThread).subscribeBy {  element ->
             val start: LocalDateTime = element.kotlin ?: LocalDateTime.now()
             button.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 button.context.timeSelectorDialog(start.toLocalTime()) { t ->

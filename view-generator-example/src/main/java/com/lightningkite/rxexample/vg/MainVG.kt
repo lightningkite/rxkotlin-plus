@@ -3,23 +3,15 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import io.reactivex.rxjava3.core.Observable
-import com.lightningkite.rx.viewgenerators.StackSubject
 import com.lightningkite.rx.ValueSubject
-import com.lightningkite.rx.android.bindString
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.visible
-
-import com.lightningkite.rx.viewgenerators.EntryPoint
 import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.android.resources.*
-import com.lightningkite.rx.android.onClick
+import com.lightningkite.rx.viewgenerators.transition.StackTransition
 import com.lightningkite.rxexample.databinding.MainBinding
-import com.lightningkite.rx.android.subscribeAutoDispose
+import io.reactivex.rxjava3.core.Observable
 
 class MainVG : ViewGenerator, EntryPoint {
-    override val titleString: ViewString get() = ViewStringRaw("Main")
-
     val stack: StackSubject<ViewGenerator> = ValueSubject(listOf<ViewGenerator>())
     override val mainStack: StackSubject<ViewGenerator>?
         get() = stack
@@ -34,10 +26,10 @@ class MainVG : ViewGenerator, EntryPoint {
         val view = xml.root
 
         stack.showIn(xml.mainContent, dependency)
-        stack.map { it -> it.lastOrNull()?.titleString?.get(dependency.context) ?: "" }
-            .subscribeAutoDispose<Observable<String>, TextView, String>(xml.title, TextView::setText)
-        shouldBackBeShown.subscribeAutoDispose(xml.mainBack, View::visible)
-        xml.mainBack.onClick { this.stack.pop() }
+        stack.map { it -> it.lastOrNull()?.let { it::class.simpleName } ?: "" }
+            .into(xml.title, TextView::setText)
+        shouldBackBeShown.into(xml.mainBack, View::visible)
+        xml.mainBack.setOnClickListener { this.stack.pop() }
 
         return view
     }

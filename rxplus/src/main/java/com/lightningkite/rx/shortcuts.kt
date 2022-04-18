@@ -1,5 +1,6 @@
 package com.lightningkite.rx
 
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -508,11 +509,17 @@ operator fun Subject<Float>.div(amount: Float): Subject<Float> {
     )
 }
 
-/**
- * Returns an Observable of type B with a mapper that can fail and returns null. On failures the return Observable is empty.
- */
-infix fun <T : Any, B : Any> Observable<T>.mapNotNull(mapper: (T) -> B?): Observable<B> =
+inline fun <T : Any, B : Any> Observable<T>.mapNotNull(crossinline mapper: (T) -> B?): Observable<B> =
     this.switchMap { mapper(it)?.let { Observable.just(it) } ?: Observable.empty() }
+
+inline fun <T: Any, R: Any> Single<T>.mapNotNull(crossinline transform: (T) -> R?): Maybe<R> = flatMapMaybe { value ->
+    Maybe.fromCallable {
+        transform(value)
+    }
+}
+
+fun <T : Any> Observable<Optional<T>>.filterIsPresent(): Observable<T> = this.mapNotNull { it.kotlin }
+fun <T : Any> Single<Optional<T>>.filterIsPresent(): Maybe<T> = this.mapNotNull { it.kotlin }
 
 /**
  * A map wrapper that turns an Observable<Optional<T>> into an Observable<B>.
@@ -612,6 +619,16 @@ fun <IN : Any> List<Single<IN>>.zip(): Single<List<IN>> =
  * Takes a Subject of type Boolean and on subscription of this, it will pass true into the onNext
  * of the Subject. After this completes it will pass false into the Subject
  */
+fun Completable.working(property: Subject<Boolean>): Completable {
+    return this
+        .doOnSubscribe { property.onNext(true) }
+        .doFinally { property.onNext(false) }
+}
+
+/**
+ * Takes a Subject of type Boolean and on subscription of this, it will pass true into the onNext
+ * of the Subject. After this completes it will pass false into the Subject
+ */
 fun <Element : Any> Single<Element>.working(property: Subject<Boolean>): Single<Element> {
     return this
         .doOnSubscribe { property.onNext(true) }
@@ -635,5 +652,16 @@ fun <Element: Any> Observable<Element>.onlyWhile(shouldListen: Observable<Boolea
     return shouldListen.switchMap {
         if(it) this
         else Observable.never()
+    }
+}
+
+/**
+ * Subscribes only to the observable while [shouldListen]'s most recent value is true.
+ * If it's false, emits [downtimeValue] and waits.
+ */
+fun <Element: Any> Observable<Element>.onlyWhile(shouldListen: Observable<Boolean>, downtimeValue: Element): Observable<Element> {
+    return shouldListen.switchMap {
+        if(it) this
+        else Observable.concat(Observable.just(downtimeValue), Observable.never())
     }
 }

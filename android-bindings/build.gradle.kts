@@ -57,3 +57,11 @@ standardPublishing {
         }
     }
 }
+
+project.afterEvaluate {
+    project.android.sourceSets.forEach { sourceSet ->
+        if(sourceSet.name.startsWith("main")) {
+            println(sourceSet.java.srcDirs)
+        }
+    }
+}

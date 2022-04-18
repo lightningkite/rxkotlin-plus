@@ -261,10 +261,12 @@ private fun generateFile(
                     line("val $it,")
                 }
             }
-            line("${CodeSection.sectionMarker} Extends ${CodeSection.overwriteMarker}")
+            line("${CodeSection.sectionMarker} Extends")
         }
         line(") : ViewGenerator {")
+        line()
         tab {
+            line("${CodeSection.sectionMarker} Properties")
             viewNode.provides.sortedBy { it.name }.filter { it.onPath == null }.forEach {
                 line()
                 line("${CodeSection.sectionMarker} Provides ${it.name} ${CodeSection.overwriteMarker}")
@@ -287,19 +289,11 @@ private fun generateFile(
                 }
             }
             line()
-            line("${CodeSection.sectionMarker} Title ${CodeSection.overwriteMarker}")
-            line(
-                """override val titleString: ViewString = ViewStringRaw("${
-                    viewName.replace(Regex("[A-Z]")) { " " + it.value }
-                        .trim()
-                }")""")
-            line()
             line("${CodeSection.sectionMarker} Generate Start ${CodeSection.overwriteMarker}")
             line("""override fun generate(dependency: ActivityAccess): View {""")
             line()
             tab {
                 line("val xml = ${viewName}Binding.inflate(dependency.layoutInflater)")
-                line("val view = xml.root")
 
                 fun handleNode(inside: String, node: XmlNode, prefix: String) {
                     node.allAttributes["android:id"]?.removePrefix("@+id/")?.let { viewId ->
@@ -484,11 +478,9 @@ private fun generateFile(
                                 // If sublayout has a VG, use that instead of looping down the layout.
                                 if (otherViewNode != null) {
                                     line("val cellVg = ${makeView(otherViewNode, "stack", view)} ")
-                                    line("val cellView = cellVg.generate(dependency)")
                                     handleNodeClick(node, "cellView", "cellView.")
                                 } else {
                                     line("val cellXml = $xmlName.inflate(dependency.layoutInflater) ")
-                                    line("val cellView = cellXml.root")
                                     val file = xml.parentFile.resolve(it.removePrefix("@layout/").plus(".xml"))
                                     handleNode(subName, XmlNode.read(file, styles), "cellXml.")
                                     handleNodeClick(node, "cellXml.root", "cellXml.root.")
@@ -502,7 +494,11 @@ private fun generateFile(
                                         )
                                     } ${CodeSection.overwriteMarker}"
                                 )
-                                line("return@label cellView")
+                                if (otherViewNode != null) {
+                                    line("return@label cellVg.generate(dependency)")
+                                } else {
+                                    line("return@label cellXml.root")
+                                }
                             }
                             line("}")
 
@@ -542,7 +538,7 @@ private fun generateFile(
                 line()
                 line("${CodeSection.sectionMarker} Generate End ${CodeSection.overwriteMarker}")
                 line()
-                line("return view")
+                line("return xml.root")
             }
             line("}")
             line()
