@@ -51,8 +51,10 @@ internal val View.flparams: FrameLayout.LayoutParams get() = (layoutParams as? F
 @RxKotlinViewDsl fun <T: View> T.weight(value: Float) = this.apply { llparams.weight = value }
 @RxKotlinViewDsl fun <T: View> T.width(value: Int) = this.apply { lparams.width = value.dp }
 @RxKotlinViewDsl fun <T: View> T.matchWidth() = this.apply { lparams.width = ViewGroup.LayoutParams.MATCH_PARENT }
+@RxKotlinViewDsl fun <T: View> T.wrapWidth() = this.apply { lparams.width = ViewGroup.LayoutParams.WRAP_CONTENT }
 @RxKotlinViewDsl fun <T: View> T.height(value: Int) = this.apply { lparams.height = value.dp }
 @RxKotlinViewDsl fun <T: View> T.matchHeight() = this.apply { lparams.height = ViewGroup.LayoutParams.MATCH_PARENT }
+@RxKotlinViewDsl fun <T: View> T.wrapHeight() = this.apply { lparams.height = ViewGroup.LayoutParams.WRAP_CONTENT }
 @RxKotlinViewDsl fun <T: View> T.frameGravity(@GravityInt gravity: Int) = this.apply { flparams.gravity = gravity }
 @RxKotlinViewDsl fun <T: View> T.align(@GravityInt gravity: Int) = this.apply { llparams.gravity = gravity }
 @RxKotlinViewDsl fun <T: View> T.pad(value: Int) = this.apply { setPadding(value.dp) }

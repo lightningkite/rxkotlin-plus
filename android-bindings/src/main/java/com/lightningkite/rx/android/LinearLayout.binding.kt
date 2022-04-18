@@ -23,6 +23,44 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: Behavior
 fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showIn(
     linearLayout: LinearLayout,
     makeView: (Observable<T>) -> View
+): SOURCE = showInAllowParams(linearLayout) {
+    makeView(it).apply {
+        layoutParams =
+            if (linearLayout.orientation == LinearLayout.VERTICAL)
+                LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+            else
+                LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
+    }
+}
+
+
+/**
+ * Will display the contents of this in the LinearLayout using the makeView provided for each item.
+ *
+ * Example:
+ * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
+ * data.showIn(linearLayoutView) { obs -> ... return view }
+ */
+fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showInWrap(
+    linearLayout: LinearLayout,
+    makeView: (Observable<T>) -> View
+): SOURCE = showInAllowParams(linearLayout) {
+    makeView(it).apply {
+        layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+    }
+}
+
+
+/**
+ * Will display the contents of this in the LinearLayout using the makeView provided for each item.
+ *
+ * Example:
+ * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
+ * data.showIn(linearLayoutView) { obs -> ... return view }
+ */
+fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showInAllowParams(
+    linearLayout: LinearLayout,
+    makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
     observeOn(RequireMainThread).subscribeBy { value ->
@@ -39,10 +77,7 @@ fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showIn(
             for (iter in 1..(-excessViews)) {
                 val prop = BehaviorSubject.create<T>()
                 val v = makeView(prop)
-                if (linearLayout.orientation == LinearLayout.VERTICAL)
-                    linearLayout.addView(v, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
-                else
-                    linearLayout.addView(v, LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
+                linearLayout.addView(v)
                 existingViews.add(LinearLayoutBoundSubview(v, prop))
             }
         }

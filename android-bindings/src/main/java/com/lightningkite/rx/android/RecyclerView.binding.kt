@@ -37,7 +37,6 @@ internal open class ObservableRVA<T: Any>(
         val subview = makeView(viewType, event)
         subview.setRemovedCondition(removeCondition)
         subview.tag = event
-        subview.layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         return object : RecyclerView.ViewHolder(subview) {}
     }
 

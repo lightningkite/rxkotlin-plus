@@ -7,10 +7,12 @@ import android.view.View
 import android.webkit.WebView
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.lightningkite.rx.viewgenerators.ActivityAccess
+import com.lightningkite.rx.viewgenerators.SwapView
 
 @RxKotlinViewDsl inline fun ViewDsl.glSurface(setup: GLSurfaceView.() -> Unit = {}) = GLSurfaceView(context).applyDefaultSpacing().apply(setup)
-@RxKotlinViewDsl inline fun ViewDsl.viewFlipper(setup: ViewFlipper.() -> Unit = {}) = ViewFlipper(context).applyDefaultSpacing().apply(setup)
 @RxKotlinViewDsl inline fun ViewDsl.surface(setup: SurfaceView.()->Unit = {}) = SurfaceView(context).applyDefaultSpacing().apply(setup)
 @RxKotlinViewDsl inline fun ViewDsl.texture(setup: TextureView.()->Unit = {}) = TextureView(context).applyDefaultSpacing().apply(setup)
 @RxKotlinViewDsl inline fun ViewDsl.view(setup: View.()->Unit = {}) = View(context).applyDefaultSpacing().apply(setup)
@@ -33,7 +35,10 @@ import com.lightningkite.rx.viewgenerators.ActivityAccess
 @RxKotlinViewDsl inline fun ViewDsl.toggleButton(setup: ToggleButton.()->Unit = {}) = ToggleButton(context).applyDefaultSpacing().apply(setup)
 @RxKotlinViewDsl inline fun ViewDsl.video(setup: VideoView.()->Unit = {}) = VideoView(context).applyDefaultSpacing().apply(setup)
 
-@RxKotlinViewDsl inline fun ViewDsl.recyclerView(setup: RecyclerView.()->Unit = {}) = RecyclerView(context).applyDefaultSpacing().apply(setup)
+@RxKotlinViewDsl inline fun ViewDsl.recycler(setup: RecyclerView.()->Unit = {}) = RecyclerView(context).apply(setup)
+@RxKotlinViewDsl inline fun ViewDsl.pager(setup: ViewPager2.()->Unit = {}) = ViewPager2(context).apply(setup)
+
+@RxKotlinViewDsl inline fun ViewDsl.swap(setup: SwapView.()->Unit = {}) = SwapView(context).apply(setup)
 
 @RxKotlinViewDsl fun ActivityAccess.dsl(make: ViewDsl.()->View): View = ViewDsl(context).let(make)
 

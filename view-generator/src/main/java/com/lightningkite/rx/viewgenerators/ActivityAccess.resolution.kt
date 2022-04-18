@@ -26,5 +26,5 @@ val ActivityAccess.displayMetrics: DisplayMetrics get() = context.resources.disp
 /**
  * A shortcut for getting resources.
  */
-val ActivityAccess.layoutInflater: LayoutInflater get() = activity.layoutInflater
+val ActivityAccess.layoutInflater: LayoutInflater get() = LayoutInflater.from(context)
 
