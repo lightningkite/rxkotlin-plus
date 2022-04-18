@@ -264,6 +264,7 @@ private fun generateFile(
             line("${CodeSection.sectionMarker} Extends")
         }
         line(") : ViewGenerator {")
+        line()
         tab {
             line("${CodeSection.sectionMarker} Properties")
             viewNode.provides.sortedBy { it.name }.filter { it.onPath == null }.forEach {

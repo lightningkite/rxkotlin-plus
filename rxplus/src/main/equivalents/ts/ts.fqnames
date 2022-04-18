@@ -65,7 +65,6 @@ com.lightningkite.rx.viewgenerators.popToPredicate
 com.lightningkite.rx.viewgenerators.root
 com.lightningkite.rx.viewgenerators.reset
 com.lightningkite.rx.viewgenerators.showIn
-com.lightningkite.rx.viewgenerators.SwapView
 com.lightningkite.rx.viewgenerators.View_focusAtStartup
 com.lightningkite.rx.viewgenerators.focusAtStartup
 com.lightningkite.rx.viewgenerators.ViewGenerator
@@ -87,3 +86,6 @@ com.lightningkite.rx.viewgenerators.lastDialog
 com.lightningkite.rx.viewgenerators.showDialogEvent
 com.lightningkite.rx.viewgenerators.DialogRequest
 com.lightningkite.rx.viewgenerators.showDialog
+com.lightningkite.rx.viewgenerators.transition.StackTransition
+com.lightningkite.rx.viewgenerators.transition.TransitionTriple
+com.lightningkite.rx.viewgenerators.transition.UsesCustomTransition
