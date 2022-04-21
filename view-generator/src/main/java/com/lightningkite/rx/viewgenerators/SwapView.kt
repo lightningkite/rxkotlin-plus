@@ -121,7 +121,7 @@ class SwapView @JvmOverloads constructor(
             val tag = it.tag ?: return@let
             val ar = SparseArray<Parcelable>()
             it.saveHierarchyState(ar)
-            oldInfo[it.tag] = ar
+            oldInfo[tag] = ar
         }
         removeView(oldView)
         addView(
