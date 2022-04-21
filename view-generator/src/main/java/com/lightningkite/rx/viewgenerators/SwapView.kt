@@ -1,7 +1,10 @@
 package com.lightningkite.rx.viewgenerators
 
 import android.content.Context
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
@@ -41,6 +44,8 @@ class SwapView @JvmOverloads constructor(
 
     private var currentView: View? = null
     private var hasCurrentView: Boolean = false
+
+    private val oldInfo = HashMap<Any, SparseArray<Parcelable>>()
 
     /**
      * Swaps from the current view to another one with the given [transition].
@@ -112,6 +117,12 @@ class SwapView @JvmOverloads constructor(
             })
         })
 
+        oldView?.let {
+            val tag = it.tag ?: return@let
+            val ar = SparseArray<Parcelable>()
+            it.saveHierarchyState(ar)
+            oldInfo[it.tag] = ar
+        }
         removeView(oldView)
         addView(
             newView, FrameLayout.LayoutParams(
@@ -119,6 +130,11 @@ class SwapView @JvmOverloads constructor(
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         )
+        newView.tag?.let { tag ->
+            oldInfo[tag]?.let {
+                newView.restoreHierarchyState(it)
+            }
+        }
 
         currentView = newView
         post {

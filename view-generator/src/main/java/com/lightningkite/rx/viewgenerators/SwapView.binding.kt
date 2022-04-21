@@ -9,8 +9,16 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
+private class WeakKey(item: Any) {
+    val ref = WeakReference(item)
+    val hashCode = item.hashCode()
+    override fun hashCode(): Int = hashCode
+    override fun equals(other: Any?): Boolean = other is WeakKey && ref.get() == other.ref.get()
+    override fun toString(): String = ref.get()?.toString() ?: hashCode.toString()
+}
 
 /**
  * Displays the Observable's view generator as the content of this view.
@@ -25,7 +33,9 @@ fun <T : Any, SOURCE : Observable<T>> SOURCE.showIn(
     this.subscribeBy { newItem ->
         if (currentItem == newItem) return@subscribeBy
         post {
-            swapView.swap(makeView(newItem), transition)
+            val view = makeView(newItem)
+            view.tag = WeakKey(newItem)
+            swapView.swap(view, transition)
             currentItem = newItem
         }
     }.addTo(swapView.removed)
@@ -45,7 +55,9 @@ fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     this.subscribeBy { newGenerator ->
         if (currentGenerator == newGenerator) return@subscribeBy
         post {
-            swapView.swap(newGenerator.generate(dependency), transition)
+            val view = newGenerator.generate(dependency)
+            view.tag = WeakKey(newGenerator)
+            swapView.swap(view, transition)
             currentGenerator = newGenerator
         }
     }.addTo(swapView.removed)
@@ -68,8 +80,10 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
         val newGenerator = value.lastOrNull()
         val newStackSize = value.size
         if (currentGenerator == newGenerator) return@subscribeBy
+        val view = newGenerator?.generate(dependency)
+        view?.tag = WeakKey(newGenerator!!)
         swapView.swap(
-            newGenerator?.generate(dependency), when {
+            view, when {
                 currentStackSize == 0 -> (newGenerator as? UsesCustomTransition)?.transition?.neutral
                     ?: stackTransition.neutral
                 newStackSize == 0 -> (currentGenerator as? UsesCustomTransition)?.transition?.pop ?: stackTransition.pop

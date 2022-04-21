@@ -2,7 +2,10 @@ package com.lightningkite.rx
 
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.Subject
 import java.util.Optional
@@ -221,3 +224,24 @@ fun <T : Any, V : Any> HasValueSubject<T>.mapWithExistingDefault(
         read = { property.get(it) ?: defaultValue },
         write = { existing, it -> property.set(existing, it); existing }
     )
+
+
+fun <S: Subject<T>, T: Any> S.bind(other: Subject<T>): CompositeDisposable {
+    var suppress = false
+    return CompositeDisposable(
+        this.subscribeBy { value ->
+            if (!suppress) {
+                suppress = true
+                other.onNext(value)
+                suppress = false
+            }
+        },
+        other.subscribeBy { value ->
+            if (!suppress) {
+                suppress = true
+                onNext(value)
+                suppress = false
+            }
+        }
+    )
+}

@@ -10,10 +10,6 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
 
-
-var butterflySpinnerRow: Int = android.R.layout.simple_spinner_item
-
-
 /**
  * Sets the values displayed by the spinner to the contents of this and selections are
  * passed to selected.

@@ -1,6 +1,8 @@
 package com.lightningkite.rx.android
 
 import android.widget.CompoundButton
+import com.jakewharton.rxbinding4.widget.checkedChanges
+import com.lightningkite.rx.withWrite
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -13,21 +15,8 @@ import io.reactivex.rxjava3.subjects.Subject
  * val selected = PublishSubject(false)
  * selected.bind(compoundButtonView)
  */
-fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOURCE {
-    var lastKnownValue: Boolean = false
-    observeOn(RequireMainThread).subscribeBy { it ->
-        lastKnownValue = it
-        if (it != compoundButton.isChecked) {
-            compoundButton.isChecked = it
-        }
-    }.addTo(compoundButton.removed)
-    compoundButton.setOnCheckedChangeListener { _, isChecked ->
-        if (lastKnownValue != isChecked) {
-            onNext(isChecked)
-        }
-    }
-    return this
-}
+fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOURCE =
+    bindView(compoundButton, compoundButton.checkedChanges().withWrite { compoundButton.isChecked = it })
 
 /**
  * Binds the value of this to the checked state of the view, however this will prevent the

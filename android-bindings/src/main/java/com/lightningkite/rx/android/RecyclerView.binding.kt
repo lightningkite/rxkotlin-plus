@@ -17,7 +17,13 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 private fun RecyclerView.defaultLayoutManager(){
     if(layoutManager == null) {
-        layoutManager = LinearLayoutManager(context)
+        layoutManager = object : LinearLayoutManager(context) {
+            override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
+                return super.generateDefaultLayoutParams().apply {
+                    width = MATCH_PARENT
+                }
+            }
+        }
     }
 }
 

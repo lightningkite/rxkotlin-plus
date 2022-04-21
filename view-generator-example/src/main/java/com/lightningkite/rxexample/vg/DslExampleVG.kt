@@ -73,8 +73,8 @@ class DslExampleVG : ViewGenerator {
                 ),
                 image {
                     setImageResource(R.drawable.reason_expertise)
-                    setWidth(100)
-                    setHeight(50)
+                    width(100)
+                    height(50)
                 },
                 columnTopFill(
                     quickButton("First"),
@@ -91,7 +91,7 @@ class DslExampleVG : ViewGenerator {
                 }
             ),
             setup = {
-                applyDefaultPadding()
+                padDefault()
                 scrollToTop.into(this) { smoothScrollTo(0, 0) }
             }
         )

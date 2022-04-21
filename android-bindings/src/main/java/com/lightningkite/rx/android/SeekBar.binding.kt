@@ -1,6 +1,7 @@
 package com.lightningkite.rx.android
 
 import android.widget.SeekBar
+import com.jakewharton.rxbinding4.widget.changes
 import com.lightningkite.rx.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -16,32 +17,7 @@ import io.reactivex.rxjava3.kotlin.addTo
  */
 fun <SOURCE: Subject<Int>> SOURCE.bind(
     seekBar: SeekBar
-): SOURCE {
-    var suppress = false
-    observeOn(RequireMainThread).subscribeBy { value ->
-        if (!suppress) {
-            suppress = true
-            seekBar.progress = value
-            suppress = false
-        }
-    }.addTo(seekBar.removed)
-    seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-            if (!suppress) {
-                suppress = true
-                onNext(p1)
-                suppress = false
-            }
-        }
-
-        override fun onStartTrackingTouch(p0: SeekBar?) {
-        }
-
-        override fun onStopTrackingTouch(p0: SeekBar?) {
-        }
-    })
-    return this
-}
+): SOURCE = bindView(seekBar, seekBar.changes().withWrite { seekBar.progress = it })
 
 /**
  * Binds the value of this to the seekbar's internal value. Changes will propagate both directions.

@@ -1,6 +1,8 @@
 package com.lightningkite.rx.android
 
 import android.widget.RatingBar
+import com.jakewharton.rxbinding4.widget.ratingChanges
+import com.lightningkite.rx.withWrite
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
@@ -12,21 +14,4 @@ import io.reactivex.rxjava3.kotlin.addTo
  */
 fun <SOURCE: Subject<Float>> SOURCE.bind(
     ratingBar: RatingBar
-): SOURCE {
-    var suppress = false
-    observeOn(RequireMainThread).subscribeBy { value ->
-        if (!suppress) {
-            suppress = true
-            ratingBar.rating = value
-            suppress = false
-        }
-    }.addTo(ratingBar.removed)
-    ratingBar.onRatingBarChangeListener = RatingBar.OnRatingBarChangeListener { _, p1, _ ->
-        if (!suppress) {
-            suppress = true
-            onNext(p1)
-            suppress = false
-        }
-    }
-    return this
-}
+): SOURCE = bindView(ratingBar, ratingBar.ratingChanges().withWrite { ratingBar.rating = it })
