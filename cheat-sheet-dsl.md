@@ -7,6 +7,14 @@ It's built for total minimalism, so here's basically the whole thing:
 - All sizes (besides text sizes) are measure in `dp`.
 - Default spacing is applied unless you override it.
 
+## Using the DSL
+
+```kotlin
+context.dsl {
+    text { setText("Hello world!") }
+}
+```
+
 ## Styles
 
 There is no style system for this View DSL, so instead it imports and exposes [Paris](https://github.com/airbnb/paris) by AirBnB for such purposes.
@@ -33,9 +41,12 @@ Example:
 
 ```kotlin
 columnTopStart(
-    text { setText("First") }.height(100),
-    text { setText("Second") }.weight(1f),
-    text { setText("Third") }.align(Gravity.END),
+    text { setText("First") },
+    text { setText("Second") },
+    text { setText("Third") },
+    setup = {
+        // Set up your LinearLayout here.
+    }
 )
 ```
 
@@ -52,9 +63,12 @@ Example:
 
 ```kotlin
 rowTopStart(
-    text { setText("First") }.width(100),
-    text { setText("Second") }.weight(1f),
-    text { setText("Third") }.align(Gravity.BOTTOM),
+    text { setText("First") },
+    text { setText("Second") },
+    text { setText("Third") },
+    setup = {
+        // Set up your LinearLayout here.
+    }
 )
 ```
 
@@ -69,9 +83,23 @@ Example:
 
 ```kotlin
 frame(
-    text { setText("Top") }.wrapWidth().wrapHeight().frameGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL),
-    text { setText("Bottom Left") }.wrapWidth().wrapHeight().frameGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL),
-    text { setText("Cover Everything") },
+    text { 
+        gravity = Grav.topCenter
+        wrapSize()
+        setText("Top") 
+    },
+    text { 
+        gravity = Grav.bottomLeft
+        wrapSize()
+        setText("Bottom Left") 
+    },
+    text { 
+        setText("Cover Everything")
+        // MATCH_PARENT by default
+    },
+    setup = {
+        // Set up your FrameLayout here.
+    }
 )
 ```
 
@@ -86,24 +114,27 @@ Example:
 
 ```kotlin
 flipper(
-    text { setText("Main Content") }
+    text { setText("Main Content") },
+    setup = {
+        // Set up your ViewFlipper here.
+    }
 )
 ```
 
 
 ### Scroll Views
 
-Creates a 
+Creates a scroll view in the given direction.
 
 Example:
 
 ```kotlin
-scroll(columnFill(
+scroll(columnTopFill(
     text { setText("First") },
     text { setText("Second") },
     text { setText("Third") },
 ))
-horizontalScroll(rowFill(
+horizontalScroll(rowStartFill(
     text { setText("First") },
     text { setText("Second") },
     text { setText("Third") },
@@ -158,6 +189,21 @@ You can override the default layout parameters with the following functions:
 - `fun View.updateMargins(left: Int = noChange, top: Int = noChange, right: Int = noChange, bottom: Int = noChange)` - Sets the margin of each side individually in density pixels.
 - `fun View.pad(value: Int)` - Sets the margin of all sides individually in density pixels.
 - `fun View.updatePad(left: Int = noChange, top: Int = noChange, right: Int = noChange, bottom: Int = noChange)` - Sets the margin of each side individually in density pixels.
+
+Example:
+
+```kotlin
+columnTopStart(
+    text {
+        setText("Hello world!")
+        gravity = Gravity.START
+    },
+    text {
+        setText("I'm at the end.")
+        gravity = Gravity.END
+    },
+)
+```
 
 
 ## Shortcuts

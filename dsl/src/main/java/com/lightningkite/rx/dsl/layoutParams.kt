@@ -8,8 +8,6 @@ import android.widget.LinearLayout
 import androidx.annotation.GravityInt
 import androidx.core.view.setMargins
 import androidx.core.view.setPadding
-import androidx.core.view.updateMargins
-import androidx.core.view.updatePadding
 
 
 val unsetSize = -3
@@ -74,7 +72,7 @@ val View.flparams: FrameLayout.LayoutParams get() = (layoutParams as? FrameLayou
 @RxKotlinViewDsl fun View.wrapHeight() { lparams.height = ViewGroup.LayoutParams.WRAP_CONTENT }
 
 /** Sets the alignment of the item inside the parent `LinearLayout`. **/
-@RxKotlinViewDsl var View.gravity: Int
+@RxKotlinViewDsl var View.layoutGravity: Int
     get() = when(val params = layoutParams) {
         is FrameLayout.LayoutParams -> params.gravity
         is LinearLayout.LayoutParams -> params.gravity

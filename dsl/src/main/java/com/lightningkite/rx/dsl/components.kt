@@ -40,8 +40,6 @@ import com.lightningkite.rx.viewgenerators.SwapView
 
 @RxKotlinViewDsl inline fun ViewDsl.swap(setup: SwapView.()->Unit = {}) = SwapView(context).apply(setup)
 
-@RxKotlinViewDsl fun ActivityAccess.dsl(make: ViewDsl.()->View): View = ViewDsl(context).let(make)
-
 /*
 Ideas for prebuilt components
 
