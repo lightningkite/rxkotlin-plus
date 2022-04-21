@@ -7,6 +7,6 @@ import android.view.View
     val context: Context,
     val defaultSpacing: Int = 8
 ) {
-    @RxKotlinViewDsl fun <T: View> T.applyDefaultSpacing(): T = apply { lparams.setMargins(defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp) }
-    @RxKotlinViewDsl fun <T: View> T.applyDefaultPadding(): T = apply { setPadding(defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp) }
+    @RxKotlinViewDsl fun View.marginDefault() { lparams.setMargins(defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp) }
+    @RxKotlinViewDsl fun View.padDefault() { setPadding(defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp, defaultSpacing.dp) }
 }

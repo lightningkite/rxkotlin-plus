@@ -1,5 +1,6 @@
 //! This file will translate using Khrysalis.
 @file:OptIn(RxKotlinViewDsl::class)
+
 package com.lightningkite.rxexample.vg
 
 import android.content.Context
@@ -28,13 +29,14 @@ class DslExampleVG : ViewGenerator {
     override fun generate(dependency: ActivityAccess): View = dependency.dsl {
         fun quickButton(text: String) = button { style(R.style.ButtonPrimary); this.text = text }
         scroll(
-            columnStart(
+            columnTopStart(
                 text {
                     style(R.style.Header)
                     setText(R.string.welcome)
                     setBackgroundResource(R.color.colorAccent)
                     transitionName = "title"
-                }.pad(4),
+                    pad(4)
+                },
                 text {
                     style(R.style.Body)
                     setText(R.string.welcome_message)
@@ -43,37 +45,56 @@ class DslExampleVG : ViewGenerator {
                     text {
                         style(R.style.Body)
                         number.map { it -> it.toString() }.into(this, TextView::setText)
-                    }.weight(1f),
+                        weight = 1f
+                    },
                     button {
                         style(R.style.ButtonPrimary)
                         setText(R.string.increment_the_number)
                         setOnClickListener { increment() }
+                    },
+                    setup = {
+                        matchWidth()
                     }
-                ).matchWidth(),
+                ),
                 rowCenter(
                     text {
                         style(R.style.Body)
                         chained.flatMap { it -> it }.map { it -> it.toString() }.into(this, TextView::setText)
-                    }.weight(1f),
+                        weight = 1f
+                    },
                     button {
                         style(R.style.ButtonPrimary)
                         setText(R.string.increment_the_number)
                         setOnClickListener { chained.value.value = chained.value.value + 1 }
+                    },
+                    setup = {
+                        matchWidth()
                     }
-                ).matchWidth(),
-                image { setImageResource(R.drawable.reason_expertise) }.width(100).height(50),
-                columnFill(
+                ),
+                image {
+                    setImageResource(R.drawable.reason_expertise)
+                    setWidth(100)
+                    setHeight(50)
+                },
+                columnTopFill(
                     quickButton("First"),
                     quickButton("Second"),
                     quickButton("Third"),
-                ).matchWidth(),
+                    setup = {
+                        matchWidth()
+                    },
+                ),
                 button {
                     style(R.style.ButtonPrimary)
                     text = "Scroll to Top"
                     setOnClickListener { scrollToTop.onNext(Unit) }
                 }
-            ).applyDefaultPadding()
-        ).apply { scrollToTop.into(this) { smoothScrollTo(0, 0) } }
+            ),
+            setup = {
+                applyDefaultPadding()
+                scrollToTop.into(this) { smoothScrollTo(0, 0) }
+            }
+        )
     }
 }
 

@@ -29,12 +29,23 @@ someRatioObservable.subscribeAutoDispose(progressBar, ProgressBar::progressRatio
 someBooleanObservable.subscribeAutoDispose(view, View::exists)  // visibility = VISIBLE or GONE
 someBooleanObservable.subscribeAutoDispose(view, View::visible)  // visibility = VISIBLE or INVISIBLE
 someBooleanObservable.subscribeAutoDispose(viewFlipper, ViewFlipper::showLoading)
+
+// You can use the 'into' alias as well.
+
+someTextObservable.into(textView, TextView::setText)
+someRatioObservable.into(progressBar, ProgressBar::progressRatio)
+someBooleanObservable.into(view, View::exists)  // visibility = VISIBLE or GONE
+someBooleanObservable.into(view, View::visible)  // visibility = VISIBLE or INVISIBLE
+someBooleanObservable.into(viewFlipper, ViewFlipper::showLoading)
 ```
 
 ### Do an action when an `Observable` updates
 
 ```kotlin
 someObservable.subscribeAutoDispose(view) { value ->
+    // Do something with `value`
+}
+someObservable.into(view) { value ->
     // Do something with `value`
 }
 ```

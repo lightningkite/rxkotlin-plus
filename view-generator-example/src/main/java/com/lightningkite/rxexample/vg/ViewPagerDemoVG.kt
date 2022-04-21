@@ -2,14 +2,14 @@
 package com.lightningkite.rxexample.vg
 
 import android.view.View
+import android.widget.TextView
 import com.lightningkite.rx.ValueSubject
+import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.showIn
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import com.lightningkite.rx.viewgenerators.StackSubject
-import com.lightningkite.rx.viewgenerators.ViewGenerator
-import com.lightningkite.rx.viewgenerators.layoutInflater
+import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rxexample.databinding.ComponentTestBinding
 import com.lightningkite.rxexample.databinding.ViewPagerDemoBinding
+import io.reactivex.rxjava3.core.Observable
 
 class ViewPagerDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
 
@@ -24,10 +24,10 @@ class ViewPagerDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
         val xml = ViewPagerDemoBinding.inflate(dependency.layoutInflater)
         val view = xml.root
 
-        items.showIn(xml.viewPager, selectedIndex) { it ->
+        Observable.just(items).showIn(xml.viewPager, selectedIndex) { it ->
             val xml = ComponentTestBinding.inflate(dependency.layoutInflater)
             val view = xml.root
-            xml.label.text = it
+            it.into(xml.label, TextView::setText)
             view
         }
 

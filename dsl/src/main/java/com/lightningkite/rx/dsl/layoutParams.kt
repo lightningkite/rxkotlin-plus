@@ -12,54 +12,103 @@ import androidx.core.view.updateMargins
 import androidx.core.view.updatePadding
 
 
-internal val unsetSize = -3
+val unsetSize = -3
 internal val Int.dp: Int get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-internal val View.lparams: ViewGroup.MarginLayoutParams get() = (layoutParams as? ViewGroup.MarginLayoutParams) ?: run {
-    val n = when(val it = layoutParams) {
-        null -> ViewGroup.MarginLayoutParams(unsetSize, unsetSize)
-        is LinearLayout.LayoutParams -> ViewGroup.MarginLayoutParams(it)
-        is FrameLayout.LayoutParams -> ViewGroup.MarginLayoutParams(it)
-        is ViewGroup.MarginLayoutParams -> ViewGroup.MarginLayoutParams(it)
-        else -> ViewGroup.MarginLayoutParams(it)
-    }
+val View.lparams: ViewGroup.MarginLayoutParams get() = (layoutParams as? ViewGroup.MarginLayoutParams) ?: run {
+    val n = if(layoutParams == null) ViewGroup.MarginLayoutParams(unsetSize, unsetSize) else ViewGroup.MarginLayoutParams(layoutParams)
     this.layoutParams = n
     n
 }
-internal val View.llparams: LinearLayout.LayoutParams get() = (layoutParams as? LinearLayout.LayoutParams) ?: run {
+val View.llparams: LinearLayout.LayoutParams get() = (layoutParams as? LinearLayout.LayoutParams) ?: run {
     val n = when(val it = layoutParams) {
         null -> LinearLayout.LayoutParams(unsetSize, unsetSize)
-        is LinearLayout.LayoutParams -> LinearLayout.LayoutParams(it)
-        is FrameLayout.LayoutParams -> LinearLayout.LayoutParams(it)
+        is FrameLayout.LayoutParams -> LinearLayout.LayoutParams(it).apply { gravity = it.gravity }
         is ViewGroup.MarginLayoutParams -> LinearLayout.LayoutParams(it)
         else -> LinearLayout.LayoutParams(it)
     }
     this.layoutParams = n
     n
 }
-internal val View.flparams: FrameLayout.LayoutParams get() = (layoutParams as? FrameLayout.LayoutParams) ?: run {
+val View.flparams: FrameLayout.LayoutParams get() = (layoutParams as? FrameLayout.LayoutParams) ?: run {
     val n = when(val it = layoutParams) {
         null -> FrameLayout.LayoutParams(unsetSize, unsetSize)
-        is LinearLayout.LayoutParams -> FrameLayout.LayoutParams(it)
-        is FrameLayout.LayoutParams -> FrameLayout.LayoutParams(it)
+        is LinearLayout.LayoutParams -> FrameLayout.LayoutParams(it).apply { gravity = it.gravity }
         is ViewGroup.MarginLayoutParams -> FrameLayout.LayoutParams(it)
         else -> FrameLayout.LayoutParams(it)
     }
     this.layoutParams = n
     n
 }
-@RxKotlinViewDsl fun <T: View> T.weight(value: Float) = this.apply { llparams.weight = value }
-@RxKotlinViewDsl fun <T: View> T.width(value: Int) = this.apply { lparams.width = value.dp }
-@RxKotlinViewDsl fun <T: View> T.matchWidth() = this.apply { lparams.width = ViewGroup.LayoutParams.MATCH_PARENT }
-@RxKotlinViewDsl fun <T: View> T.wrapWidth() = this.apply { lparams.width = ViewGroup.LayoutParams.WRAP_CONTENT }
-@RxKotlinViewDsl fun <T: View> T.height(value: Int) = this.apply { lparams.height = value.dp }
-@RxKotlinViewDsl fun <T: View> T.matchHeight() = this.apply { lparams.height = ViewGroup.LayoutParams.MATCH_PARENT }
-@RxKotlinViewDsl fun <T: View> T.wrapHeight() = this.apply { lparams.height = ViewGroup.LayoutParams.WRAP_CONTENT }
-@RxKotlinViewDsl fun <T: View> T.frameGravity(@GravityInt gravity: Int) = this.apply { flparams.gravity = gravity }
-@RxKotlinViewDsl fun <T: View> T.align(@GravityInt gravity: Int) = this.apply { llparams.gravity = gravity }
-@RxKotlinViewDsl fun <T: View> T.pad(value: Int) = this.apply { setPadding(value.dp) }
-@RxKotlinViewDsl fun <T: View> T.margin(value: Int) = this.apply { lparams.setMargins(value.dp) }
-@RxKotlinViewDsl fun <T: View> T.hpad(value: Int) = this.apply { updatePadding(left = value.dp, right = value.dp) }
-@RxKotlinViewDsl fun <T: View> T.hmargin(value: Int) = this.apply { lparams.updateMargins(left = value.dp, right = value.dp) }
-@RxKotlinViewDsl fun <T: View> T.vpad(value: Int) = this.apply { updatePadding(top = value.dp, bottom = value.dp) }
-@RxKotlinViewDsl fun <T: View> T.vmargin(value: Int) = this.apply { lparams.updateMargins(top = value.dp, bottom = value.dp) }
+
+/** Sets the `weight` for `LinearLayout`s such as `row` and `column`. **/
+@RxKotlinViewDsl var View.weight: Float
+    get() = llparams.weight
+    set(value) { llparams.weight = value }
+
+/** - Sets the width and height to the given measurement in density pixels. **/
+@RxKotlinViewDsl fun View.size(value: Int) { lparams.width = value.dp; lparams.height = value.dp }
+
+/** Sets the width to match the width of its parent. **/
+@RxKotlinViewDsl fun View.matchSize() { lparams.width = ViewGroup.LayoutParams.MATCH_PARENT; lparams.height = ViewGroup.LayoutParams.MATCH_PARENT }
+
+/** Sets the width to wrap its content. **/
+@RxKotlinViewDsl fun View.wrapSize() { lparams.width = ViewGroup.LayoutParams.WRAP_CONTENT; lparams.height = ViewGroup.LayoutParams.WRAP_CONTENT }
+
+/** - Sets the width to the given measurement in density pixels. **/
+@RxKotlinViewDsl fun View.width(value: Int) { lparams.width = value.dp }
+
+/** Sets the width to match the width of its parent. **/
+@RxKotlinViewDsl fun View.matchWidth() { lparams.width = ViewGroup.LayoutParams.MATCH_PARENT }
+
+/** Sets the width to wrap its content. **/
+@RxKotlinViewDsl fun View.wrapWidth() { lparams.width = ViewGroup.LayoutParams.WRAP_CONTENT }
+
+/** Sets the height to the given measurement in density pixels. **/
+@RxKotlinViewDsl fun View.height(value: Int) { lparams.height = value.dp }
+
+/** Sets the height to match the width of its parent. **/
+@RxKotlinViewDsl fun View.matchHeight() { lparams.height = ViewGroup.LayoutParams.MATCH_PARENT }
+
+/** Sets the height to wrap its content. **/
+@RxKotlinViewDsl fun View.wrapHeight() { lparams.height = ViewGroup.LayoutParams.WRAP_CONTENT }
+
+/** Sets the alignment of the item inside the parent `LinearLayout`. **/
+@RxKotlinViewDsl var View.gravity: Int
+    get() = when(val params = layoutParams) {
+        is FrameLayout.LayoutParams -> params.gravity
+        is LinearLayout.LayoutParams -> params.gravity
+        else -> 0
+    }
+    set(@GravityInt gravity: Int) {
+        when(val params = layoutParams) {
+            is FrameLayout.LayoutParams -> params.gravity = gravity
+            is LinearLayout.LayoutParams -> params.gravity = gravity
+            else -> {
+                layoutParams = if(params != null) FrameLayout.LayoutParams(params).apply { this.gravity = gravity } else FrameLayout.LayoutParams(
+                    unsetSize, unsetSize, gravity)
+            }
+        }
+    }
+
+/** Sets the margin of all sides individually in density pixels. **/
+@RxKotlinViewDsl fun View.margin(value: Int) { lparams.setMargins(value.dp) }
+
+/** Sets the margin of each side individually in density pixels. **/
+@RxKotlinViewDsl fun View.updateMargins(left: Int = Int.MAX_VALUE, top: Int = Int.MAX_VALUE, right: Int = Int.MAX_VALUE, bottom: Int = Int.MAX_VALUE) { lparams.setMargins(
+    if(left == Int.MAX_VALUE) lparams.leftMargin else left.dp,
+    if(top == Int.MAX_VALUE) lparams.topMargin else top.dp,
+    if(right == Int.MAX_VALUE) lparams.rightMargin else right.dp,
+    if(bottom == Int.MAX_VALUE) lparams.bottomMargin else bottom.dp,
+) }
+
+/** Sets the margin of all sides individually in density pixels. **/
+@RxKotlinViewDsl fun View.pad(value: Int) { setPadding(value.dp) }
+
+/** Sets the margin of each side individually in density pixels. **/
+@RxKotlinViewDsl fun View.updatePad(left: Int = Int.MAX_VALUE, top: Int = Int.MAX_VALUE, right: Int = Int.MAX_VALUE, bottom: Int = Int.MAX_VALUE) { setPadding(
+    if(left == Int.MAX_VALUE) this.paddingLeft else left.dp,
+    if(top == Int.MAX_VALUE) this.paddingTop else top.dp,
+    if(right == Int.MAX_VALUE) this.paddingRight else right.dp,
+    if(bottom == Int.MAX_VALUE) this.paddingBottom else bottom.dp,
+) }

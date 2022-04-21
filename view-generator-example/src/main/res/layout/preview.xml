@@ -14,7 +14,7 @@
             android:padding="8dp"
             tools:text="View Name"/>
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
             android:background="@android:color/white"
             android:layout_width="match_parent"
