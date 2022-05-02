@@ -24,13 +24,26 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okio.BufferedSink
 import okio.source
 import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+import kotlin.math.max
+import kotlin.math.min
 
-private fun String.stringToCompressFormat(): CompressFormat = when (this) {
-    "jpeg" -> CompressFormat.JPEG
-    "png" -> CompressFormat.PNG
-    "webp" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) CompressFormat.WEBP_LOSSLESS else CompressFormat.WEBP
-    else -> CompressFormat.PNG
-}
+private val String.stringToCompressFormat: CompressFormat
+    get() = when (this) {
+        "jpeg" -> CompressFormat.JPEG
+        "png" -> CompressFormat.PNG
+        "webp" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) CompressFormat.WEBP_LOSSLESS else CompressFormat.WEBP
+        else -> CompressFormat.PNG
+    }
+
+private val CompressFormat.toSubType: String
+    get() = when {
+        this == CompressFormat.JPEG -> "jpg"
+        this == CompressFormat.PNG -> "png"
+        this == CompressFormat.WEBP ||
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && (this == CompressFormat.WEBP_LOSSY || this == CompressFormat.WEBP_LOSSLESS)) -> "webp"
+        else -> "png"
+    }
 
 /**
  * Makes a [RequestBody] out of an [Image].
@@ -42,10 +55,10 @@ fun Image.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000): 
         val task: Pair<RequestBuilder<Bitmap>, CompressFormat> = when (this) {
             is ImageReference ->
                 glide.load(this.uri) to (staticApplicationContext.contentResolver.getType(this.uri)
-                    ?: "image/png").toMediaType().subtype.stringToCompressFormat()
+                    ?: "image/png").toMediaType().subtype.stringToCompressFormat
             is ImageBitmap -> glide.load(this.bitmap) to CompressFormat.PNG
             is ImageRaw -> glide.load(this.data) to CompressFormat.PNG
-            is ImageRemoteUrl -> glide.load(this.url) to this.url.substringAfterLast(".").stringToCompressFormat()
+            is ImageRemoteUrl -> glide.load(this.url) to this.url.substringAfterLast(".").stringToCompressFormat
             is ImageResource -> glide.load(this.resource) to CompressFormat.PNG
         }
         task.first
@@ -83,6 +96,11 @@ fun Image.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000): 
             })
     }
 
+private fun Bitmap.resize(maxDimension: Int): Bitmap {
+    val ratio = this.width.toFloat() / this.height.toFloat()
+    return if(height > width) this.scale((maxDimension * ratio).toInt(), maxDimension) else this.scale(maxDimension, (maxDimension / ratio).toInt())
+}
+
 /**
  * Makes a [RequestBody] out of an [Bitmap].
  * You can set maximum dimension and file size limits for upload.
@@ -92,18 +110,10 @@ fun Bitmap.toRequestBody(
     maxBytes: Long = 10_000_000,
     format: CompressFormat
 ): RequestBody {
-
-    val data: ByteArray = compress(maxDimension, maxBytes, format)
-
-    return data.toRequestBody("image/jpeg".toMediaType(), 0, data.size)
-}
-
-fun Bitmap.compress(maxDimension: Int, maxBytes: Long, format: CompressFormat): ByteArray {
     var quality = 100
     var data: ByteArray
-    var realDimension = maxDimension
-    val ratio = this.width.toFloat() / this.height.toFloat()
-    var scaledBimap = this.scale(realDimension, (realDimension / ratio).toInt())
+    var realDimension = min(max(height, width), maxDimension)
+    var scaledBimap = resize(realDimension)
     do {
         data = ByteArrayOutputStream().use {
             when {
@@ -113,17 +123,18 @@ fun Bitmap.compress(maxDimension: Int, maxBytes: Long, format: CompressFormat): 
                     scaledBimap.compress(format, quality, it)
                     quality -= 5
                 }
-                format == CompressFormat.PNG ||
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && format == CompressFormat.WEBP_LOSSLESS -> {
-                    scaledBimap = this.scale(realDimension, (realDimension / ratio).toInt())
+                else -> {
+                    scaledBimap = resize(realDimension)
                     scaledBimap.compress(format, quality, it)
                     realDimension = (realDimension * 0.95f).toInt()
                 }
+
             }
             it.toByteArray()
         }
     } while (data.size > maxBytes)
-    return data
+
+    return data.toRequestBody("image/${format.toSubType}".toMediaType(), 0, data.size)
 }
 
 /**
