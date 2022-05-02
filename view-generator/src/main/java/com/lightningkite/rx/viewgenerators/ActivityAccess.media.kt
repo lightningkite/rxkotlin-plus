@@ -24,8 +24,8 @@ import io.reactivex.rxjava3.core.Single
 import java.io.*
 import java.util.*
 
-private fun ActivityAccess.requestSomethings(type: String, prompt: String): Maybe<List<Uri>>
-    = requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+private fun ActivityAccess.requestSomethings(type: String, prompt: String): Maybe<List<Uri>> =
+    requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
         .flatMap {
             val getIntent = Intent(Intent.ACTION_GET_CONTENT)
             getIntent.type = type
@@ -39,10 +39,13 @@ private fun ActivityAccess.requestSomethings(type: String, prompt: String): Mayb
 
             this.startActivityForResult(chooserIntent)
         }
-        .mapOptional { it.data?.clipData?.let { (0 until it.itemCount).map { index -> it.getItemAt(index).uri } }.optional }
+        .mapOptional {
+            (it.data?.clipData?.let { (0 until it.itemCount).map { index -> it.getItemAt(index).uri } }
+                ?: it.data?.data?.let { listOf(it) }).optional
+        }
 
-private fun ActivityAccess.requestSomething(type: String, prompt: String): Maybe<Uri>
-    = requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+private fun ActivityAccess.requestSomething(type: String, prompt: String): Maybe<Uri> =
+    requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
         .flatMap {
             val getIntent = Intent(Intent.ACTION_GET_CONTENT)
             getIntent.type = type
@@ -139,7 +142,8 @@ fun ActivityAccess.requestVideoCamera(front: Boolean = false): Maybe<Uri> {
  * Starts a new activity to get images and videos from the gallery.
  * Handles permissions by itself.
  */
-fun ActivityAccess.requestMediasGallery(): Maybe<List<Uri>> = requestSomethings("video/*,image/*", "Select videos and images")
+fun ActivityAccess.requestMediasGallery(): Maybe<List<Uri>> =
+    requestSomethings("video/*,image/*", "Select videos and images")
 
 /**
  * Starts a new activity to get an image or video from the gallery.

@@ -146,7 +146,7 @@ fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bind(
 @JvmName("bindDateTime")
 fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
     button: Button,
-    formatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
+    formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT),
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
@@ -175,7 +175,7 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
 @JvmName("bindDateTime")
 fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
     button: Button,
-    formatter: DateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT),
+    formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT),
     nullText: String
 ): SOURCE {
     this.map { it.kotlin?.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
