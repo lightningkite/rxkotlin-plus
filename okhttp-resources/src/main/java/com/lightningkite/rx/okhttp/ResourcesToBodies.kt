@@ -28,6 +28,7 @@ import java.nio.ByteBuffer
 import kotlin.math.max
 import kotlin.math.min
 
+@Suppress("DEPRECATION")
 private val String.stringToCompressFormat: CompressFormat
     get() = when (this) {
         "jpeg" -> CompressFormat.JPEG
@@ -36,6 +37,7 @@ private val String.stringToCompressFormat: CompressFormat
         else -> CompressFormat.PNG
     }
 
+@Suppress("DEPRECATION")
 private val CompressFormat.toSubType: String
     get() = when {
         this == CompressFormat.JPEG -> "jpg"
@@ -116,6 +118,7 @@ fun Bitmap.toRequestBody(
     var scaledBimap = resize(realDimension)
     do {
         data = ByteArrayOutputStream().use {
+            @Suppress("DEPRECATION")
             when {
                 format == CompressFormat.JPEG ||
                         format == CompressFormat.WEBP ||
