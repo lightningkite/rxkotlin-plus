@@ -76,7 +76,7 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
 ): SOURCE {
     var currentGenerator: ViewGenerator? = null
     var currentStackSize = 0
-    this.debounce(1L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribeBy { value ->
+    this.debounce(50L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribeBy { value ->
         val newGenerator = value.lastOrNull()
         val newStackSize = value.size
         if (currentGenerator == newGenerator) return@subscribeBy

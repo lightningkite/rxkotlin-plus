@@ -1116,6 +1116,17 @@
   type: get
   template: ~this~.closed
 
+- id: io.reactivex.rxjava3.disposables.Disposable.fromAction
+  type: call
+  template:
+    pattern: new DisposableLambda(~0~)
+    imports:
+      DisposableLambda: '@lightningkite/rxjs-plus'
+
+- id: io.reactivex.rxjava3.disposables.CompositeDisposable.add
+  type: call
+  template: ~this~.parts.push(~0~)
+
 # Subjects
 
 - id: io.reactivex.rxjava3.subjects.Subject

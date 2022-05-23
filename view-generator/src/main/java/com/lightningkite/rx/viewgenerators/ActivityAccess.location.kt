@@ -4,21 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.*
-import android.location.LocationManager.FUSED_PROVIDER
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.location.LocationRequestCompat
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Gets a single location update from the users.
@@ -51,8 +44,9 @@ internal fun ActivityAccess.internalGetCurrentLocation(
                 manager,
                 if (LocationManagerCompat.hasProvider(manager, "fused")) "fused" else LocationManager.GPS_PROVIDER,
                 null,
-                context.mainExecutor
+                ContextCompat.getMainExecutor(context),
             ) {
+
                 if (it != null)
                     em.onSuccess(it)
                 else
@@ -77,7 +71,7 @@ internal fun ActivityAccess.internalGetLocationUpdates(
                 manager,
                 if (LocationManagerCompat.hasProvider(manager, "fused")) "fused" else LocationManager.GPS_PROVIDER,
                 request,
-                context.mainExecutor,
+                ContextCompat.getMainExecutor(context),
                 listener
             )
             em.setDisposable(Disposable.fromAction {
