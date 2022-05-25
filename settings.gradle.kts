@@ -7,13 +7,14 @@ pluginManagement {
     }
 }
 
-include("rxplus")
+include("android-bindings")
+include("android-resources")
+include("dsl")
 include("okhttp")
 include("okhttp-jackson")
 include("okhttp-resources")
-include("android-bindings")
-include("android-resources")
+include("rxplus")
 include("view-generator")
-include("view-generator-example")
 include("view-generator-plugin")
-include("dsl")
+
+include("view-generator-example")

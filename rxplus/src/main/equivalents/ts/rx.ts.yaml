@@ -122,17 +122,16 @@
 - id: io.reactivex.rxjava3.core.Observable.onErrorReturnItem
   type: call
   template:
-    pattern: ~this~.pipe(onErrorResumeNext(of(~0~)))
+    pattern: ~this~.pipe(catchError(() => of(~0~)))
     imports:
-      onErrorResumeNext: rxjs/operators
+      catchError: rxjs/operators
       of: rxjs
-- id: io.reactivex.rxjava3.core.Observable.onErrorResumeNext
+- id: io.reactivex.rxjava3.core.Observable.onErrorResumeWith
   type: call
-  arguments: [io.reactivex.rxjava3.core.ObservableSource]
   template:
-    pattern: ~this~.pipe(onErrorResumeNext(~0~))
+    pattern: ~this~.pipe(catchError(() => ~0~))
     imports:
-      onErrorResumeNext: rxjs/operators
+      catchError: rxjs/operators
 - id: io.reactivex.rxjava3.core.Observable.onErrorResumeNext
   type: call
   template:
@@ -647,19 +646,16 @@
 - id: io.reactivex.rxjava3.core.Single.onErrorReturnItem
   type: call
   template:
-    pattern: ~this~.pipe(onErrorResumeNext(of(~0~)))
+    pattern: ~this~.pipe(catchError(() => of(~0~)))
     imports:
-      onErrorResumeNext: rxjs/operators
+      catchError: rxjs/operators
       of: rxjs
-
-- id: io.reactivex.rxjava3.core.Single.onErrorResumeNext
+- id: io.reactivex.rxjava3.core.Single.onErrorResumeWith
   type: call
-  arguments: [io.reactivex.rxjava3.core.SingleSource]
   template:
-    pattern: ~this~.pipe(onErrorResumeNext(~0~))
+    pattern: ~this~.pipe(catchError(() => ~0~))
     imports:
-      onErrorResumeNext: rxjs/operators
-
+      catchError: rxjs/operators
 - id: io.reactivex.rxjava3.core.Single.onErrorResumeNext
   type: call
   template:
@@ -671,7 +667,7 @@
   type: call
   arguments: [io.reactivex.rxjava3.core.SingleSource]
   template:
-    pattern: ~this~.pipe(onErrorResumeNext(~0~))
+    pattern: ~this~.pipe(catchError(~0~))
     imports:
       catchError: rxjs/operators
 
@@ -1022,9 +1018,9 @@
 - id: io.reactivex.rxjava3.core.Maybe.onErrorReturnItem
   type: call
   template:
-    pattern: ~this~.pipe(onErrorResumeNext(of(~0~)))
+    pattern: ~this~.pipe(catchError(() => of(~0~)))
     imports:
-      onErrorResumeNext: rxjs/operators
+      catchError: rxjs/operators
       of: rxjs
 
 - id: io.reactivex.rxjava3.core.Maybe.error
