@@ -12,7 +12,7 @@ group = "com.lightningkite.rx"
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.4.0")
+    testImplementation("org.mockito:mockito-core:4.5.1")
     api("io.reactivex.rxjava3:rxjava:3.1.4")
     api("io.reactivex.rxjava3:rxkotlin:3.0.1")
 }

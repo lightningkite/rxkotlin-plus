@@ -26,7 +26,7 @@ android {
 dependencies {
     api(project(":android-bindings"))
     api("com.google.android.exoplayer:exoplayer:2.17.1")
-    implementation("com.github.bumptech.glide:glide:4.13.1")
+    implementation("com.github.bumptech.glide:glide:4.13.2")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     testImplementation("junit:junit:4.13.2")

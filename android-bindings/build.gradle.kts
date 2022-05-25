@@ -28,7 +28,7 @@ dependencies {
     api("io.reactivex.rxjava3:rxandroid:3.0.0")
     api("androidx.core:core-ktx:1.7.0")
     api("androidx.recyclerview:recyclerview:1.2.1")
-    api("com.google.android.material:material:1.5.0")
+    api("com.google.android.material:material:1.6.0")
     api("dev.b3nedikt.viewpump:viewpump:4.0.10")
     api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
