@@ -187,6 +187,18 @@
     pattern: "Observable<Int>.interval(RxTimeInterval.milliseconds(Int(~0~)), scheduler: ~2~)"
     imports: [RxSwift]
 
+- id: io.reactivex.rxjava3.core.Observable.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
 #- id: io.reactivex.rxjava3.core.Observable.map
 #  type: call
 #  template:

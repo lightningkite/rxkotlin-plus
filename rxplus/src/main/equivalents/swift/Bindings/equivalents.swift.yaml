@@ -45,3 +45,17 @@
   type: call
   template:
     pattern: '~this~.rx.longClick'
+
+- id: com.lightningkite.rx.android.showLoading
+  type: get
+  reflectiveName: "\\UIView.showLoading"
+  template:
+    pattern: '~this~.showLoading'
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.showLoading
+  type: set
+  reflectiveName: "\\UIView.showLoading"
+  template:
+    pattern: '~this~.showLoading = ~value~'
+    imports: [RxSwiftPlus]
