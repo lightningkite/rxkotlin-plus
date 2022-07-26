@@ -8,6 +8,7 @@ pluginManagement {
 }
 
 include("android-bindings")
+include("android-bluetooth")
 include("android-resources")
 include("dsl")
 include("okhttp")
