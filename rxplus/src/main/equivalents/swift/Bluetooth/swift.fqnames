@@ -1,0 +1,6 @@
+RxSwiftPlus
+com.lightningkite.rx.android.ble.BleScanResult
+com.lightningkite.rx.android.ble.BleCharacteristic
+com.lightningkite.rx.android.ble.BleDevice
+com.lightningkite.rx.android.ble.bleScan
+com.lightningkite.rx.android.ble.bleDevice
