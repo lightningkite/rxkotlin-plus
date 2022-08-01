@@ -106,7 +106,7 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
             device.establishConnection(false)
         else
             device.establishConnection(false)
-    }
+    }.replay(1).refCount(1000L, TimeUnit.MILLISECONDS)
 
     override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges().map {
         when(it) {
@@ -115,10 +115,13 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
         }
     }
 
-    override fun stayConnected(): Observable<Unit> = connection.switchMap { Observable.never<Unit>() }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
+    override fun stayConnected(): Observable<Unit> = connection.switchMap { Observable.never<Unit>() }.retryWhen {
+        println("Stay Connected retry")
+        it.delay(1000L, TimeUnit.MILLISECONDS) }
 
-    override fun rssi(): Single<Int> = connection.firstOrError().flatMap { it.readRssi() }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
-
+    override fun rssi(): Single<Int> = connection.firstOrError().flatMap { it.readRssi() }.retryWhen{
+        println("Retry RSSI")
+        it.delay(1000L, TimeUnit.MILLISECONDS) }
     override fun read(characteristic: BleCharacteristic): Single<ByteArray> = connection.firstOrError().flatMap {
         it.readCharacteristic(characteristic.id)
     }
@@ -129,11 +132,15 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
 
     override fun notify(characteristic: BleCharacteristic): Observable<Observable<ByteArray>> = connection.flatMap {
         it.setupNotification(characteristic.id)
-    }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
+    }.retryWhen {
+        println(" *Retry Notify* ")
+        it.delay(1000L, TimeUnit.MILLISECONDS) }
 }
 
 fun BleDevice.readNotify(characteristic: BleCharacteristic)
         = Observable.merge(
-    read(characteristic).toObservable().retry(1).onErrorComplete(),
+    read(characteristic).toObservable().retryWhen{
+        println(" *Retry Read-Notify* ")
+        it.delay(1000L,TimeUnit.MILLISECONDS)},
     notify(characteristic).switchMap{it}
 )
