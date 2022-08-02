@@ -336,6 +336,10 @@
   type: call
   template: ~this~.startWith(~0~)
 
+- id: io.reactivex.rxjava3.observables.ConnectableObservable.refCount
+  type: call
+  template: "~this~.refCount()"
+
 #- id: io.reactivex.rxjava3.core.Observable.replay
 #  type: call
 #  template:

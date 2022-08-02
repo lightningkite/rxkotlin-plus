@@ -45,3 +45,8 @@
   type: call
   template:
     pattern: '~this~.rx.longClick'
+
+- id: com.lightningkite.rx.android.showIn
+  type: call
+  suppliedArguments: [ recyclerView, getId, makeView ]
+  template: "~this~.showIn(~0~, makeView: ~2~)"
