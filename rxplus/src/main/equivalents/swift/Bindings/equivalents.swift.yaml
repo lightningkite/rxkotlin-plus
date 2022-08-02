@@ -50,3 +50,17 @@
   type: call
   suppliedArguments: [ recyclerView, getId, makeView ]
   template: "~this~.showIn(~0~, makeView: ~2~)"
+
+- id: com.lightningkite.rx.android.showLoading
+  type: get
+  reflectiveName: "\\UIView.showLoading"
+  template:
+    pattern: '~this~.showLoading'
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.showLoading
+  type: set
+  reflectiveName: "\\UIView.showLoading"
+  template:
+    pattern: '~this~.showLoading = ~value~'
+    imports: [RxSwiftPlus]

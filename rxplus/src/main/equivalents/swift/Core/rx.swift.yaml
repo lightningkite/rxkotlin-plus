@@ -85,11 +85,6 @@
   template:
     pattern: '~this~.asSingle()'
     imports: [RxSwift]
-- id: io.reactivex.rxjava3.core.Observable.delay
-  type: call
-  template:
-    pattern: '~this~.delay(.milliseconds(~0~), scheduler: MainScheduler.instance)'
-    imports: [RxSwift]
 - id: io.reactivex.rxjava3.core.Observable.timeout
   type: call
   template:
@@ -187,151 +182,30 @@
     pattern: "Observable<Int>.interval(RxTimeInterval.milliseconds(Int(~0~)), scheduler: ~2~)"
     imports: [RxSwift]
 
-#- id: io.reactivex.rxjava3.core.Observable.map
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxMap(~0~))
-#    imports:
-#      rxMap: map from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.delay
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxDelay(~0~))
-#    imports:
-#      delay: rxjs/operators as rxDelay
-#
-#- id: io.reactivex.rxjava3.core.Observable.filter
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxFilter(~0~))
-#    imports:
-#      rxFilter: filter from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.mapNotNull
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxMap(~0~), rxFilter(x => x !== null))
-#    imports:
-#      rxMap: map from rxjs/operators
-#      rxFilter: filter from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.filterNotNull
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxFilter(x => x !== null))
-#    imports:
-#      rxFilter: filter from rxjs/operators
-#
-#
-#- id: io.reactivex.rxjava3.core.Observable.skip
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxSkip(0))
-#    imports:
-#      rxSkip: skip from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.flatMap
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxFlatMap(~0~))
-#    imports:
-#      rxFlatMap: flatMap from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.switchMap
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxSwitchMap(~0~))
-#    imports:
-#      rxSwitchMap: switchMap from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.subscribeOn
-#  type: call
-#  template: ~this~
-#
-#- id: io.reactivex.rxjava3.core.Observable.scheduleOn
-#  type: call
-#  template: ~this~
-#
-#- id: io.reactivex.rxjava3.core.Observable.create
-#  type: call
-#  template:
-#    pattern: Observable(~0~)
-#    imports:
-#      Observable: rxjs
-#
-#- id: io.reactivex.rxjava3.core.Observable.create
-#  type: call
-#  hasExplicitTypeArguments: true
-#  template:
-#    pattern: Observable<~T0~>(~0~)
-#    imports:
-#      Observable: rxjs
-#
-#- id: io.reactivex.rxjava3.core.Observable.just
-#  type: call
-#  template:
-#    pattern: rxOf(~*~)
-#    imports:
-#      rxOf: of from rxjs
-#
-#- id: io.reactivex.rxjava3.core.Observable.error
-#  type: call
-#  template:
-#    pattern: rxThrowError(~*~)
-#    imports:
-#      rxThrowError: throwError from rxjs
-#
-#- id: io.reactivex.rxjava3.core.Observable.empty
-#  type: call
-#  template:
-#    pattern: rxOf()
-#    imports:
-#      rxOf: of from rxjs
-#
-#- id: io.reactivex.rxjava3.core.Observable.never
-#  type: call
-#  template:
-#    pattern: rxNEVER
-#    imports:
-#      rxNEVER: NEVER from rxjs
-#
-#- id: io.reactivex.rxjava3.core.Observable.doFinally
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxFinalize(~0~))
-#    imports:
-#      rxFinalize: finalize from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.doOnNext
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxTap(~0~))
-#    imports:
-#      rxTap: tap from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.doOnError
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxTap(undefined, ~0~))
-#    imports:
-#      rxTap: tap from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.doOnComplete
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxTap(undefined, undefined, ~0~))
-#    imports:
-#      rxTap: tap from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.startWith
-#  type: call
-#  template:
-#    pattern: rxConcat(rxOf(~0~), ~this~)
-#    imports:
-#      rxOf: of from rxjs
-#      rxConcat: concat from rxjs
-#
+- id: io.reactivex.rxjava3.core.Observable.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.switchMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
 - id: io.reactivex.rxjava3.core.Observable.startWithItem
   type: call
   template: ~this~.startWith(~0~)
@@ -339,31 +213,6 @@
 - id: io.reactivex.rxjava3.observables.ConnectableObservable.refCount
   type: call
   template: "~this~.refCount()"
-
-#- id: io.reactivex.rxjava3.core.Observable.replay
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxPublishReplay(~0~))
-#    imports:
-#      rxPublishReplay: publishReplay from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.observables.ConnectableObservable.refCount
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxRefCount())
-#    imports:
-#      rxRefCount: refCount from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.take
-#  type: call
-#  template:
-#    pattern: ~this~.pipe(rxTake(~0~))
-#    imports:
-#      rxTake: take from rxjs/operators
-#
-#- id: io.reactivex.rxjava3.core.Observable.singleOrError
-#  type: call
-#  template: ~this~
 
 # Observer
 - id: io.reactivex.rxjava3.core.Observer
@@ -444,11 +293,6 @@
   template: '~this~.subscribe(onError: ~onError~)'
 #
 ## Operators for Single
-- id: io.reactivex.rxjava3.core.Single.delay
-  type: call
-  template:
-    pattern: '~this~.delay(.milliseconds(Int(~0~)), scheduler: MainScheduler.instance)'
-    imports: [RxSwift]
 
 - id: io.reactivex.rxjava3.core.Single.zip
   type: call
@@ -518,12 +362,6 @@
   template: '~this~.subscribe(onError: ~onError~)'
 
 ## Operators for Completable
-
-- id: io.reactivex.rxjava3.core.Completable.delay
-  type: call
-  template:
-    pattern: '~this~.delay(.milliseconds(Int(~0~)), scheduler: MainScheduler.instance)'
-    imports: [RxSwift]
 
 - id: io.reactivex.rxjava3.core.Completable.zip
   type: call
@@ -696,3 +534,51 @@
   template:
     pattern: 'MainScheduler.instance'
     imports: [RxSwift]
+
+- id: org.reactivestreams.Publisher
+  type: type
+  template:
+    pattern: 'Observable<~T0~>'
+    imports: [RxSwift]
+- id: org.reactivestreams.Publisher
+  type: typeRef
+  template:
+    pattern: 'Observable'
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.delay
+  type: call
+  exactArgumentRequirements: { 1: TimeUnit.MILLISECONDS }
+  template:
+    pattern: '~this~.delay(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Single.delay
+  type: call
+  exactArgumentRequirements: { 1: TimeUnit.MILLISECONDS }
+  template:
+    pattern: '~this~.delay(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Completable.delay
+  type: call
+  exactArgumentRequirements: { 1: TimeUnit.MILLISECONDS }
+  template:
+    pattern: '~this~.delay(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Flowable.delay
+  type: call
+  exactArgumentRequirements: { 1: TimeUnit.MILLISECONDS }
+  template:
+    pattern: '~this~.delay(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.retryWhen
+  type: call
+  template: '~this~.retry(when: ~0~)'
+
+- id: io.reactivex.rxjava3.core.Single.retryWhen
+  type: call
+  template: '~this~.retry(when: ~0~)'
+
+- id: io.reactivex.rxjava3.core.Maybe.retryWhen
+  type: call
+  template: '~this~.retry(when: ~0~)'
