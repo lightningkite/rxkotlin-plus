@@ -1,24 +1,40 @@
 package com.lightningkite.rx.okhttp
 
 import kotlinx.serialization.*
+import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import kotlinx.serialization.modules.SerializersModule
+import java.util.*
 import kotlin.reflect.KType
+
+val OptionalSerializerModule = SerializersModule {
+    contextual(Optional::class) { list ->
+        @Suppress("UNCHECKED_CAST")
+        OptionalSerializer(list[0] as KSerializer<Any>)
+    }
+}
 
 /**
  * The default JSON mapper from Jackson that is used to serialize and deserialize items in the convenience functions.
  */
 var defaultJsonMapper = Json {
     this.ignoreUnknownKeys = true
+    serializersModule = OptionalSerializerModule
 }
-//var defaultJsonMapper = ObjectMapper()
-//    .registerModule(KotlinModule())
-//    .registerModule(JavaTimeModule())
-//    .disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
-//    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-//    .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-//    .disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
-//    .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
-//    .setDateFormat(StdDateFormat().withLenient(true))
+
+@Suppress("OPT_IN_USAGE")
+class OptionalSerializer<T: Any>(val inner: KSerializer<T>): KSerializer<Optional<T>> {
+    val nullable = inner.nullable
+    override val descriptor: SerialDescriptor
+        get() = SerialDescriptor("Optional<${inner.descriptor.serialName}>", nullable.descriptor)
+    override fun deserialize(decoder: Decoder): Optional<T> = Optional.ofNullable(nullable.deserialize(decoder))
+    override fun serialize(encoder: Encoder, value: Optional<T>) {
+        nullable.serialize(encoder, if(value.isPresent) value.get() else null)
+    }
+}
 
 /**
  * Uses the [defaultJsonMapper] to emit the value as a JSON string.
