@@ -3,6 +3,9 @@ package com.lightningkite.rx.android.ble
 import android.os.Build
 import android.os.ParcelUuid
 import com.lightningkite.rx.android.staticApplicationContext
+import com.lightningkite.rx.filterIsPresent
+import com.lightningkite.rx.kotlin
+import com.lightningkite.rx.mapNotNull
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.polidea.rxandroidble3.RxBleClient
 import com.polidea.rxandroidble3.RxBleConnection
@@ -14,7 +17,7 @@ import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_POWER
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 data class BleScanResult(
@@ -106,12 +109,25 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
     override val id: String
         get() = device.macAddress
 
-    val connection = activityAccess.requireBle.flatMapObservable {
+
+    //get bluetooth permission
+    private val rawConnection = activityAccess.requireBle.flatMapObservable {
+        //Check and see if bond is required
         if (requiresBond)
             device.establishConnection(false)
         else
             device.establishConnection(false)
-    }.retryWhen { it.delay(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()) }
+    }.map { Optional.of(it) } //Maps to a optional because a connection may or may not be present
+    val connection: Observable<RxBleConnection> = rawConnection.onErrorResumeNext {
+        it.printStackTrace()
+        /*Conacts (or connects) the pipelines to allow a connection to fire if present and do nothing
+        if no connection is present*/
+        Observable.concat<Optional<RxBleConnection>>(
+            Observable.just(Optional.empty()),
+            Observable.empty<Optional<RxBleConnection>>().delay(1000L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()),
+            rawConnection
+        )
+    }.replay(1).refCount().filterIsPresent()
 
     override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges().map {
         when (it) {
