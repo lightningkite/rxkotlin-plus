@@ -1,5 +1,6 @@
 package com.lightningkite.rx.android.resources
 
+import android.app.Activity
 import android.graphics.BitmapFactory
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -15,10 +16,12 @@ fun ImageView.setImage(image: Image?) {
             when (image) {
                 is ImageRaw -> this.setImageBitmap(BitmapFactory.decodeByteArray(image.data, 0, image.data.size))
                 is ImageReference -> {
+                    if((context as? Activity)?.isDestroyed == true) return@let
                     Glide.with(this).load(image.uri).into(this)
                 }
                 is ImageBitmap -> this.setImageBitmap(image.bitmap)
                 is ImageRemoteUrl -> {
+                    if((context as? Activity)?.isDestroyed == true) return@let
                     Glide.with(this).load(image.url).into(this)
                 }
                 is ImageResource -> this.setImageResource(image.resource)
