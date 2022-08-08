@@ -1,5 +1,7 @@
 package com.lightningkite.rx.android.ble
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
 import android.os.Build
 import android.os.ParcelUuid
 import com.lightningkite.rx.android.staticApplicationContext
@@ -15,6 +17,7 @@ import com.polidea.rxandroidble3.scan.ScanSettings
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_LATENCY
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_POWER
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import java.util.*
@@ -23,7 +26,8 @@ import java.util.concurrent.TimeUnit
 data class BleScanResult(
     val name: String?,
     val rssi: Int,
-    val id: String
+    val id: String,
+    val services: Map<UUID, ByteArray>
 )
 
 data class BleCharacteristic(val serviceId: UUID, val id: UUID)
@@ -91,7 +95,8 @@ fun ActivityAccess.bleScan(
         BleScanResult(
             name = it.bleDevice.name,
             rssi = it.rssi,
-            id = it.bleDevice.macAddress
+            id = it.bleDevice.macAddress,
+            services = (it.scanRecord?.serviceData?.mapKeys { it.key.uuid }  ?: mapOf()) + (it.scanRecord?.serviceUuids?.associate { it.uuid to byteArrayOf() } ?: mapOf())
         )
     }
 }
@@ -112,15 +117,17 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
 
     //get bluetooth permission
     private val rawConnection = activityAccess.requireBle.flatMapObservable {
+        println("Attempting connection to ${device.name ?: device.macAddress}")
         //Check and see if bond is required
         if (requiresBond)
-            device.establishConnection(false)
+            device.establishConnection(false).doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }.switchMapSingle { device.waitForBond().toSingleDefault(it) }
         else
-            device.establishConnection(false)
+            device.establishConnection(false).doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }
     }.map { Optional.of(it) } //Maps to a optional because a connection may or may not be present
     val connection: Observable<RxBleConnection> = rawConnection.onErrorResumeNext {
+        println("Connection failed to ${device.name ?: device.macAddress} with $it")
         it.printStackTrace()
-        /*Conacts (or connects) the pipelines to allow a connection to fire if present and do nothing
+        /*Connects the pipelines to allow a connection to fire if present and do nothing
         if no connection is present*/
         Observable.concat<Optional<RxBleConnection>>(
             Observable.just(Optional.empty()),
@@ -160,3 +167,22 @@ fun BleDevice.readNotify(characteristic: BleCharacteristic) = Observable.merge(
     read(characteristic).toObservable().retry(1).onErrorComplete(),
     notify(characteristic)
 )
+
+
+@SuppressLint("MissingPermission")
+private fun RxBleDevice.waitForBond(): Completable {
+    this.bluetoothDevice.createBond()
+    return Observable.interval(0, 300, TimeUnit.MILLISECONDS)
+        .filter {
+            println("Bonded List")
+            ble.bondedDevices.forEach {
+                println("Bonded: ${it.name}")
+            }
+            ble.bondedDevices.any {
+                it.macAddress.lowercase() == this.macAddress.lowercase()
+                        && it.bluetoothDevice.bondState == BluetoothDevice.BOND_BONDED
+            }
+        }
+        .firstOrError()
+        .ignoreElement()
+}
