@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.lightningkite.rx.*
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.Subject
 import io.reactivex.rxjava3.kotlin.addTo
@@ -22,18 +20,18 @@ import io.reactivex.rxjava3.kotlin.addTo
  * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
 fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
-    viewPager: ViewPager2,
+    viewPager2: ViewPager2,
     showIndex: Subject<Int> = ValueSubject(0),
     makeView: (Observable<T>)->View
 ): SOURCE {
     var lastSubmitted = listOf<T>()
-    viewPager.adapter = object : ObservableRVA<T>(viewPager.removed, { 0 }, { _, obs -> makeView(obs) }) {
+    viewPager2.adapter = object : ObservableRVA<T>(viewPager2.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
             observeOn(RequireMainThread).subscribeBy { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
-            }.addTo(viewPager.removed)
+            }.addTo(viewPager2.removed)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -47,13 +45,13 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     }
     observeOn(RequireMainThread).subscribeBy { list ->
         lastSubmitted = list
-        viewPager.adapter!!.notifyDataSetChanged()
-        viewPager.currentItem
-    }.addTo(viewPager.removed)
+        viewPager2.adapter!!.notifyDataSetChanged()
+        viewPager2.currentItem
+    }.addTo(viewPager2.removed)
     showIndex.observeOn(RequireMainThread).subscribeBy { value ->
-        viewPager.currentItem = value
-    }.addTo(viewPager.removed)
-    viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+        viewPager2.currentItem = value
+    }.addTo(viewPager2.removed)
+    viewPager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             showIndex.onNext(position)
         }
