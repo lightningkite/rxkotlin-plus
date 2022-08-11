@@ -229,7 +229,7 @@ object HttpClient {
             } catch (e: Exception) {
                 em.tryOnError(e)
             }
-        }.share().let { threadCorrectly(it) }
+        }.replay(1).autoConnect().let { threadCorrectly(it) }
     }
 
     private class ProgressRequestBody<T>(val base: RequestBody, val onProgress: (HttpProgress<T>) -> Unit) :
