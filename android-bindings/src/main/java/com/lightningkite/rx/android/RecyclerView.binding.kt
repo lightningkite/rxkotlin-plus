@@ -71,7 +71,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(RequireMainThread).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -99,7 +99,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, determineType, makeView) {
         init {
-            observeOn(RequireMainThread).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -125,7 +125,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(RequireMainThread).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new
@@ -160,7 +160,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, determineType, makeView) {
         init {
-            observeOn(RequireMainThread).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new
