@@ -264,10 +264,19 @@
 
 - id: com.lightningkite.rx.android.showLoading
   type: call
+  receiver: Observable
   template:
     pattern: ~this~.pipe(subscribeAutoDispose(~0~, hasClass("loading")))
     imports:
       subscribeAutoDispose: '@lightningkite/rxjs-plus'
+      hasClass: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showLoading
+  type: get
+  template: ~this~.classList.contains("loading")
+  reflectiveName:
+    pattern: hasClass("loading")
+    imports:
       hasClass: '@lightningkite/rxjs-plus'
 
 

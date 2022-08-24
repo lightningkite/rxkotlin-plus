@@ -1,0 +1,82 @@
+- id: com.lightningkite.rx.android.ble.BleScanResult
+  type: type
+  template: 'void'
+- id: com.lightningkite.rx.android.ble.BleScanResult
+  type: call
+  template: 'undefined'
+- id: com.lightningkite.rx.android.ble.BleScanResult.name
+  type: get
+  template: '""'
+- id: com.lightningkite.rx.android.ble.BleScanResult.rssi
+  type: get
+  template: '0'
+- id: com.lightningkite.rx.android.ble.BleScanResult.id
+  type: get
+  template: '""'
+- id: com.lightningkite.rx.android.ble.BleScanResult.services
+  type: get
+  template: 'new Map<string, Int8Array>()'
+
+- id: com.lightningkite.rx.android.ble.BleCharacteristic
+  type: type
+  template: '{ serviceId: string, id: string }'
+- id: com.lightningkite.rx.android.ble.BleCharacteristic
+  type: call
+  template: '{ serviceId: ~0~, id: ~1~ }'
+- id: com.lightningkite.rx.android.ble.BleDevice
+  type: type
+  template: 'void'
+- id: com.lightningkite.rx.android.ble.BleDevice.id
+  type: get
+  template: '""'
+- id: com.lightningkite.rx.android.ble.BleDevice.stayConnected
+  type: call
+  template:
+    pattern: 'NEVER'
+    imports:
+      NEVER: rxjs
+- id: com.lightningkite.rx.android.ble.BleDevice.isConnected
+  type: call
+  template:
+    pattern: 'of(false)'
+    imports:
+      of: rxjs
+- id: com.lightningkite.rx.android.ble.BleDevice.rssi
+  type: call
+  template:
+    pattern: 'of(0)'
+    imports:
+      of: rxjs
+- id: com.lightningkite.rx.android.ble.BleDevice.read
+  type: call
+  template:
+    pattern: 'NEVER'
+    imports:
+      NEVER: rxjs
+- id: com.lightningkite.rx.android.ble.BleDevice.write
+  type: call
+  template:
+    pattern: 'NEVER'
+    imports:
+      NEVER: rxjs
+- id: com.lightningkite.rx.android.ble.BleDevice.notify
+  type: call
+  template:
+    pattern: 'NEVER'
+    imports:
+      NEVER: rxjs
+- id: com.lightningkite.rx.android.ble.bleScan
+  type: call
+  template:
+    pattern: 'NEVER'
+    imports:
+      NEVER: rxjs
+- id: com.lightningkite.rx.android.ble.bleDevice
+  type: call
+  template: 'undefined'
+- id: com.lightningkite.rx.android.ble.readNotify
+  type: call
+  template:
+    pattern: 'NEVER'
+    imports:
+      NEVER: rxjs

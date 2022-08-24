@@ -10,6 +10,12 @@
     pattern: Observable<~T0~>
     imports:
       Observable: rxjs
+- id: org.reactivestreams.Publisher
+  type: type
+  template:
+    pattern: Observable<~T0~>
+    imports:
+      Observable: rxjs
 - id: io.reactivex.rxjava3.core.SingleSource
   type: type
   template:
@@ -258,6 +264,34 @@
     imports:
       switchMap: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Observable.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Observable.switchMapSingle
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Observable.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Observable.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Observable.subscribeOn
   type: call
   template: ~this~
@@ -351,9 +385,9 @@
 - id: io.reactivex.rxjava3.core.Observable.doOnDispose
   type: call
   template:
-    pattern: ~this~.pipe(finalize(~0~))
+    pattern: '~this~.pipe(tap({ unsubscribe: ~0~ }))'
     imports:
-      finalize: rxjs/operators
+      tap: rxjs/operators
 
 - id: io.reactivex.rxjava3.core.Observable.doOnError
   type: call
@@ -397,6 +431,13 @@
     pattern: merge(~*~)
     imports:
       merge: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.firstOrError
+  type: call
+  template:
+    pattern: ~this~.pipe(take(1))
+    imports:
+      take: rxjs/operators
 
 - id: io.reactivex.rxjava3.core.Observable.replay
   type: call
@@ -572,6 +613,41 @@
     imports:
       mergeMap: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Single.switchMap
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.flatMapObservable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.switchMapObservable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Single.subscribeOn
   type: call
   template: ~this~
@@ -724,6 +800,13 @@
   type: call
   template: ~this~
 
+- id: io.reactivex.rxjava3.core.Single.retryWhen
+  type: call
+  template:
+    pattern: ~this~.pipe(retryWhen(~0~))
+    imports:
+      retryWhen: rxjs/operators
+
 # SingleEmitter
 
 - id: io.reactivex.rxjava3.core.SingleEmitter
@@ -838,6 +921,27 @@
     imports:
       mergeMap: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Completable.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.flatMapObservable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Completable.subscribeOn
   type: call
   template: ~this~
@@ -881,6 +985,21 @@
     pattern: concat(...~0~)
     imports:
       concat: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.retryWhen
+  type: call
+  template:
+    pattern: ~this~.pipe(retryWhen(~0~))
+    imports:
+      retryWhen: rxjs/operators
+
+- type: "call"
+  id: "io.reactivex.rxjava3.core.Completable.toSingleDefault"
+  template:
+    pattern: concat(~this~, of(~0~))
+    imports:
+      concat: rxjs
+      of: rxjs
 
 
 # Maybe
@@ -964,6 +1083,27 @@
       delay: rxjs/operators
 
 - id: io.reactivex.rxjava3.core.Maybe.flatMap
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Maybe.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Maybe.flatMapObservable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Maybe.flatMapCompletable
   type: call
   template:
     pattern: ~this~.pipe(mergeMap(~0~))
@@ -1165,3 +1305,462 @@
     pattern: new BehaviorSubject(~0~)
     imports:
       BehaviorSubject: rxjs
+      
+      
+      
+# Flowable
+
+- id: io.reactivex.rxjava3.core.Flowable
+  type: type
+  template:
+    pattern: Observable<~T0~>
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable
+  type: typeRef
+  template:
+    pattern: Observable
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.subscribe
+  type: call
+  arguments: [io.reactivex.rxjava3.core.Observer]
+  template: ~this~.subscribe(~0~)
+
+- id: io.reactivex.rxjava3.core.Flowable.subscribe
+  type: call
+  template: ~this~.subscribe(~0~, ~1~, ~2~)
+
+- id: io.reactivex.rxjava3.kotlin.subscribeBy
+  type: call
+  receiver: io.reactivex.rxjava3.core.Flowable
+  template: ~this~.subscribe(~onNext~, ~onError~, ~onComplete~)
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~], ~2~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: [java.lang.Iterable, io.reactivex.rxjava3.functions.Function]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~], ~3~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~], ~4~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~, ~4~], ~5~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~, ~4~, ~5~], ~6~)
+    imports:
+      combineLatest: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.combineLatest
+  type: call
+  arguments: ["*", "*", "*", "*", "*", "*", "*", "*"]
+  template:
+    pattern: combineLatest([~0~, ~1~, ~2~, ~3~, ~4~, ~5~, ~6~], ~7~)
+    imports:
+      combineLatest: rxjs
+
+# Operators
+
+- id: io.reactivex.rxjava3.core.Flowable.onErrorReturnItem
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(() => of(~0~)))
+    imports:
+      catchError: rxjs/operators
+      of: rxjs
+- id: io.reactivex.rxjava3.core.Flowable.onErrorResumeWith
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(() => ~0~))
+    imports:
+      catchError: rxjs/operators
+- id: io.reactivex.rxjava3.core.Flowable.onErrorResumeNext
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(~0~))
+    imports:
+      catchError: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.map
+  type: call
+  template:
+    pattern: ~this~.pipe(map(~0~))
+    imports:
+      map: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.retry
+  type: call
+  template:
+    pattern: ~this~.pipe(retry(~0~))
+    imports:
+      retry: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.retry
+  type: call
+  arguments: []
+  template:
+    pattern: ~this~.pipe(retry())
+    imports:
+      retry: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.retryWhen
+  type: call
+  template:
+    pattern: ~this~.pipe(retryWhen(~0~))
+    imports:
+      retryWhen: rxjs/operators
+#      retryWhen: '@lightningkite/rxjs-plus'
+
+- id: io.reactivex.rxjava3.core.Flowable.delay
+  type: call
+  template:
+    pattern: ~this~.pipe(delay(~0~))
+    imports:
+      delay: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.timeout
+  type: call
+  template:
+    pattern: '~this~.pipe(timeout(~0~))'
+    imports:
+      timeout: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.debounce
+  type: call
+  template:
+    pattern: ~this~.pipe(debounceTime(~0~))
+    imports:
+      debounceTime: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.filter
+  type: call
+  template:
+    pattern: ~this~.pipe(filter(~0~))
+    imports:
+      filter: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.distinct
+  type: call
+  template:
+    pattern: ~this~.pipe(distinct(~0~))
+    imports:
+      distinct: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.distinctUntilChanged
+  type: call
+  arguments: []
+  template:
+    pattern: ~this~.pipe(distinctUntilChanged())
+    imports:
+      distinctUntilChanged: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.distinctUntilChanged
+  type: call
+  template:
+    pattern: ~this~.pipe(distinctUntilChanged(equalBy(~0~)))
+    imports:
+      distinctUntilChanged: rxjs/operators
+      equalBy: '@lightningkite/khrysalis-runtime'
+
+- id: io.reactivex.rxjava3.core.Flowable.mapNotNull
+  type: call
+  template:
+    pattern: ~this~.pipe(map(~0~), filter(isNonNull))
+    imports:
+      map: rxjs/operators
+      filter: rxjs/operators
+      isNonNull: '@lightningkite/rxjs-plus'
+
+- id: io.reactivex.rxjava3.core.Flowable.filterNotNull
+  type: call
+  template:
+    pattern: ~this~.pipe(filter(isNonNull))
+    imports:
+      filter: rxjs/operators
+      isNonNull: '@lightningkite/rxjs-plus'
+
+- id: io.reactivex.rxjava3.core.Flowable.skip
+  type: call
+  template:
+    pattern: ~this~.pipe(skip(0))
+    imports:
+      skip: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.flatMap
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.switchMap
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.switchMapSingle
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.flatMapCompletable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.switchMapCompletable
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.subscribeOn
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Flowable.scheduleOn
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Flowable.interval
+  type: call
+  template:
+    pattern: interval(~0~)
+    imports:
+      interval: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.create
+  type: call
+  template:
+    pattern: new Observable(~0~)
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.create
+  type: call
+  hasExplicitTypeArguments: true
+  template:
+    pattern: new Observable<~T0~>(~0~)
+    imports:
+      Observable: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.fromIterable
+  type: call
+  template:
+    pattern: from(~0~)
+    imports:
+      from: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.just
+  type: call
+  template:
+    pattern: of(~*~)
+    imports:
+      of: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.error
+  type: call
+  template:
+    pattern: throwError(~*~)
+    imports:
+      throwError: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.empty
+  type: call
+  template:
+    pattern: of()
+    imports:
+      of: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.never
+  type: call
+  template:
+    pattern: NEVER
+    imports:
+      NEVER: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.observeOn
+  type: call
+  template: ~this~
+
+- id: io.reactivex.rxjava3.core.Flowable.doFinally
+  type: call
+  template:
+    pattern: ~this~.pipe(finalize(~0~))
+    imports:
+      finalize: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.doOnNext
+  type: call
+  template:
+    pattern: ~this~.pipe(tap(~0~))
+    imports:
+      tap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.doOnSubscribe
+  type: call
+  template:
+    pattern: ~this~.pipe(doOnSubscribe(~0~))
+    imports:
+      doOnSubscribe: '@lightningkite/rxjs-plus'
+
+- id: io.reactivex.rxjava3.core.Flowable.doOnDispose
+  type: call
+  template:
+    pattern: '~this~.pipe(tap({ unsubscribe: ~0~ }))'
+    imports:
+      tap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.doOnError
+  type: call
+  template:
+    pattern: ~this~.pipe(tap(undefined, ~0~))
+    imports:
+      tap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.doOnComplete
+  type: call
+  template:
+    pattern: ~this~.pipe(tap(undefined, undefined, ~0~))
+    imports:
+      tap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.doOnTerminate
+  type: call
+  template:
+    pattern: ~this~.pipe(tap(undefined, ~0~, ~0~))
+    imports:
+      tap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.startWithItem
+  type: call
+  template:
+    pattern: concat(of(~0~), ~this~)
+    imports:
+      of: rxjs
+      concat: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.concat
+  type: call
+  template:
+    pattern: concat(~*~)
+    imports:
+      concat: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.merge
+  type: call
+  template:
+    pattern: merge(~*~)
+    imports:
+      merge: rxjs
+
+- id: io.reactivex.rxjava3.core.Flowable.replay
+  type: call
+  template:
+    pattern: ~this~.pipe(publishReplay(~0~))
+    imports:
+      publishReplay: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.publish
+  type: call
+  template:
+    pattern: ~this~.pipe(publish())
+    imports:
+      publish: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.share
+  type: call
+  template:
+    pattern: ~this~.pipe(share())
+    imports:
+      share: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.take
+  type: call
+  template:
+    pattern: ~this~.pipe(take(~0~))
+    imports:
+      take: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Flowable.singleOrError
+  type: call
+  template: ~this~

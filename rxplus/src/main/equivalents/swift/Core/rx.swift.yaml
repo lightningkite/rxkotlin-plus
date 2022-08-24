@@ -399,7 +399,16 @@
 - id: io.reactivex.rxjava3.core.CompletableEmitter.onError
   type: call
   template: ~this~.onFailure(~0~)
-  
+
+- type: "call"
+  id: "io.reactivex.rxjava3.core.Completable.toSingleDefault"
+  template:
+    pattern: "~this~.asObservable().map { _ in fatalError() }.concat(Observable.just()).asSingle()"
+
+- type: "call"
+  id: "io.reactivex.rxjava3.core.Single.ignoreElement"
+  template:
+    pattern: "~this~.asCompletable()"
 
 # Maybe
 
