@@ -39,6 +39,7 @@ private fun ActivityAccess.requestSomethings(type: String, prompt: String): Mayb
 
             this.startActivityForResult(chooserIntent)
         }
+        .filter { it.code == Activity.RESULT_OK }
         .mapOptional {
             (it.data?.clipData?.let { (0 until it.itemCount).map { index -> it.getItemAt(index).uri } }
                 ?: it.data?.data?.let { listOf(it) }).optional
@@ -58,6 +59,7 @@ private fun ActivityAccess.requestSomething(type: String, prompt: String): Maybe
 
             this.startActivityForResult(chooserIntent)
         }
+        .filter { it.code == Activity.RESULT_OK }
         .mapOptional { it.data?.data.optional }
 
 /**
@@ -93,9 +95,9 @@ fun ActivityAccess.requestImageCamera(
                 intent.putExtra("android.intent.extras.CAMERA_FACING", 1)
                 intent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true)
             }
-
             this.startActivityForResult(intent)
         }
+        .filter { it.code == Activity.RESULT_OK }
         .mapOptional { (it.data?.data ?: file).optional }
 }
 
@@ -155,13 +157,13 @@ fun ActivityAccess.requestMediaGallery(): Maybe<Uri> = requestSomething("video/*
  * Starts a new activity to get a file.
  * Handles permissions by itself.
  */
-fun ActivityAccess.requestFile(): Maybe<Uri> = requestSomething("*/*", "Select file")
+fun ActivityAccess.requestFile(type: String = "*/*"): Maybe<Uri> = requestSomething(type, "Select file")
 
 /**
  * Starts a new activity to get files.
  * Handles permissions by itself.
  */
-fun ActivityAccess.requestFiles(): Maybe<List<Uri>> = requestSomethings("*/*", "Select files")
+fun ActivityAccess.requestFiles(type: String = "*/*"): Maybe<List<Uri>> = requestSomethings(type, "Select files")
 
 /**
  * Shortcut to get the MIME type of the given [uri].

@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import io.reactivex.rxjava3.core.Single
@@ -51,7 +52,10 @@ private fun ImageReference.load(context: Context, maxDimension: Int = 2048): Sin
         Glide.with(context)
             .asBitmap()
             .load(this.uri)
+            .override(maxDimension)
+            .downsample(DownsampleStrategy.AT_MOST)
             .into(object : CustomTarget<Bitmap>() {
+
                 override fun onLoadCleared(placeholder: Drawable?) {
                     if(!emitted) {
                         emitted = true
