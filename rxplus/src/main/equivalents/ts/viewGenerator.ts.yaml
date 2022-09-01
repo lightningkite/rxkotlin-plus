@@ -1,4 +1,17 @@
 ---
+- id: com.lightningkite.rx.viewgenerators.StackSubject
+  type: call
+  template:
+    pattern: 'new BehaviorSubject<Array<~T0~>>(~0~)'
+    imports:
+      BehaviorSubject: 'rxjs'
+- id: com.lightningkite.rx.viewgenerators.ViewGeneratorStack
+  type: call
+  template:
+    pattern: 'new BehaviorSubject<Array<ViewGenerator>>(~0~)'
+    imports:
+      BehaviorSubject: 'rxjs'
+
 - id: com.lightningkite.rx.viewgenerators.ActivityAccess
   type: type
   template: Window

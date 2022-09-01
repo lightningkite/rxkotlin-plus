@@ -14,6 +14,10 @@
   type: get
   template: ~this~.status
 
+- id: okhttp3.Response.isSuccessful
+  type: get
+  template: ~this~.ok
+
 - id: okhttp3.MediaType.parse
   type: call
   template: ~0~
@@ -24,6 +28,15 @@
     pattern: TimeoutError
     imports:
       TimeoutError: rxjs
+
+- id: com.lightningkite.rx.okhttp.unsuccessfulAsError
+  type: call
+  receiver: Single
+  template:
+    pattern: '~this~.pipe(unsuccessfulAsError)'
+    imports:
+      switchMap: rxjs
+      unsuccessfulAsError: '@lightningkite/rxjs-plus'
 
 - id: com.lightningkite.rx.okhttp.discard
   type: call

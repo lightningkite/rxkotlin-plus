@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.ParcelUuid
 import com.lightningkite.rx.android.staticApplicationContext
 import com.lightningkite.rx.filterIsPresent
+import com.lightningkite.rx.forever
 import com.lightningkite.rx.kotlin
 import com.lightningkite.rx.mapNotNull
 import com.lightningkite.rx.viewgenerators.ActivityAccess
@@ -20,6 +21,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.exceptions.UndeliverableException
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -27,8 +31,21 @@ data class BleScanResult(
     val name: String?,
     val rssi: Int,
     val id: String,
-    val services: Map<UUID, ByteArray>
+    val services: Map<UUID, ByteArray>,
 )
+
+private object FixRxUndeliverable {
+    init {
+        val originalHandler = RxJavaPlugins.getErrorHandler()
+        RxJavaPlugins.setErrorHandler { throwable ->
+            if (throwable is UndeliverableException) {
+                return@setErrorHandler // ignore BleExceptions as they were surely delivered at least once
+            }
+            // add other custom handlers if needed
+            originalHandler?.accept(throwable) ?: throw RuntimeException("No handler available", throwable)
+        }
+    }
+}
 
 data class BleCharacteristic(val serviceId: UUID, val id: UUID)
 
@@ -44,6 +61,7 @@ interface BleDevice {
 
 private val ActivityAccess.requireBle: Single<Unit>
     get() {
+        FixRxUndeliverable
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Single.just(Unit)
                 .flatMap {
@@ -96,20 +114,20 @@ fun ActivityAccess.bleScan(
             name = it.bleDevice.name,
             rssi = it.rssi,
             id = it.bleDevice.macAddress,
-            services = (it.scanRecord?.serviceData?.mapKeys { it.key.uuid }  ?: mapOf()) + (it.scanRecord?.serviceUuids?.associate { it.uuid to byteArrayOf() } ?: mapOf())
+            services = (it.scanRecord?.serviceData?.mapKeys { it.key.uuid }
+                ?: mapOf()) + (it.scanRecord?.serviceUuids?.associate { it.uuid to byteArrayOf() } ?: mapOf())
         )
     }
 }
 
 fun ActivityAccess.bleDevice(
     id: String,
-    requiresBond: Boolean,
-): BleDevice = AndroidBleDevice(this, ble.getBleDevice(id), requiresBond)
+): BleDevice = AndroidBleDevice(this, ble.getBleDevice(id))
 
 
 private val ble = RxBleClient.create(staticApplicationContext)
 
-private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: RxBleDevice, val requiresBond: Boolean) :
+private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: RxBleDevice) :
     BleDevice {
     override val id: String
         get() = device.macAddress
@@ -119,10 +137,8 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
     private val rawConnection = activityAccess.requireBle.flatMapObservable {
         println("Attempting connection to ${device.name ?: device.macAddress}")
         //Check and see if bond is required
-        if (requiresBond)
-            device.establishConnection(false).doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }.switchMapSingle { device.waitForBond().toSingleDefault(it) }
-        else
-            device.establishConnection(false).doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }
+        device.establishConnection(false)
+            .doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }
     }.map { Optional.of(it) } //Maps to a optional because a connection may or may not be present
     val connection: Observable<RxBleConnection> = rawConnection.onErrorResumeNext {
         println("Connection failed to ${device.name ?: device.macAddress} with $it")
@@ -131,7 +147,8 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
         if no connection is present*/
         Observable.concat<Optional<RxBleConnection>>(
             Observable.just(Optional.empty()),
-            Observable.empty<Optional<RxBleConnection>>().delay(1000L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()),
+            Observable.empty<Optional<RxBleConnection>>()
+                .delay(1000L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()),
             rawConnection
         )
     }.replay(1).refCount().filterIsPresent()
@@ -149,9 +166,11 @@ private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: R
     override fun rssi(): Single<Int> =
         connection.firstOrError().flatMap { it.readRssi() }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
 
-    override fun read(characteristic: BleCharacteristic): Single<ByteArray> = connection.firstOrError().flatMap {
-        it.readCharacteristic(characteristic.id)
-    }
+    override fun read(characteristic: BleCharacteristic): Single<ByteArray> = connection
+        .doOnSubscribe { connection.take(5000L, TimeUnit.MILLISECONDS).subscribeBy(onError = {}).forever() }
+        .firstOrError().flatMap {
+            it.readCharacteristic(characteristic.id)
+        }
 
     override fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit> =
         connection.firstOrError().flatMap {
@@ -167,22 +186,3 @@ fun BleDevice.readNotify(characteristic: BleCharacteristic) = Observable.merge(
     read(characteristic).toObservable().retry(1).onErrorComplete(),
     notify(characteristic)
 )
-
-
-@SuppressLint("MissingPermission")
-private fun RxBleDevice.waitForBond(): Completable {
-    this.bluetoothDevice.createBond()
-    return Observable.interval(0, 300, TimeUnit.MILLISECONDS)
-        .filter {
-            println("Bonded List")
-            ble.bondedDevices.forEach {
-                println("Bonded: ${it.name}")
-            }
-            ble.bondedDevices.any {
-                it.macAddress.lowercase() == this.macAddress.lowercase()
-                        && it.bluetoothDevice.bondState == BluetoothDevice.BOND_BONDED
-            }
-        }
-        .firstOrError()
-        .ignoreElement()
-}

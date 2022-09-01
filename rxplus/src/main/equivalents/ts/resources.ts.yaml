@@ -120,7 +120,7 @@
 
 - id: com.lightningkite.rx.android.DrawableResource
   type: type
-  template: 'string'
+  template: '{ name: string, file?: string }'
 
 - type: "call"
   id: "com.lightningkite.rx.android.resources.asImage"
