@@ -122,16 +122,22 @@ fun ActivityAccess.bleScan(
 
 fun ActivityAccess.bleDevice(
     id: String,
-): BleDevice = AndroidBleDevice(this, ble.getBleDevice(id))
+): BleDevice = AndroidBleDevice[this, id]
 
 
 private val ble = RxBleClient.create(staticApplicationContext)
 
-private class AndroidBleDevice(val activityAccess: ActivityAccess, val device: RxBleDevice) :
+private class AndroidBleDevice private constructor(val activityAccess: ActivityAccess, val device: RxBleDevice) :
     BleDevice {
     override val id: String
         get() = device.macAddress
 
+    companion object {
+        private val cache = HashMap<String, AndroidBleDevice>()
+        operator fun get(activityAccess: ActivityAccess, id: String): AndroidBleDevice = cache.getOrPut(id) {
+            AndroidBleDevice(activityAccess, ble.getBleDevice(id))
+        }
+    }
 
     //get bluetooth permission
     private val rawConnection = activityAccess.requireBle.flatMapObservable {

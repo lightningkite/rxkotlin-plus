@@ -90,6 +90,16 @@
   template:
     pattern: '~this~.timeout(.milliseconds(~0~), scheduler: MainScheduler.instance)'
     imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Single.timeout
+  type: call
+  template:
+    pattern: '~this~.timeout(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Maybe.timeout
+  type: call
+  template:
+    pattern: '~this~.timeout(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
 - id: io.reactivex.rxjava3.core.Observable.debounce
   type: call
   template:

@@ -189,6 +189,20 @@
     imports:
       timeout: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Single.timeout
+  type: call
+  template:
+    pattern: '~this~.pipe(timeout(~0~))'
+    imports:
+      timeout: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Maybe.timeout
+  type: call
+  template:
+    pattern: '~this~.pipe(timeout(~0~))'
+    imports:
+      timeout: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Observable.debounce
   type: call
   template:
