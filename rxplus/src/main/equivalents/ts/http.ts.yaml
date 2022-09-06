@@ -228,15 +228,7 @@
   receiver: Image
   type: call
   template:
-    pattern: imageToBody(~this~, ~*~)
-    imports:
-      imageToBody: '@lightningkite/rxjs-plus'
-
-- id: com.lightningkite.rx.okhttp.toJsonRequestBody
-  receiver: Image
-  type: call
-  template:
-    pattern: imageToBody(~this~, ~*~)
+    pattern: imageToBody(~this~, ~0~, ~1~)
     imports:
       imageToBody: '@lightningkite/rxjs-plus'
 

@@ -22,6 +22,18 @@
     pattern: Observable<~T0~>
     imports:
       Observable: rxjs
+- id: io.reactivex.rxjava3.core.CompletableSource
+  type: type
+  template:
+    pattern: Observable<~T0~>
+    imports:
+      Observable: rxjs
+- id: io.reactivex.rxjava3.core.MaybeSource
+  type: type
+  template:
+    pattern: Observable<~T0~>
+    imports:
+      Observable: rxjs
 
 - id: io.reactivex.rxjava3.core.Observable
   type: type
@@ -125,6 +137,13 @@
 
 # Operators
 
+- id: io.reactivex.rxjava3.core.Observable.onErrorReturn
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(err => of((~0~)(err))))
+    imports:
+      catchError: rxjs/operators
+      of: rxjs
 - id: io.reactivex.rxjava3.core.Observable.onErrorReturnItem
   type: call
   template:
@@ -144,6 +163,34 @@
     pattern: ~this~.pipe(catchError(~0~))
     imports:
       catchError: rxjs/operators
+- id: io.reactivex.rxjava3.core.Observable.onErrorComplete
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(()=>EMPTY))
+    imports:
+      catchError: rxjs/operators
+      EMPTY: rxjs
+- id: io.reactivex.rxjava3.core.Single.onErrorComplete
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(()=>EMPTY))
+    imports:
+      catchError: rxjs/operators
+      EMPTY: rxjs
+- id: io.reactivex.rxjava3.core.Maybe.onErrorComplete
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(()=>EMPTY))
+    imports:
+      catchError: rxjs/operators
+      EMPTY: rxjs
+- id: io.reactivex.rxjava3.core.Completable.onErrorComplete
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(()=>EMPTY))
+    imports:
+      catchError: rxjs/operators
+      EMPTY: rxjs
 
 - id: io.reactivex.rxjava3.core.Observable.map
   type: call
@@ -300,6 +347,20 @@
       mergeMap: rxjs/operators
 
 - id: io.reactivex.rxjava3.core.Observable.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.pipe(switchMap(~0~))
+    imports:
+      switchMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Observable.flatMapCompletable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Observable.switchMapCompletable
   type: call
   template:
     pattern: ~this~.pipe(switchMap(~0~))
@@ -662,6 +723,20 @@
     imports:
       mergeMap: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Single.flatMapCompletable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Single.switchMapCompletable
+  type: call
+  template:
+    pattern: ~this~.pipe(mergeMap(~0~))
+    imports:
+      mergeMap: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Single.subscribeOn
   type: call
   template: ~this~
@@ -733,6 +808,13 @@
     imports:
       zip: rxjs
 
+- id: io.reactivex.rxjava3.core.Single.onErrorReturn
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(err => of((~0~)(err))))
+    imports:
+      catchError: rxjs/operators
+      of: rxjs
 - id: io.reactivex.rxjava3.core.Single.onErrorReturnItem
   type: call
   template:
@@ -747,21 +829,6 @@
     imports:
       catchError: rxjs/operators
 - id: io.reactivex.rxjava3.core.Single.onErrorResumeNext
-  type: call
-  template:
-    pattern: ~this~.pipe(catchError(~0~))
-    imports:
-      catchError: rxjs/operators
-
-- id: io.reactivex.rxjava3.core.Single.onErrorReturn
-  type: call
-  arguments: [io.reactivex.rxjava3.core.SingleSource]
-  template:
-    pattern: ~this~.pipe(catchError(~0~))
-    imports:
-      catchError: rxjs/operators
-
-- id: io.reactivex.rxjava3.core.Single.onErrorReturn
   type: call
   template:
     pattern: ~this~.pipe(catchError(~0~))
@@ -873,6 +940,20 @@
   type: call
   receiver: io.reactivex.rxjava3.core.Completable
   template: ~this~.subscribe(~onError~, ~onComplete~)
+
+- id: io.reactivex.rxjava3.core.Completable.doOnComplete
+  type: call
+  template:
+    pattern: ~this~.pipe(tap(~0~))
+    imports:
+      tap: rxjs/operators
+
+- id: io.reactivex.rxjava3.core.Completable.doOnError
+  type: call
+  template:
+    pattern: ~this~.pipe(tap(undefined, ~0~))
+    imports:
+      tap: rxjs/operators
 
 # Operators for Completable
 - id: io.reactivex.rxjava3.core.Completable.toObservable
@@ -1169,6 +1250,13 @@
     imports:
       zip: rxjs
 
+- id: io.reactivex.rxjava3.core.Maybe.onErrorReturn
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(err => of((~0~)(err))))
+    imports:
+      catchError: rxjs/operators
+      of: rxjs
 - id: io.reactivex.rxjava3.core.Maybe.onErrorReturnItem
   type: call
   template:
@@ -1426,6 +1514,13 @@
 
 # Operators
 
+- id: io.reactivex.rxjava3.core.Flowable.onErrorReturn
+  type: call
+  template:
+    pattern: ~this~.pipe(catchError(err => of((~0~)(err))))
+    imports:
+      catchError: rxjs/operators
+      of: rxjs
 - id: io.reactivex.rxjava3.core.Flowable.onErrorReturnItem
   type: call
   template:

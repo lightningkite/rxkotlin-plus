@@ -301,3 +301,7 @@
 - id: com.lightningkite.rx.viewgenerators.SwapView
   type: type
   template: HTMLDivElement
+
+- id: com.lightningkite.rx.viewgenerators.DialogRequest
+  type: call
+  template: '{ _string: ~0~, confirmation: ~1~ }'
