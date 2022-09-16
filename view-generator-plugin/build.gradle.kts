@@ -28,7 +28,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
 }
 
 val kotlinVersion: String by project
-val jacksonVersion = "2.13.3"
+val jacksonVersion = "2.13.4"
 dependencies {
     api(localGroovy())
     api(gradleApi())

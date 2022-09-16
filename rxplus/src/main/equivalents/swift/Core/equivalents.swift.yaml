@@ -12,6 +12,12 @@
     pattern: "ValueSubject<Array<ViewGenerator>>"
     imports: [RxSwiftPlus]
 
+- id: "com.lightningkite.rx.viewgenerators.ViewGeneratorStack"
+  type: "call"
+  template:
+    pattern: 'ValueSubject<Array<ViewGenerator>>(~0~)'
+    imports: [RxSwiftPlus]
+
 - type: "call"
   id: "io.reactivex.rxjava3.kotlin.addTo"
   template:

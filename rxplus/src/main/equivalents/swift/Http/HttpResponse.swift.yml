@@ -11,6 +11,10 @@
   type: type
   template: MediaType
 
+- id: okhttp3.MediaType.Companion.toMediaType
+  type: call
+  template: ~this~
+
 - id: okhttp3.RequestBody
   type: type
   template: HttpBody

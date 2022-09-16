@@ -105,6 +105,11 @@
   template:
     pattern: '~this~.debounce(.milliseconds(~0~), scheduler: MainScheduler.instance)'
     imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Observable.throttleFirst
+  type: call
+  template:
+    pattern: '~this~.throttle(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
 - id: io.reactivex.rxjava3.core.Observable.distinctUntilChanged
   type: call
   arguments: []

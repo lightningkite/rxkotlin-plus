@@ -12,10 +12,10 @@ plugins {
 group = "com.lightningkite.rx"
 
 android {
-    compileSdk = 31
+    compileSdk = 33
     defaultConfig {
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 33
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -26,9 +26,9 @@ android {
 dependencies {
     api(project(":rxplus"))
     api("io.reactivex.rxjava3:rxandroid:3.0.0")
-    api("androidx.core:core-ktx:1.7.0")
+    api("androidx.core:core-ktx:1.9.0")
     api("androidx.recyclerview:recyclerview:1.2.1")
-    api("com.google.android.material:material:1.6.0")
+    api("com.google.android.material:material:1.6.1")
     api("dev.b3nedikt.viewpump:viewpump:4.0.10")
     api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
