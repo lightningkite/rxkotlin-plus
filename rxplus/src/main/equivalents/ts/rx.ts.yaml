@@ -250,6 +250,13 @@
     imports:
       timeout: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Observable.throttleFirst
+  type: call
+  template:
+    pattern: ~this~.pipe(throttleTime(~0~))
+    imports:
+      throttleTime: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Observable.debounce
   type: call
   template:
@@ -1407,9 +1414,9 @@
     pattern: new BehaviorSubject(~0~)
     imports:
       BehaviorSubject: rxjs
-      
-      
-      
+
+
+
 # Flowable
 
 - id: io.reactivex.rxjava3.core.Flowable

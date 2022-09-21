@@ -17,16 +17,19 @@ import java.time.ZonedDateTime
 fun ActivityAccess.share(title: String, message: String? = null, url: String? = null, image: Image? = null) {
     val i = Intent(Intent.ACTION_SEND)
     i.type = "text/plain"
+    i.putExtra(Intent.EXTRA_TITLE, title)
     listOfNotNull(message, url).joinToString("\n").let { i.putExtra(Intent.EXTRA_TEXT, it) }
     if (image != null) {
         when (image) {
             is ImageReference -> {
                 i.setType("image/jpeg")
                 i.putExtra(Intent.EXTRA_STREAM, image.uri)
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             is ImageRemoteUrl -> {
                 i.setType("image/jpeg")
                 i.putExtra(Intent.EXTRA_STREAM, Uri.parse(image.url))
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
         }
     }
