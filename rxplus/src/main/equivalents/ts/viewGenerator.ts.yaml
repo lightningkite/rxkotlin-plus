@@ -5,6 +5,7 @@
     pattern: 'new BehaviorSubject<Array<~T0~>>(~0~)'
     imports:
       BehaviorSubject: 'rxjs'
+
 - id: com.lightningkite.rx.viewgenerators.ViewGeneratorStack
   type: call
   template:

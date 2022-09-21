@@ -10,10 +10,10 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-val jacksonVersion = "2.13.3"
+val jacksonVersion = "2.13.4"
 dependencies {
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:4.6.1")
+    testImplementation("org.mockito:mockito-core:4.8.0")
     api("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
