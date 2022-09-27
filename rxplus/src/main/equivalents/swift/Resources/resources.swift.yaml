@@ -103,6 +103,19 @@
 #  template: "~this~.setFromVideoThumbnail(~video~)"
 
 - type: "type"
+  id: "com.lightningkite.rx.android.StringResource"
+  template: "String"
+
+- type: "type"
+  id: "com.lightningkite.rx.android.ColorResource"
+  template: "UIColor"
+
+- type: "type"
+  id: "com.lightningkite.rx.android.DrawableResource"
+  isFunctionType: true
+  template: "()->CALayer"
+
+- type: "type"
   id: "com.lightningkite.rx.android.resources.StringResource"
   template: "String"
 

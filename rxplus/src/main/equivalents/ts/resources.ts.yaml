@@ -122,6 +122,18 @@
   type: type
   template: '{ name: string, file?: string }'
 
+- id: com.lightningkite.rx.android.resources.StringResource
+  type: type
+  template: 'string'
+
+- id: com.lightningkite.rx.android.resources.ColorResource
+  type: type
+  template: 'string'
+
+- id: com.lightningkite.rx.android.resources.DrawableResource
+  type: type
+  template: '{ name: string, file?: string }'
+
 - type: "call"
   id: "com.lightningkite.rx.android.resources.asImage"
   receiver: "kotlin.String"

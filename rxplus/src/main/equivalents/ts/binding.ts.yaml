@@ -90,7 +90,7 @@
 
 - id: com.lightningkite.rx.android.visible
   type: set
-  template: '~this~.style.visibility = ~value~ ? "visible" : ""'
+  template: '~this~.style.visibility = ~value~ ? "visible" : "unset"'
 
 - id: com.lightningkite.rx.android.exists
   type: get
@@ -104,6 +104,35 @@
   type: set
   template:
     pattern: viewExists.set(~this~, ~value~)
+    imports:
+      viewExists: '@lightningkite/rxjs-plus'
+
+- id: androidx.core.view.isVisible
+  type: get
+  reflectiveName:
+    pattern: viewVisible
+    imports:
+      viewVisible: '@lightningkite/rxjs-plus'
+  template: (~this~.style.visibility == "visible")
+
+- id: androidx.core.view.isVisible
+  type: set
+  template: '~this~.style.visibility = ~value~ ? "visible" : "unset"'
+
+- id: androidx.core.view.isGone
+  type: get
+  reflectiveName:
+    pattern: reverse(viewExists, not)
+    imports:
+      viewExists: '@lightningkite/rxjs-plus'
+      reverse: '@lightningkite/rxjs-plus'
+      not: '@lightningkite/rxjs-plus'
+  template: ~this~.hidden
+
+- id: androidx.core.view.isGone
+  type: set
+  template:
+    pattern: viewExists.set(~this~, !~value~)
     imports:
       viewExists: '@lightningkite/rxjs-plus'
 
@@ -234,7 +263,7 @@
 
 - id: com.lightningkite.rx.android.showIn
   type: call
-  arguments: [ViewPager, Subject, function]
+  arguments: [ViewPager2, Subject, function]
   template:
     pattern: '~this~.pipe(showInPager(~0~, ~1~, ~2~))'
     imports:
@@ -243,24 +272,12 @@
 - id: com.lightningkite.rx.android.showIn
   type: call
   receiver: List
-  arguments: [ViewPager, Subject, function]
+  arguments: [ViewPager2, Subject, function]
   template:
     pattern: 'of(~this~).pipe(showInPager(~0~, ~1~, ~2~))'
     imports:
       of: rxjs
       showInPager: '@lightningkite/rxjs-plus'
-
-- id: com.lightningkite.rx.android.StringResource
-  type: type
-  template: string
-
-- id: com.lightningkite.rx.android.ColorResource
-  type: type
-  template: string
-
-- id: com.lightningkite.rx.android.DrawableResource
-  type: type
-  template: string
 
 - id: com.lightningkite.rx.android.showLoading
   type: call
@@ -278,6 +295,10 @@
     pattern: hasClass("loading")
     imports:
       hasClass: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.showLoading
+  type: set
+  template: ~this~.classList.toggle("loading", ~value~)
 
 
 - id: com.lightningkite.rx.android.bind

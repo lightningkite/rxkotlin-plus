@@ -105,6 +105,11 @@
   template:
     pattern: '~this~.debounce(.milliseconds(~0~), scheduler: MainScheduler.instance)'
     imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Observable.throttleFirst
+  type: call
+  template:
+    pattern: '~this~.throttle(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
 - id: io.reactivex.rxjava3.core.Observable.distinctUntilChanged
   type: call
   arguments: []
@@ -133,6 +138,16 @@
   template:
     pattern: '~this~.catchError(~0~)'
     imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Observable.onErrorReturn
+  type: call
+  template:
+    pattern: '~this~.catchError { err in Observable.just(~0~(err)) }'
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Single.onErrorReturn
+  type: call
+  template:
+    pattern: '~this~.catchError { err in Single.just(~0~(err)) }'
+    imports: [RxSwift]
 - id: io.reactivex.rxjava3.core.Observable.onErrorReturnItem
   type: call
   template:
@@ -155,6 +170,16 @@
   template:
     pattern: '~this~.catchError { _ in ~0~ }'
     imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Observable.onErrorComplete
+  type: call
+  template:
+    pattern: '~this~.catchError { _ in Observable.empty() }'
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Single.onErrorComplete
+  type: call
+  template:
+    pattern: '~this~.catchError { _ in Maybe.complete() }'
+    imports: [RxSwift]
 
 - id: io.reactivex.rxjava3.core.ObservableSource
   type: type
@@ -165,6 +190,16 @@
   type: type
   template:
     pattern: Single<~T0~>
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.MaybeSource
+  type: type
+  template:
+    pattern: Maybe<~T0~>
+    imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.CompletableSource
+  type: type
+  template:
+    pattern: Completable
     imports: [RxSwift]
 
 
@@ -216,6 +251,18 @@
     pattern: ~this~.flatMap(~0~)
     imports: [RxSwift]
 
+- id: io.reactivex.rxjava3.core.Observable.flatMapCompletable
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.switchMapCompletable
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
 - id: io.reactivex.rxjava3.core.Single.flatMapObservable
   type: call
   template:
@@ -226,6 +273,102 @@
   type: call
   template:
     pattern: ~this~.asObservable().flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Single.flatMapCompletable
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Single.switchMapCompletable
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Single.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Single.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.flatMapObservable
+  type: call
+  template:
+    pattern: ~this~.asObservable().flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.switchMapObservable
+  type: call
+  template:
+    pattern: ~this~.asObservable().flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.switchMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.flatMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.switchMapMaybe
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Maybe.flatMapObservable
+  type: call
+  template:
+    pattern: ~this~.asObservable().flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Maybe.switchMapObservable
+  type: call
+  template:
+    pattern: ~this~.asObservable().flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Maybe.flatMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Maybe.switchMapSingle
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Maybe.flatMapCompletable
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Maybe.switchMapCompletable
+  type: call
+  template:
+    pattern: ~this~.flatMap(~0~)
     imports: [RxSwift]
 
 - id: io.reactivex.rxjava3.core.Observable.startWithItem

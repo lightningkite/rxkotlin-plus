@@ -2,6 +2,13 @@
 
 - id: com.lightningkite.rx.android.subscribeAutoDispose
   type: call
+  arguments: ["*"]
+  template:
+    pattern: ~this~.subscribeAutoDispose(~0~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.subscribeAutoDispose
+  type: call
   template:
     pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
     imports: [RxSwiftPlus]
@@ -10,6 +17,13 @@
   type: call
   template:
     pattern: ~this~.subscribeAutoDispose(~0~, ~1~)
+    imports: [RxSwiftPlus]
+
+- id: com.lightningkite.rx.android.into
+  type: call
+  arguments: ["*"]
+  template:
+    pattern: ~this~.subscribeAutoDispose(~0~)
     imports: [RxSwiftPlus]
 
 - id: com.lightningkite.rx.android.into
