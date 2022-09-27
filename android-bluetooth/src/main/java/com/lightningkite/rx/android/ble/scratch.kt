@@ -57,6 +57,7 @@ interface BleDevice {
     fun read(characteristic: BleCharacteristic): Single<ByteArray>
     fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit>
     fun notify(characteristic: BleCharacteristic): Observable<ByteArray>
+    fun negotiateMtu(requestedMtu: Int): Single<Int>
 }
 
 private val ActivityAccess.requireBle: Single<Unit>
@@ -186,6 +187,8 @@ private class AndroidBleDevice private constructor(val activityAccess: ActivityA
     override fun notify(characteristic: BleCharacteristic): Observable<ByteArray> = connection.flatMap {
         it.setupNotification(characteristic.id).switchMap { it }
     }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
+
+    override fun negotiateMtu(requestedMtu: Int): Single<Int> = connection.firstOrError().flatMap { it.requestMtu(requestedMtu) }
 }
 
 fun BleDevice.readNotify(characteristic: BleCharacteristic) = Observable.merge(
