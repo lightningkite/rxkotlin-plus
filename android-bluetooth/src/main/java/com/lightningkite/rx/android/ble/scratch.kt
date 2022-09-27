@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.os.Build
 import android.os.ParcelUuid
-import android.util.Log
 import com.lightningkite.rx.android.staticApplicationContext
 import com.lightningkite.rx.filterIsPresent
 import com.lightningkite.rx.forever
@@ -179,20 +178,15 @@ private class AndroidBleDevice private constructor(val activityAccess: ActivityA
         .firstOrError().flatMap {
             it.readCharacteristic(characteristic.id)
         }
-        .doOnSuccess { Log.d("RxPlusAndroidBle", "Read ${characteristic.id}: ${it.contentToString()}") }
-        .doOnError { Log.w("RxPlusAndroidBle", "Failed to read ${characteristic.id}") }
 
     override fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit> =
         connection.firstOrError().flatMap {
             it.writeCharacteristic(characteristic.id, value)
         }.map { Unit }
-            .doOnSuccess { Log.d("RxPlusAndroidBle", "Wrote ${characteristic.id}: ${value.contentToString()}") }
-            .doOnError { Log.w("RxPlusAndroidBle", "Failed to write ${characteristic.id}") }
 
     override fun notify(characteristic: BleCharacteristic): Observable<ByteArray> = connection.flatMap {
         it.setupNotification(characteristic.id).switchMap { it }
     }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
-        .doOnNext { Log.d("RxPlusAndroidBle", "Notified ${characteristic.id}: ${it.contentToString()}") }
 
     override fun negotiateMtu(requestedMtu: Int): Single<Int> = connection.firstOrError().flatMap { it.requestMtu(requestedMtu) }
 }
