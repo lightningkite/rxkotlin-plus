@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.os.Build
 import android.os.ParcelUuid
+import android.util.Log
 import com.lightningkite.rx.android.staticApplicationContext
 import com.lightningkite.rx.filterIsPresent
 import com.lightningkite.rx.forever
@@ -57,7 +58,6 @@ interface BleDevice {
     fun read(characteristic: BleCharacteristic): Single<ByteArray>
     fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit>
     fun notify(characteristic: BleCharacteristic): Observable<ByteArray>
-    fun negotiateMtu(requestedMtu: Int): Single<Int>
 }
 
 private val ActivityAccess.requireBle: Single<Unit>
@@ -123,20 +123,25 @@ fun ActivityAccess.bleScan(
 
 fun ActivityAccess.bleDevice(
     id: String,
-): BleDevice = AndroidBleDevice[this, id]
+    mtu: Int? = null,
+): BleDevice = AndroidBleDevice[this, id, mtu]
 
 
 private val ble = RxBleClient.create(staticApplicationContext)
 
-private class AndroidBleDevice private constructor(val activityAccess: ActivityAccess, val device: RxBleDevice) :
+private class AndroidBleDevice private constructor(
+    val activityAccess: ActivityAccess,
+    val device: RxBleDevice,
+    val mtu: Int? = null,
+) :
     BleDevice {
     override val id: String
         get() = device.macAddress
 
     companion object {
         private val cache = HashMap<String, AndroidBleDevice>()
-        operator fun get(activityAccess: ActivityAccess, id: String): AndroidBleDevice = cache.getOrPut(id) {
-            AndroidBleDevice(activityAccess, ble.getBleDevice(id))
+        operator fun get(activityAccess: ActivityAccess, id: String, mtu: Int?): AndroidBleDevice = cache.getOrPut(id) {
+            AndroidBleDevice(activityAccess, ble.getBleDevice(id), mtu)
         }
     }
 
@@ -158,7 +163,13 @@ private class AndroidBleDevice private constructor(val activityAccess: ActivityA
                 .delay(1000L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()),
             rawConnection
         )
-    }.replay(1).refCount().filterIsPresent()
+    }.filterIsPresent()
+        .flatMapSingle {
+            mtu?.let { mtu ->
+                it.requestMtu(mtu).map { _ -> it }
+            } ?: Single.just(it)
+        }
+        .replay(1).refCount(5_000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
 
     override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges().map {
         when (it) {
@@ -178,17 +189,23 @@ private class AndroidBleDevice private constructor(val activityAccess: ActivityA
         .firstOrError().flatMap {
             it.readCharacteristic(characteristic.id)
         }
+        .doOnSuccess { Log.d("RxPlusAndroidBle", "Read ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})") }
+        .doOnError { Log.w("RxPlusAndroidBle", "Failed to read ${characteristic.id}") }
+
 
     override fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit> =
         connection.firstOrError().flatMap {
             it.writeCharacteristic(characteristic.id, value)
         }.map { Unit }
+            .doOnSuccess { Log.d("RxPlusAndroidBle", "Wrote ${characteristic.id}: ${value.contentToString()} (${value.toString(Charsets.UTF_8)})") }
+            .doOnError { Log.w("RxPlusAndroidBle", "Failed to write ${characteristic.id}") }
+
 
     override fun notify(characteristic: BleCharacteristic): Observable<ByteArray> = connection.flatMap {
         it.setupNotification(characteristic.id).switchMap { it }
     }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
+        .doOnNext { Log.d("RxPlusAndroidBle", "Notified ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})") }
 
-    override fun negotiateMtu(requestedMtu: Int): Single<Int> = connection.firstOrError().flatMap { it.requestMtu(requestedMtu) }
 }
 
 fun BleDevice.readNotify(characteristic: BleCharacteristic) = Observable.merge(
