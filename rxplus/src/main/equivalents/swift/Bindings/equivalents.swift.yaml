@@ -78,3 +78,13 @@
   template:
     pattern: '~this~.showLoading = ~value~'
     imports: [RxSwiftPlus]
+
+- id: com.jakewharton.rxbinding4.widget.editorActionEvents
+  type: call
+  template:
+    pattern: 'Observable<Void>.never()' # TODO
+    imports: [RxSwift]
+
+- id: com.jakewharton.rxbinding4.widget.TextViewEditorActionEvent
+  type: type
+  template: 'Void'

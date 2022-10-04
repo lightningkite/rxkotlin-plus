@@ -390,3 +390,14 @@
     pattern: replaceWithStyles(~this~, ~0~)
     imports:
       replaceWithStyles: '@lightningkite/rxjs-plus'
+
+- id: com.jakewharton.rxbinding4.widget.editorActionEvents
+  type: call
+  template:
+    pattern: 'fromEvent(input, "keyup").pipe(filter(x => x.key === "Enter"))'
+    imports:
+      fromEvent: rxjs
+
+- id: com.jakewharton.rxbinding4.widget.TextViewEditorActionEvent
+  type: type
+  template: 'KeyboardEvent'
