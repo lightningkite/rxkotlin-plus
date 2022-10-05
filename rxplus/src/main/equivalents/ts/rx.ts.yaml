@@ -495,10 +495,9 @@
 - id: io.reactivex.rxjava3.core.Observable.startWithItem
   type: call
   template:
-    pattern: concat(of(~0~), ~this~)
+    pattern: ~this~.pipe(startWith(~0~))
     imports:
-      of: rxjs
-      concat: rxjs
+      startWith: rxjs
 
 - id: io.reactivex.rxjava3.core.Observable.concat
   type: call
@@ -506,6 +505,15 @@
     pattern: concat(~*~)
     imports:
       concat: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.concat
+  arguments: [Iterable]
+  type: call
+  template:
+    pattern: from(~0~).pipe(concatAll())
+    imports:
+      from: rxjs
+      concatAll: rxjs
 
 - id: io.reactivex.rxjava3.core.Observable.merge
   type: call
@@ -852,7 +860,7 @@
 - id: io.reactivex.rxjava3.core.Single.doOnSubscribe
   type: call
   template:
-    pattern: doOnSubscribe(~this~, ~0~)
+    pattern: ~this~.pipe(doOnSubscribe(~0~))
     imports:
       doOnSubscribe: '@lightningkite/rxjs-plus'
 
@@ -1084,9 +1092,18 @@
 - id: io.reactivex.rxjava3.core.Completable.concat
   type: call
   template:
-    pattern: concat(...~0~)
+    pattern: concat(~*~)
     imports:
       concat: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.concat
+  type: call
+  arguments: [Iterable]
+  template:
+    pattern: from(~0~).pipe(concatAll())
+    imports:
+      from: rxjs
+      concatAll: rxjs
 
 - id: io.reactivex.rxjava3.core.Completable.retryWhen
   type: call
@@ -1282,7 +1299,7 @@
 - id: io.reactivex.rxjava3.core.Maybe.doOnSubscribe
   type: call
   template:
-    pattern: doOnSubscribe(~this~, ~0~)
+    pattern: ~this~.pipe(doOnSubscribe(~0~))
     imports:
       doOnSubscribe: '@lightningkite/rxjs-plus'
 
@@ -1830,7 +1847,22 @@
 - id: io.reactivex.rxjava3.core.Flowable.startWithItem
   type: call
   template:
-    pattern: concat(of(~0~), ~this~)
+    pattern: ~this~.pipe(startWith(~0~))
+    imports:
+      startWith: rxjs
+
+- id: io.reactivex.rxjava3.core.Completable.startWith
+  type: call
+  template:
+    pattern: concat(~0~, ~this~)
+    imports:
+      of: rxjs
+      concat: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.startWith
+  type: call
+  template:
+    pattern: concat(~0~, ~this~)
     imports:
       of: rxjs
       concat: rxjs

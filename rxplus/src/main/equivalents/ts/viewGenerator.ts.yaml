@@ -164,7 +164,7 @@
 
 - id: com.lightningkite.rx.viewgenerators.post
   type: call
-  template: 'setTimeout(~1~)'
+  template: 'setTimeout(~0~, ~1~)'
 
 
 - id: com.lightningkite.rx.viewgenerators.backPressPop

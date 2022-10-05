@@ -154,6 +154,14 @@
 
 - id: com.lightningkite.rx.android.bind
   type: call
+  arguments: [SeekBar, IntRange]
+  template:
+    pattern: '(~0~.min = ~1~.start.toString(), ~0~.max = ~1~.endInclusive.toString(), ~this~.pipe(bind(~0~, "valueAsNumber", "input")))'
+    imports:
+      bind: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.android.bind
+  type: call
   arguments: [RatingBar]
   template:
     pattern: '~this~.pipe(bind(~0~, "valueAsNumber", "input"))'

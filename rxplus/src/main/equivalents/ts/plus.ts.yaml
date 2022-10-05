@@ -382,3 +382,26 @@
     pattern: '~this~.pipe(mapSubjectWithExisting(x => x.toLocalDateTime(), (a, b) => a.with(b)))'
     imports:
       mapSubjectWithExisting: '@lightningkite/rxjs-plus'
+
+
+- id: com.lightningkite.rx.onlyWhile
+  type: call
+  template:
+    pattern: '~this~.pipe(onlyWhile(~0~))'
+    imports:
+      onlyWhile: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.onlyWhile
+  type: call
+  arguments: [Observable, '*']
+  template:
+    pattern: '~this~.pipe(onlyWhileDefault(~0~, ~1~))'
+    imports:
+      onlyWhileDefault: '@lightningkite/rxjs-plus'
+
+- id: com.lightningkite.rx.filterIsPresent
+  type: call
+  template:
+    pattern: '~this~.pipe(filterIsPresent())'
+    imports:
+      filterIsPresent: '@lightningkite/rxjs-plus'

@@ -2,6 +2,9 @@
   type: type
   template: 'void'
 - id: com.lightningkite.rx.android.ble.BleScanResult
+  type: typeRef
+  template: 'undefined'
+- id: com.lightningkite.rx.android.ble.BleScanResult
   type: call
   template: 'undefined'
 - id: com.lightningkite.rx.android.ble.BleScanResult.name
@@ -26,6 +29,9 @@
 - id: com.lightningkite.rx.android.ble.BleDevice
   type: type
   template: 'void'
+- id: com.lightningkite.rx.android.ble.BleDevice
+  type: typeRef
+  template: 'undefined'
 - id: com.lightningkite.rx.android.ble.BleDevice.id
   type: get
   template: '""'
