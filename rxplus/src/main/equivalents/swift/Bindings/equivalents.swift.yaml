@@ -88,3 +88,18 @@
 - id: com.jakewharton.rxbinding4.widget.TextViewEditorActionEvent
   type: type
   template: 'Void'
+
+- id: androidx.core.view.isVisible
+  type: get
+  reflectiveName:
+    pattern: '\UIView.visible'
+    imports: [UIKit, RxSwiftPlus]
+  template:
+    pattern: ~this~.visible
+    imports: [UIKit, RxSwiftPlus]
+
+- id: androidx.core.view.isVisible
+  type: set
+  template:
+    pattern: ~this~.visible = ~value~
+    imports: [UIKit, RxSwiftPlus]

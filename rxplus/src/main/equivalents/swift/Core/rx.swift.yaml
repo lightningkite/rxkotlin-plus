@@ -563,6 +563,18 @@
   template:
     pattern: "~this~.asCompletable()"
 
+- id: io.reactivex.rxjava3.core.Observable.ignoreElements
+  type: call
+  template:
+    pattern: ~this~.ignoreElements().asCompletable()
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Completable.toObservable
+  type: call
+  template:
+    pattern: (~this~.toObservable() as Observable<~T0~>)
+    imports: [RxSwift]
+
 # Maybe
 
 - id: io.reactivex.rxjava3.core.Maybe

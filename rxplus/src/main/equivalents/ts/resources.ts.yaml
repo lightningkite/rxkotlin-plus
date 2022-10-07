@@ -2,6 +2,9 @@
 - type: "type"
   id: "com.lightningkite.rx.android.resources.ViewString"
   template: "string"
+- type: "typeRef"
+  id: "com.lightningkite.rx.android.resources.ViewString"
+  template: "String"
 
 - type: "call"
   id: "com.lightningkite.rx.android.resources.ViewString.get"

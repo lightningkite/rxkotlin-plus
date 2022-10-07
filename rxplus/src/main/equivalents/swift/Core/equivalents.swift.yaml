@@ -345,3 +345,9 @@
     pattern: "~this~.value = ~value~"
     imports: [RxSwiftPlus]
 
+
+- id: com.lightningkite.rx.filterIsPresent
+  type: call
+  template:
+    pattern: '~this~.notNull()'
+    imports: [RxSwiftPlus]

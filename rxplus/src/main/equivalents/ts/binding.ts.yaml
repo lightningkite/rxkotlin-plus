@@ -402,9 +402,10 @@
 - id: com.jakewharton.rxbinding4.widget.editorActionEvents
   type: call
   template:
-    pattern: 'fromEvent(input, "keyup").pipe(filter(x => x.key === "Enter"))'
+    pattern: 'fromEvent(~this~, "keyup").pipe(filter(x => (x as KeyboardEvent).key === "Enter"))'
     imports:
       fromEvent: rxjs
+      filter: rxjs/operators
 
 - id: com.jakewharton.rxbinding4.widget.TextViewEditorActionEvent
   type: type
