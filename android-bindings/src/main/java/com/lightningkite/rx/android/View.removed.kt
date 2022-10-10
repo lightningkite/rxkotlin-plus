@@ -16,7 +16,7 @@ val View.removed: CompositeDisposable
             val composite = CompositeDisposable()
             this.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
                 override fun onViewDetachedFromWindow(v: View) {
-                    composite.dispose()
+                    composite.clear()
                     v.removeOnAttachStateChangeListener(this)
                 }
 
