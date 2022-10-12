@@ -38,4 +38,5 @@
     <string name="play_video">Play video</string>
     <string name="gallery_multi">Gallery Multiple</string>
     <string name="camera_multi">Camera Multiple</string>
+    <string name="label_home">Home</string>
 </resources>
