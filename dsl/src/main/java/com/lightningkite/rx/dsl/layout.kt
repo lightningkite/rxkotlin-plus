@@ -4,6 +4,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.airbnb.paris.extensions.style
 import com.lightningkite.rx.viewgenerators.transition.SlideFixed
 
 

@@ -1,12 +1,9 @@
 package com.lightningkite.rx.viewgenerators
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.Subject
 
 /**
  * Request a permission on an activity, but as a [Single].

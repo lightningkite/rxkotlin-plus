@@ -7,14 +7,13 @@ import com.lightningkite.rx.ValueSubject
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.visible
 import com.lightningkite.rx.viewgenerators.*
-import com.lightningkite.rx.viewgenerators.transition.StackTransition
-import com.lightningkite.rxexample.databinding.MainBinding
 import io.reactivex.rxjava3.core.Observable
 
 class MainVG : ViewGenerator, EntryPoint {
     val stack: StackSubject<ViewGenerator> = ValueSubject(listOf<ViewGenerator>())
     override val mainStack: StackSubject<ViewGenerator>?
         get() = stack
+
     val shouldBackBeShown: Observable<Boolean> = stack.map { it -> it.size > 1 }
 
     init {
@@ -22,7 +21,6 @@ class MainVG : ViewGenerator, EntryPoint {
     }
 
     override fun generate(dependency: ActivityAccess): View {
-        val xml = MainBinding.inflate(dependency.layoutInflater)
         val view = xml.root
 
         stack.showIn(xml.mainContent, dependency)

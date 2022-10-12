@@ -1,4 +1,4 @@
-//! This file will translate using Khrysalis.
+
 @file:OptIn(RxKotlinViewDsl::class)
 
 package com.lightningkite.rxexample.vg
