@@ -768,3 +768,23 @@
 - id: io.reactivex.rxjava3.core.Maybe.retryWhen
   type: call
   template: '~this~.retry(when: ~0~)'
+
+- id: io.reactivex.rxjava3.core.Observable.defer
+  type: call
+  template: 'Observable.deferred(~0~)'
+
+- id: io.reactivex.rxjava3.core.Single.defer
+  type: call
+  template: 'Single.deferred(~0~)'
+
+- id: io.reactivex.rxjava3.core.Maybe.defer
+  type: call
+  template: 'Maybe.deferred(~0~)'
+
+- id: io.reactivex.rxjava3.core.Completable.defer
+  type: call
+  template: 'Completable.deferred(~0~)'
+
+- id: io.reactivex.rxjava3.core.Flowable.defer
+  type: call
+  template: 'Flowable.deferred(~0~)'
