@@ -474,7 +474,7 @@
 
 - id: io.reactivex.rxjava3.core.Single.zip
   type: call
-  arguments: [SingleSource, SingleSource, SingleSource, BiFunction]
+  arguments: [SingleSource, SingleSource, SingleSource, Function3]
   template:
     pattern: '~this~.zip(~0~, ~1~, ~2~, resultSelector: ~3~)'
     imports: [RxSwift]
@@ -730,6 +730,13 @@
   type: typeRef
   template:
     pattern: 'Observable'
+    imports: [RxSwift]
+
+- id: io.reactivex.rxjava3.core.Observable.buffer
+  type: call
+  exactArgumentRequirements: { 1: TimeUnit.MILLISECONDS }
+  template:
+    pattern: '~this~.buffer(timeSpan: .milliseconds(~0~), count: .max, scheduler: MainScheduler.instance)'
     imports: [RxSwift]
 
 - id: io.reactivex.rxjava3.core.Observable.delay

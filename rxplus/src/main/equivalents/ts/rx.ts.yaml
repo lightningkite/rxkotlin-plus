@@ -229,6 +229,13 @@
     imports:
       delay: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Observable.buffer
+  type: call
+  template:
+    pattern: ~this~.pipe(bufferTime(~0~))
+    imports:
+      bufferTime: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Observable.timeout
   type: call
   template:
@@ -417,6 +424,13 @@
     pattern: of(~*~)
     imports:
       of: rxjs
+
+- id: io.reactivex.rxjava3.core.Observable.defer
+  type: call
+  template:
+    pattern: defer(~0~)
+    imports:
+      defer: rxjs
 
 - id: io.reactivex.rxjava3.core.Observable.error
   type: call

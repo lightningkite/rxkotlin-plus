@@ -1,0 +1,7 @@
+
+- id: com.polidea.rxandroidble3.exceptions.BleCharacteristicNotFoundException
+  type: type
+  template: 'RxError'
+- id: com.polidea.rxandroidble3.exceptions.BleCharacteristicNotFoundException
+  type: typeRef
+  template: 'RxError'

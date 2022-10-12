@@ -4,6 +4,12 @@
 - id: com.lightningkite.rx.android.ble.BleScanResult
   type: typeRef
   template: 'undefined'
+- id: com.polidea.rxandroidble3.exceptions.BleCharacteristicNotFoundException
+  type: type
+  template: 'Error'
+- id: com.polidea.rxandroidble3.exceptions.BleCharacteristicNotFoundException
+  type: typeRef
+  template: 'Error'
 - id: com.lightningkite.rx.android.ble.BleScanResult
   type: call
   template: 'undefined'
