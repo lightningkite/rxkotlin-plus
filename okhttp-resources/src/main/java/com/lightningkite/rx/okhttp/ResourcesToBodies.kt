@@ -144,10 +144,13 @@ fun Bitmap.toRequestBody(
  * Makes a [RequestBody] out of a [Uri].
  */
 fun Uri.toRequestBody(): Single<RequestBody> {
+    val length = staticApplicationContext.contentResolver.openAssetFileDescriptor(this@toRequestBody, "r")?.use {
+        it.length
+    } ?: -1L
     val type = (staticApplicationContext.contentResolver.getType(this) ?: "application/octet-stream").toMediaType()
     return Single.just<RequestBody>(object : RequestBody() {
         override fun contentType(): MediaType = type
-
+        override fun contentLength(): Long = length
         override fun writeTo(sink: BufferedSink) {
             staticApplicationContext.contentResolver.openInputStream(this@toRequestBody)?.use {
                 it.source().use { source ->
