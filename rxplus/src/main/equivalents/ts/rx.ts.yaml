@@ -917,6 +917,14 @@
     imports:
       retryWhen: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Single.never
+  type: call
+  template:
+    pattern: NEVER
+    imports:
+      NEVER: rxjs
+
+
 # SingleEmitter
 
 - id: io.reactivex.rxjava3.core.SingleEmitter

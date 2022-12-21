@@ -107,17 +107,38 @@
     imports:
       viewExists: '@lightningkite/rxjs-plus'
 
-- id: androidx.core.view.isVisible
+
+
+- id: androidx.core.view.isInvisible
   type: get
   reflectiveName:
     pattern: viewVisible
     imports:
       viewVisible: '@lightningkite/rxjs-plus'
-  template: (~this~.style.visibility == "visible")
+  template: viewVisible.get(~this~)
+
+- id: androidx.core.view.isInvisible
+  type: set
+  template: viewVisible.set(~this~, ~value~)
+
+
+- id: androidx.core.view.isVisible
+  type: get
+  reflectiveName:
+    pattern: viewExists
+    imports:
+      viewExists: '@lightningkite/rxjs-plus'
+      reverse: '@lightningkite/rxjs-plus'
+      not: '@lightningkite/rxjs-plus'
+  template: !(~this~.hidden)
 
 - id: androidx.core.view.isVisible
   type: set
-  template: '~this~.style.visibility = ~value~ ? "visible" : "unset"'
+  template:
+    pattern: viewExists.set(~this~, ~value~)
+    imports:
+      viewExists: '@lightningkite/rxjs-plus'
+
 
 - id: androidx.core.view.isGone
   type: get
