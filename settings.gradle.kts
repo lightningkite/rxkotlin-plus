@@ -17,5 +17,6 @@ include("okhttp-resources")
 include("rxplus")
 include("view-generator")
 include("view-generator-plugin")
+include("view-generator-fcm")
 
 include("view-generator-example")
