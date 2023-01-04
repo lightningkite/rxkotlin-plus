@@ -1,0 +1,5 @@
+@lightningkite/rxjs-plus/fcm
+
+com.lightningkite.rx.viewgenerators.fcm.Notifications
+com.lightningkite.rx.viewgenerators.fcm.ForegroundNotificationHandler
+com.lightningkite.rx.viewgenerators.fcm.ForegroundNotificationHandlerResult

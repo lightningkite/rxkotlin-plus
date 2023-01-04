@@ -14,6 +14,9 @@ import okio.ByteString.Companion.toByteString
  * A live web socket connection.
  */
 class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterface {
+    init {
+        println("Web socket to $url attempted")
+    }
     internal var underlyingSocket: WebSocket? = null
     private val _read =
         PublishSubject.create<WebSocketFrame>()
@@ -24,11 +27,14 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterf
     override val read: Observable<WebSocketFrame> get() = _read.let { HttpClient.threadCorrectly(it) }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
+        println("Web socket to $url opened")
         _ownConnection.onNext(this)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         try {
+            println("Web socket to $url failed $t")
+            t.printStackTrace()
             _ownConnection.onError(t)
             _read.onError(t)
         } catch (e: Exception) {
@@ -37,19 +43,23 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterf
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+        println("Web socket to $url closing code $code")
         _ownConnection.onComplete()
         _read.onComplete()
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
+        println("Web socket to $url got message $text")
         _read.onNext(WebSocketFrame(text = text))
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+        println("Web socket to $url got message $bytes")
         _read.onNext(WebSocketFrame(binary = bytes.toByteArray()))
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        println("Web socket to $url closed code $code")
     }
 
     override val write: Observer<WebSocketFrame> = object : Observer<WebSocketFrame> {
