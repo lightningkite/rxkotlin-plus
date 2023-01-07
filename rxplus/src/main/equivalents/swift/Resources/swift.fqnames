@@ -15,6 +15,7 @@ com.lightningkite.rx.android.resources.ImageRemoteUrl
 com.lightningkite.rx.android.resources.ImageResource
 com.lightningkite.rx.android.resources.asImage
 com.lightningkite.rx.android.resources.setImage
+com.lightningkite.rx.android.resources.setImages
 com.lightningkite.rx.android.resources.setFromVideoThumbnail
 com.lightningkite.rx.android.resources.PlayerView_player
 com.lightningkite.rx.android.resources.setVideo
@@ -37,3 +38,4 @@ com.lightningkite.rx.android.resources.joinToViewString
 com.lightningkite.rx.android.resources.toDebugString
 com.lightningkite.rx.android.resources.bindImage
 com.lightningkite.rx.android.resources.loadImage
+com.lightningkite.rx.android.resources.loadImages

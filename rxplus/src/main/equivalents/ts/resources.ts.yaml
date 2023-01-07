@@ -219,6 +219,30 @@
       imageElementSet: '@lightningkite/rxjs-plus'
 
 - type: call
+  id: com.lightningkite.rx.android.resources.setImages
+  reflectiveName:
+    pattern: 'imageElementSetMultiple'
+    imports:
+      imageElementSetMultiple: '@lightningkite/rxjs-plus'
+  template:
+    pattern: 'imageElementSetMultiple(~this~, ~0~)'
+    imports:
+      imageElementSetMultiple: '@lightningkite/rxjs-plus'
+
+- type: call
+  id: com.lightningkite.rx.android.resources.setImages
+  actualReceiver: ImageButton
+  reflectiveName:
+    pattern: 'chain("image", imageElementSetMultiple)'
+    imports:
+      chain: '@lightningkite/rxjs-plus'
+      imageElementSetMultiple: '@lightningkite/rxjs-plus'
+  template:
+    pattern: 'imageElementSetMultiple(~this~.image, ~0~)'
+    imports:
+      imageElementSetMultiple: '@lightningkite/rxjs-plus'
+
+- type: call
   id: com.lightningkite.rx.android.resources.load
   template:
     pattern: 'imageToBitmap(~this~)'
