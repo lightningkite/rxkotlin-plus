@@ -168,7 +168,7 @@
 
 - type: "call"
   id: "com.lightningkite.rx.android.resources.ImageRaw"
-  template: "{ raw: ~0~ }"
+  template: "{ raw: new Blob([~0~]) }"
 
 - type: "call"
   id: "com.lightningkite.rx.android.resources.ImageRemoteUrl"

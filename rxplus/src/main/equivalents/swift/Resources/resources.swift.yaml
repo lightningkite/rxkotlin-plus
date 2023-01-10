@@ -41,7 +41,7 @@
 
 - type: "call"
   id: "com.lightningkite.rx.android.resources.ImageRaw"
-  template: "ImageRaw(~raw~)"
+  template: "ImageRaw(~0~)"
 
 - type: "get"
   id: "com.lightningkite.rx.android.resources.ImageRaw.raw"
