@@ -110,6 +110,11 @@
   template:
     pattern: '~this~.throttle(.milliseconds(~0~), scheduler: MainScheduler.instance)'
     imports: [RxSwift]
+- id: io.reactivex.rxjava3.core.Observable.throttleLatest
+  type: call
+  template:
+    pattern: '~this~.debounce(.milliseconds(~0~), scheduler: MainScheduler.instance)'
+    imports: [RxSwift]
 - id: io.reactivex.rxjava3.core.Observable.distinctUntilChanged
   type: call
   arguments: []
@@ -650,6 +655,10 @@
 - id: io.reactivex.rxjava3.disposables.CompositeDisposable.add
   type: call
   template: ~this~.insert(~0~)
+
+- id: io.reactivex.rxjava3.disposables.CompositeDisposable.clear
+  type: call
+  template: ~this~.dispose()
 
 - id: io.reactivex.rxjava3.disposables.Disposable.fromAction
   type: call

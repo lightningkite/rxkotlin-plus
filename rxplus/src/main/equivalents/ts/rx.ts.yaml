@@ -264,6 +264,13 @@
     imports:
       throttleTime: rxjs/operators
 
+- id: io.reactivex.rxjava3.core.Observable.throttleLatest
+  type: call
+  template:
+    pattern: '~this~.pipe(throttleTime(~0~, undefined, { leading: false, trailing: true }))'
+    imports:
+      throttleTime: rxjs/operators
+
 - id: io.reactivex.rxjava3.core.Observable.debounce
   type: call
   template:

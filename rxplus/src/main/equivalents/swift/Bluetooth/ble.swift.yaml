@@ -1,7 +1,11 @@
 
 - id: com.polidea.rxandroidble3.exceptions.BleCharacteristicNotFoundException
   type: type
-  template: 'RxError'
+  template:
+    pattern: 'BluetoothError'
+    imports: [RxBluetoothKit]
 - id: com.polidea.rxandroidble3.exceptions.BleCharacteristicNotFoundException
   type: typeRef
-  template: 'RxError'
+  template:
+    pattern: 'BluetoothError'
+    imports: [RxBluetoothKit]
