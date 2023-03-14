@@ -92,14 +92,14 @@
 - id: androidx.core.view.isVisible
   type: get
   reflectiveName:
-    pattern: '\UIView.visible'
+    pattern: '\UIView.exists'
     imports: [UIKit, RxSwiftPlus]
   template:
-    pattern: ~this~.visible
+    pattern: ~this~.exists
     imports: [UIKit, RxSwiftPlus]
 
 - id: androidx.core.view.isVisible
   type: set
   template:
-    pattern: ~this~.visible = ~value~
+    pattern: ~this~.exists = ~value~
     imports: [UIKit, RxSwiftPlus]
