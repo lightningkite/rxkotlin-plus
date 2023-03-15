@@ -28,7 +28,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
 }
 
 val kotlinVersion: String by project
-val jacksonVersion = "2.13.4"
+val jacksonVersion = "2.14.2"
 dependencies {
     api(localGroovy())
     api(gradleApi())
@@ -47,8 +47,8 @@ dependencies {
     api("net.jodah:xsylum:0.1.0")
 
     // https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder
-    implementation("org.apache.xmlgraphics:batik-transcoder:1.14")
-    implementation("org.apache.xmlgraphics:batik-codec:1.14")
+    implementation("org.apache.xmlgraphics:batik-transcoder:1.16")
+    implementation("org.apache.xmlgraphics:batik-codec:1.16")
 
     // https://mvnrepository.com/artifact/net.mabboud.fontverter/FontVerter
     implementation("net.mabboud.fontverter:FontVerter:1.2.22")

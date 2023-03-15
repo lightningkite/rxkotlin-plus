@@ -10,7 +10,7 @@ plugins {
 
 group = "com.lightningkite.rx"
 
-val jacksonVersion = "2.13.4"
+val jacksonVersion = "2.14.2"
 dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.8.0")

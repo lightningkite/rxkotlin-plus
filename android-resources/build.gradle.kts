@@ -25,13 +25,13 @@ android {
 
 dependencies {
     api(project(":android-bindings"))
-    api("com.google.android.exoplayer:exoplayer:2.18.1")
+    api("com.google.android.exoplayer:exoplayer:2.18.4")
     implementation("com.github.bumptech.glide:glide:4.13.2")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
 standardPublishing {
