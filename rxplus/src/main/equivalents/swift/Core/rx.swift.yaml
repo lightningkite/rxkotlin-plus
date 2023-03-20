@@ -466,6 +466,7 @@
 
 - id: io.reactivex.rxjava3.core.Single.zip
   type: call
+  arguments: [SingleSource, BiFunction]
   template:
     pattern: '~this~.zip(~0~, resultSelector: ~1~)'
     imports: [RxSwift]
