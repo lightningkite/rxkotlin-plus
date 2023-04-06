@@ -12,8 +12,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomTarget
 import com.lightningkite.rx.android.resources.*
 import androidx.core.graphics.scale
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.single
+import com.badoo.reaktive.single.singleOf
 import com.bumptech.glide.RequestBuilder
-import io.reactivex.rxjava3.core.Single
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.lightningkite.rx.android.staticApplicationContext
@@ -52,7 +54,7 @@ private val CompressFormat.toSubType: String
  * You can set maximum dimension and file size limits for upload.
  */
 fun Image.toRequestBody(maxDimension: Int = 2048, maxBytes: Long = 10_000_000): Single<RequestBody> =
-    Single.create { em ->
+    single { em ->
         val glide = Glide.with(staticApplicationContext).asBitmap()
         val task: Pair<RequestBuilder<Bitmap>, CompressFormat> = when (this) {
             is ImageReference ->
@@ -148,7 +150,7 @@ fun Uri.toRequestBody(): Single<RequestBody> {
         it.length
     } ?: -1L
     val type = (staticApplicationContext.contentResolver.getType(this) ?: "application/octet-stream").toMediaType()
-    return Single.just<RequestBody>(object : RequestBody() {
+    return singleOf(object : RequestBody() {
         override fun contentType(): MediaType = type
         override fun contentLength(): Long = length
         override fun writeTo(sink: BufferedSink) {

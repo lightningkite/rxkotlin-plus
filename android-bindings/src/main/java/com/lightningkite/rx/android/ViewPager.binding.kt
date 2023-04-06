@@ -4,11 +4,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.subject.Subject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.*
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
-import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  * Will display the contents of this in the ViewPager using the makeView provided for each item.
@@ -21,13 +23,13 @@ import io.reactivex.rxjava3.kotlin.addTo
  */
 fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     viewPager2: ViewPager2,
-    showIndex: Subject<Int> = ValueSubject(0),
+    showIndex: Subject<Int> = BehaviorSubject(0),
     makeView: (Observable<T>)->View
 ): SOURCE {
     var lastSubmitted = listOf<T>()
     viewPager2.adapter = object : ObservableRVA<T>(viewPager2.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(RequireMainThread).subscribeBy { it ->
+            observeOn(RequireMainThread).subscribe{ it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -43,12 +45,12 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
             return s
         }
     }
-    observeOn(RequireMainThread).subscribeBy { list ->
+    observeOn(RequireMainThread).subscribe { list ->
         lastSubmitted = list
         viewPager2.adapter!!.notifyDataSetChanged()
         viewPager2.currentItem
     }.addTo(viewPager2.removed)
-    showIndex.observeOn(RequireMainThread).subscribeBy { value ->
+    showIndex.observeOn(RequireMainThread).subscribe { value ->
         viewPager2.currentItem = value
     }.addTo(viewPager2.removed)
     viewPager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {

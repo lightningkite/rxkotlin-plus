@@ -4,12 +4,11 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.widget.Button
-import com.lightningkite.rx.kotlin
-import com.lightningkite.rx.optional
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
+import com.badoo.reaktive.maybe.observeOn
+import com.badoo.reaktive.maybe.subscribe
+import com.badoo.reaktive.observable.firstOrComplete
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.subject.Subject
 import java.util.Optional
 import java.text.DateFormat
 import java.time.LocalDate
@@ -36,7 +35,7 @@ fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
-        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
+        firstOrComplete().observeOn(RequireMainThread).subscribe{ start ->
             button.context.dateSelectorDialog(start) {
                 this.onNext(it)
             }
@@ -56,21 +55,21 @@ fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
  * value.bind(buttonView, nullText = "Select Date")
  */
 @JvmName("bindDate")
-fun <SOURCE: Subject<Optional<LocalDate>>> SOURCE.bind(
+fun <SOURCE: Subject<LocalDate?>> SOURCE.bind(
     button: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT),
     nullText: String
 ): SOURCE {
-    this.map { it.kotlin?.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
+    this.map { it.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
     button.setOnClickListener {
-        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
-            button.context.dateSelectorDialog(start.kotlin ?: LocalDate.now()) {
-                this.onNext(it.optional)
+        firstOrComplete().observeOn(RequireMainThread).subscribe{ start ->
+            button.context.dateSelectorDialog(start ?: LocalDate.now()) {
+                this.onNext(it)
             }
         }
     }
     button.setOnLongClickListener {
-        this.onNext(Optional.empty())
+        this.onNext(null)
         true
     }
     return this
@@ -93,7 +92,7 @@ fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
-        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
+        firstOrComplete().observeOn(RequireMainThread).subscribe { start ->
             button.context.timeSelectorDialog(start) {
                 this.onNext(it)
             }
@@ -113,21 +112,21 @@ fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
  * value.bind(buttonView, nullText = "Select Time")
  */
 @JvmName("bindTime")
-fun <SOURCE: Subject<Optional<LocalTime>>> SOURCE.bind(
+fun <SOURCE: Subject<LocalTime?>> SOURCE.bind(
     button: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT),
     nullText: String
 ): SOURCE {
-    this.map { it.kotlin?.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
+    this.map { it.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
     button.setOnClickListener {
-        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
-            button.context.timeSelectorDialog(start.kotlin ?: LocalTime.now()) {
-                this.onNext(it.optional)
+        firstOrComplete().observeOn(RequireMainThread).subscribe{ start ->
+            button.context.timeSelectorDialog(start ?: LocalTime.now()) {
+                this.onNext(it)
             }
         }
     }
     button.setOnLongClickListener {
-        this.onNext(Optional.empty())
+        this.onNext(null)
         true
     }
     return this
@@ -150,7 +149,7 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
-        this.firstElement().observeOn(RequireMainThread).subscribeBy { start ->
+        firstOrComplete().observeOn(RequireMainThread).subscribe { start ->
             button.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 button.context.timeSelectorDialog(start.toLocalTime()) { t ->
                     this.onNext(LocalDateTime.of(d, t))
@@ -173,24 +172,24 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
  * value.bind(buttonView, nullText = "Select DateTime")
  */
 @JvmName("bindDateTime")
-fun <SOURCE: Subject<Optional<LocalDateTime>>> SOURCE.bind(
+fun <SOURCE: Subject<LocalDateTime?>> SOURCE.bind(
     button: Button,
     formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT),
     nullText: String
 ): SOURCE {
-    this.map { it.kotlin?.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
+    this.map { it.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
     button.setOnClickListener {
-        this.firstElement().observeOn(RequireMainThread).subscribeBy {  element ->
-            val start: LocalDateTime = element.kotlin ?: LocalDateTime.now()
+        firstOrComplete().observeOn(RequireMainThread).subscribe {  element ->
+            val start: LocalDateTime = element ?: LocalDateTime.now()
             button.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 button.context.timeSelectorDialog(start.toLocalTime()) { t ->
-                    this.onNext(LocalDateTime.of(d, t).optional)
+                    this.onNext(LocalDateTime.of(d, t))
                 }
             }
         }
     }
     button.setOnLongClickListener {
-        this.onNext(Optional.empty())
+        this.onNext(null)
         true
     }
     return this

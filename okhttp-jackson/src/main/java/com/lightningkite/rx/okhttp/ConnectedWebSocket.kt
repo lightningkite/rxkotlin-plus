@@ -1,9 +1,9 @@
 package com.lightningkite.rx.okhttp
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.ObservableCallbacks
+import com.badoo.reaktive.subject.publish.PublishSubject
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -13,11 +13,11 @@ import okio.ByteString.Companion.toByteString
 /**
  * A live web socket connection.
  */
-class ConnectedWebSocket(val url: String) : WebSocketListener(), Observer<WebSocketFrame> {
+class ConnectedWebSocket(val url: String) : WebSocketListener(), ObservableCallbacks<WebSocketFrame> {
     internal var underlyingSocket: WebSocket? = null
     private val _read =
-        PublishSubject.create<WebSocketFrame>()
-    private val _ownConnection = PublishSubject.create<ConnectedWebSocket>()
+        PublishSubject<WebSocketFrame>()
+    private val _ownConnection = PublishSubject<ConnectedWebSocket>()
 
     /**
      * An observable representing the socket's connection.  Will emit once it is fully connected.
@@ -60,9 +60,6 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), Observer<WebSoc
 
     override fun onComplete() {
         underlyingSocket?.close(1000, null)
-    }
-
-    override fun onSubscribe(d: Disposable) {
     }
 
     override fun onNext(frame: WebSocketFrame) {

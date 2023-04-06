@@ -10,8 +10,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.single
+import com.badoo.reaktive.subject.publish.PublishSubject
 import java.util.*
 
 /**
@@ -26,13 +27,13 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
 
     override var savedInstanceState: Bundle? = null
 
-    override val onResume = PublishSubject.create<Unit>()
-    override val onPause = PublishSubject.create<Unit>()
-    override val onSaveInstanceState = PublishSubject.create<Bundle>()
-    override val onLowMemory = PublishSubject.create<Unit>()
-    override val onDestroy = PublishSubject.create<Unit>()
-    override val onActivityResult = PublishSubject.create<Triple<Int, Int, Intent?>>()
-    override val onNewIntent = PublishSubject.create<Intent>()
+    override val onResume = PublishSubject<Unit>()
+    override val onPause = PublishSubject<Unit>()
+    override val onSaveInstanceState = PublishSubject<Bundle>()
+    override val onLowMemory = PublishSubject<Unit>()
+    override val onDestroy = PublishSubject<Unit>()
+    override val onActivityResult = PublishSubject<Triple<Int, Int, Intent?>>()
+    override val onNewIntent = PublishSubject<Intent>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +91,7 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
     /**
      * Requests a bunch of permissions and returns a map of permissions that were previously ungranted and their new status.
      */
-    override fun requestPermissions(permission: Array<String>): Single<Set<String>> = Single.create { em ->
+    override fun requestPermissions(permission: Array<String>): Single<Set<String>> = single { em ->
         val ungranted = permission.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
@@ -114,7 +115,7 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
     /**
      * Requests a single permissions and returns whether it was granted or not.
      */
-    override fun requestPermission(permission: String): Single<Boolean> = Single.create<Boolean> { em ->
+    override fun requestPermission(permission: String): Single<Boolean> = single { em ->
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             val generated: Int = (Math.random() * 0xFFFF).toInt()
             requestReturns[generated] = {
@@ -124,7 +125,7 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
         } else {
             em.onSuccess(true)
         }
-    }.cache()
+    }
 
     @TargetApi(23)
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

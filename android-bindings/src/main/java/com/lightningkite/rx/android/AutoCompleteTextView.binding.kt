@@ -4,11 +4,11 @@ import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.ObservableCallbacks
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.subscribe
 
 /**
  * Filters the contents of this based on the inputs of the view and then displays
@@ -20,9 +20,9 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
  * values.showIn(autoCompleteView, result, { it })
  */
 @JvmName("showInWithObserver")
-fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     autoCompleteTextView: AutoCompleteTextView,
-    onItemSelected: Observer<T>,
+    onItemSelected: ObservableCallbacks<T>,
     toString: (T) -> String = { it.toString() }
 ): SOURCE = showIn(autoCompleteTextView, { onItemSelected.onNext(it) }, toString)
 
@@ -36,7 +36,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
  * val result = ""
  * values.showIn(autoCompleteView,{ result = it }, { it })
  */
-fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
+fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     autoCompleteTextView: AutoCompleteTextView,
     onItemSelected: (T) -> Unit = { autoCompleteTextView.setText(toString(it)) },
     toString: (T) -> String = { it.toString() }
@@ -44,7 +44,7 @@ fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
     var lastPublishedResults: List<T> = listOf()
     autoCompleteTextView.setAdapter(object : BaseAdapter(), Filterable {
         init {
-            observeOn(RequireMainThread).observeOn(RequireMainThread).subscribeBy {
+            observeOn(RequireMainThread).observeOn(RequireMainThread).subscribe {
                 val copy = it.toList()
                 autoCompleteTextView.post {
                     lastPublishedResults = copy

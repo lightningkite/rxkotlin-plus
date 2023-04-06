@@ -7,11 +7,14 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.single
+import com.badoo.reaktive.single.singleOf
+import com.badoo.reaktive.single.singleOfError
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import io.reactivex.rxjava3.core.Single
 
 
 /**
@@ -20,14 +23,14 @@ import io.reactivex.rxjava3.core.Single
 fun Image.load(context: Context): Single<Bitmap> {
     return try {
         when (this) {
-            is ImageRaw -> Single.just(BitmapFactory.decodeByteArray(this.data, 0, this.data.size))
+            is ImageRaw -> singleOf(BitmapFactory.decodeByteArray(this.data, 0, this.data.size))
             is ImageReference -> load(context = context)
-            is ImageBitmap -> Single.just(this.bitmap)
+            is ImageBitmap -> singleOf(this.bitmap)
             is ImageRemoteUrl -> load(context = context)
             is ImageResource -> {
                 val drawable = ResourcesCompat.getDrawable(context.resources, resource, null)!!
                 if (drawable is BitmapDrawable) {
-                    Single.just(drawable.bitmap)
+                    singleOf(drawable.bitmap)
                 } else {
                     val bitmap = Bitmap.createBitmap(
                         drawable.intrinsicWidth,
@@ -37,17 +40,17 @@ fun Image.load(context: Context): Single<Bitmap> {
                     val canvas = Canvas(bitmap)
                     drawable.setBounds(0, 0, canvas.width, canvas.height)
                     drawable.draw(canvas)
-                    Single.just(bitmap)
+                    singleOf(bitmap)
                 }
             }
         }
     } catch (e: Exception) {
-        Single.error(e)
+        singleOfError(e)
     }
 }
 
 private fun ImageReference.load(context: Context, maxDimension: Int = 2048): Single<Bitmap> {
-    return Single.create { emitter ->
+    return single { emitter ->
         var emitted = false
         Glide.with(context)
             .asBitmap()
@@ -81,7 +84,7 @@ private fun ImageReference.load(context: Context, maxDimension: Int = 2048): Sin
 }
 
 private fun ImageRemoteUrl.load(context: Context): Single<Bitmap> {
-    return Single.create { emitter ->
+    return single{ emitter ->
         var emitted = false
         Glide.with(context)
             .asBitmap()

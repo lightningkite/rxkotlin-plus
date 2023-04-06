@@ -9,17 +9,15 @@ package com.lightningkite.rxexample.vg
 //--- Imports
 
 import android.view.View
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.maybe.subscribe
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.resources.Video
 import com.lightningkite.rx.android.resources.VideoReference
 import com.lightningkite.rx.android.resources.VideoRemoteUrl
 import com.lightningkite.rx.android.resources.setVideo
-import com.lightningkite.rx.kotlin
-import com.lightningkite.rx.optional
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rxexample.databinding.VideoDemoBinding
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.util.*
 
 //--- Name (overwritten on flow generation)
@@ -28,8 +26,8 @@ class VideoDemoVG : ViewGenerator {
 
     //--- Properties
     val currentVideo =
-        ValueSubject<Optional<Video>>(VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4").optional)
-    val timesPlayPressed = ValueSubject<Int>(0)
+        BehaviorSubject<Video?>(VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"))
+    val timesPlayPressed = BehaviorSubject<Int>(0)
 
     //--- Generate Start (overwritten on flow generation)
     override fun generate(dependency: ActivityAccess): View {
@@ -38,7 +36,7 @@ class VideoDemoVG : ViewGenerator {
 
         //--- Set Up xml.video
         currentVideo.into(xml.video) {
-            setVideo(it.kotlin)
+            setVideo(it)
         }
 
         //--- Set Up xml.play (overwritten on flow generation)
@@ -46,23 +44,23 @@ class VideoDemoVG : ViewGenerator {
 
         //--- Set Up xml.gallery
         xml.gallery.setOnClickListener {
-            dependency.requestVideoGallery().subscribeBy {
-                currentVideo.value = VideoReference(it).optional
+            dependency.requestVideoGallery().subscribe {
+                currentVideo.onNext(VideoReference(it))
             }
         }
 
         //--- Set Up xml.camera
         xml.camera.setOnClickListener {
-            dependency.requestVideoCamera().subscribeBy {
-                currentVideo.value = VideoReference(it).optional
+            dependency.requestVideoCamera().subscribe {
+                currentVideo.onNext(VideoReference(it))
             }
         }
 
         //--- Set Up xml.galleryMulti
         xml.galleryMulti.setOnClickListener {
-            dependency.requestVideosGallery().subscribeBy {
+            dependency.requestVideosGallery().subscribe {
                 it.firstOrNull()?.let {
-                    currentVideo.value = VideoReference(it).optional
+                    currentVideo.onNext(VideoReference(it))
                 }
             }
         }
@@ -82,13 +80,11 @@ class VideoDemoVG : ViewGenerator {
 
     //--- Action playClick
     fun playClick() {
-        timesPlayPressed.value++
+        timesPlayPressed.onNext(timesPlayPressed.value + 1)
         when (timesPlayPressed.value % 3) {
-            0 -> currentVideo.value =
-                VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4").optional
-            1 -> currentVideo.value =
-                VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4").optional
-            2 -> currentVideo.value = Optional.empty()
+            0 -> currentVideo.onNext(VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"))
+            1 -> currentVideo.onNext(VideoRemoteUrl("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"))
+            2 -> currentVideo.onNext(null)
         }
     }
 

@@ -3,16 +3,16 @@ package com.lightningkite.rx.android
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
+import com.badoo.reaktive.subject.publish.PublishSubject
 
 
 private fun RecyclerView.defaultLayoutManager(){
@@ -39,7 +39,7 @@ internal open class ObservableRVA<T: Any>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val event = BehaviorSubject.create<T>()
+        val event = PublishSubject<T>()
         val subview = makeView(viewType, event)
         subview.setRemovedCondition(removeCondition)
         subview.tag = event
@@ -71,7 +71,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -99,7 +99,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, determineType, makeView) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -125,7 +125,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new
@@ -160,7 +160,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, determineType, makeView) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribeBy { it ->
+            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new

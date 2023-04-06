@@ -3,29 +3,28 @@ package com.lightningkite.rx.viewgenerators
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import com.lightningkite.rx.ValueSubject
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.debounce
+import com.badoo.reaktive.observable.distinctUntilChanged
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 
 object ApplicationAccess {
 
-    private val applicationIsActiveEvent = ValueSubject<Boolean>(true)
+    private val applicationIsActiveEvent = BehaviorSubject(true)
 
     /**
      * Whether the application is in the foreground.
      */
     val foreground: Observable<Boolean> = applicationIsActiveEvent
-        .debounce(100L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+        .debounce(100L, AndroidSchedulers.mainThread())
         .distinctUntilChanged()
 
     /**
      * Whether the soft input (a.k.a. software keyboard) is up
      */
-    val softInputActive = ValueSubject<Boolean>(false)
+    val softInputActive = BehaviorSubject(false)
 
     /**
      * Sets up the [application] to report visibility events to [applicationIsActiveEvent]

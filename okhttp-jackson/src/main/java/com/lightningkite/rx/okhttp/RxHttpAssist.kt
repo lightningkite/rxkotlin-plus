@@ -1,11 +1,11 @@
 package com.lightningkite.rx.okhttp
 
-import com.fasterxml.jackson.core.type.TypeReference
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.flatMap
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.singleOfError
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
-import com.fasterxml.jackson.module.kotlin.readValue
-import io.reactivex.rxjava3.core.Single
 import okhttp3.Response
-import java.lang.reflect.ParameterizedType
 
 /**
  * Changes unsuccessful responses into [HttpResponseException].
@@ -28,7 +28,7 @@ fun Single<Response>.discard(): Single<Unit> {
         if (it.isSuccessful) {
             it.discard()
         } else {
-            Single.error<Unit>(HttpResponseException(it)) as Single<Unit>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -42,7 +42,7 @@ inline fun <reified T: Any> Single<Response>.readJson(): Single<T> {
         if (it.isSuccessful) {
             it.readJson<T>(type)
         } else {
-            Single.error<T>(HttpResponseException(it)) as Single<T>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -56,7 +56,7 @@ inline fun <reified T: Any> Single<Response>.readJsonDebug(): Single<T> {
         if (it.isSuccessful) {
             it.readJsonDebug<T>(type)
         } else {
-            Single.error<T>(HttpResponseException(it)) as Single<T>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -69,7 +69,7 @@ fun Single<Response>.readText(): Single<String> {
         if (it.isSuccessful) {
             it.readText()
         } else {
-            Single.error<String>(HttpResponseException(it))
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -82,7 +82,7 @@ fun Single<Response>.readByteArray(): Single<ByteArray> {
         if (it.isSuccessful) {
             it.readByteArray()
         } else {
-            Single.error<ByteArray>(HttpResponseException(it))
+            singleOfError(HttpResponseException(it))
         }
     }
 }

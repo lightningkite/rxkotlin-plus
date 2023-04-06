@@ -1,12 +1,8 @@
 package com.lightningkite.rx.android
 
 import android.widget.RatingBar
-import com.jakewharton.rxbinding4.widget.ratingChanges
+import com.badoo.reaktive.subject.Subject
 import com.lightningkite.rx.withWrite
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
-import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  *

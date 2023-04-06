@@ -10,8 +10,6 @@ import androidx.appcompat.app.ViewPumpAppCompatDelegate
 import com.lightningkite.rxexample.dslvg.MainDslVG
 import com.lightningkite.rxexample.vg.MainVG
 import dev.b3nedikt.viewpump.ViewPump
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class MainActivity : ViewGeneratorActivity() {

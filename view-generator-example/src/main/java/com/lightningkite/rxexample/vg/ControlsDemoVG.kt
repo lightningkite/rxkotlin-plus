@@ -3,7 +3,7 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.bind
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.showIn
@@ -14,10 +14,10 @@ import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.ControlsDemoBinding
 
 class ControlsDemoVG : ViewGenerator {
-    val text: ValueSubject<String> = ValueSubject("")
-    val options: ValueSubject<List<String>> =
-        ValueSubject(listOf("Apple", "Banana", "Chili Pepper", "Dragon Fruit"))
-    val number: ValueSubject<Int> = ValueSubject(32)
+    val text: BehaviorSubject<String> = BehaviorSubject("")
+    val options: BehaviorSubject<List<String>> =
+        BehaviorSubject(listOf("Apple", "Banana", "Chili Pepper", "Dragon Fruit"))
+    val number: BehaviorSubject<Int> = BehaviorSubject(32)
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = ControlsDemoBinding.inflate(dependency.layoutInflater)

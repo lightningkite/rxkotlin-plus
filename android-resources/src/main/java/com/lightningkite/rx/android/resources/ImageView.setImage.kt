@@ -1,17 +1,11 @@
 package com.lightningkite.rx.android.resources
 
-import android.app.Activity
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.TransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
-import com.lightningkite.rx.forever
-import io.reactivex.rxjava3.kotlin.subscribeBy
 
 /**
  * Loads and sets the image into the ImageView.

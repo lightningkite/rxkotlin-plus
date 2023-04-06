@@ -1,13 +1,11 @@
 package com.lightningkite.rx.android.resources
 
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.disposable.plusAssign
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.lightningkite.rx.android.removed
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.kotlin.plusAssign
 import java.util.*
 
 private var PlayerView_player = WeakHashMap<StyledPlayerView, ExoPlayer>()
@@ -18,7 +16,7 @@ private var PlayerView_player = WeakHashMap<StyledPlayerView, ExoPlayer>()
 fun StyledPlayerView.setVideo(video: Video?, playWhenReady: Boolean = false) {
     val exoPlayer = PlayerView_player.getOrPut(this) {
         val p = ExoPlayer.Builder(context).build()
-        removed += Disposable.fromAction {
+        removed += Disposable {
             p.release()
         }
         p

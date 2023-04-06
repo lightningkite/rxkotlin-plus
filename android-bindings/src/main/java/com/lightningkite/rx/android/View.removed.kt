@@ -1,8 +1,8 @@
 package com.lightningkite.rx.android
 
 import android.view.View
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
+import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.disposable.addTo
 import java.util.*
 
 /**

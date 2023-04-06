@@ -11,12 +11,16 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.ViewFlipper
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.kotlin.addTo
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.maybe.doOnAfterSubscribe
+import com.badoo.reaktive.maybe.doOnBeforeTerminate
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.doOnAfterSubscribe
+import com.badoo.reaktive.single.doOnBeforeTerminate
 import java.util.*
 
 /**
@@ -31,7 +35,7 @@ import java.util.*
 @Deprecated("Simplified to use subscribeAutoDispose", ReplaceWith("this.subscribeAutoDispose(viewFlipper, ViewFlipper::showLoading)", "com.lightningkite.rx.android.showLoading", "com.lightningkite.rx.android.subscribeAutoDispose"))
 fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): SOURCE {
     defaults(viewFlipper, color)
-    observeOn(RequireMainThread).subscribeBy { it ->
+    observeOn(RequireMainThread).subscribe{ it ->
         viewFlipper.displayedChild = if (it) 1 else 0
     }.addTo(viewFlipper.removed)
     return this
@@ -89,9 +93,9 @@ var ViewFlipper.loadCount: Int
  * val value = Single.just<Boolean>(false)
  * value.showLoading(viewFlipper)
  */
-fun <T: Any> Single<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): Single<T> {
+fun <T> Single<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): Single<T> {
     defaults(viewFlipper, color)
-    return this.doOnSubscribe { viewFlipper.loadCount++ }.doOnTerminate { viewFlipper.loadCount-- }
+    return this.doOnAfterSubscribe { viewFlipper.loadCount++ }.doOnBeforeTerminate { viewFlipper.loadCount-- }
 }
 
 /**
@@ -103,7 +107,7 @@ fun <T: Any> Single<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResourc
  * val value: Maybe<Boolean> ...
  * value.showLoading(viewFlipper)
  */
-fun <T: Any> Maybe<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): Maybe<T> {
+fun <T> Maybe<T>.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): Maybe<T> {
     defaults(viewFlipper, color)
-    return this.doOnSubscribe { viewFlipper.loadCount++ }.doOnTerminate { viewFlipper.loadCount-- }
+    return this.doOnAfterSubscribe { viewFlipper.loadCount++ }.doOnBeforeTerminate { viewFlipper.loadCount-- }
 }

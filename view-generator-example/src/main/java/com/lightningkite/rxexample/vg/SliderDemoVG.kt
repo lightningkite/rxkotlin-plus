@@ -2,7 +2,8 @@
 package com.lightningkite.rxexample.vg
 
 import android.view.View
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.subject.Subject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.bind
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.map
@@ -12,11 +13,10 @@ import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
 import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.SliderDemoBinding
-import io.reactivex.rxjava3.subjects.Subject
 
 class SliderDemoVG : ViewGenerator {
 
-    val ratio: ValueSubject<Float> = ValueSubject(0f)
+    val ratio: BehaviorSubject<Float> = BehaviorSubject(0f)
     val percent: Subject<Int> = ratio.map(
         read = { it -> (it * 100).toInt() },
         write = { it -> it.toFloat() / 100f }

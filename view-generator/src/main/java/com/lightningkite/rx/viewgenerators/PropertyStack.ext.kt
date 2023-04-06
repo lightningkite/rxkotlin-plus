@@ -1,8 +1,9 @@
 package com.lightningkite.rx.viewgenerators
 
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 
-typealias StackSubject<T> = ValueSubject<List<T>>
+
+typealias StackSubject<T> = BehaviorSubject<List<T>>
 typealias ViewGeneratorStack = StackSubject<ViewGenerator>
 
 /**

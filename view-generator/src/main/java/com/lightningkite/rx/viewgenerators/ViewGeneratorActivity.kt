@@ -12,8 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.observable.subscribe
 
 /**
  * An [AccessibleActivity] that is structured to contain a single [ViewGenerator].
@@ -43,7 +43,7 @@ abstract class ViewGeneratorActivity(val changeToTheme: Int? = null) : Accessibl
             intent?.let { handleNewIntent(it) }
         }
         view = main.generate(this)
-        showDialogEventCloser = showDialogEvent.subscribeBy { request ->
+        showDialogEventCloser = showDialogEvent.subscribe { request ->
             val builder = AlertDialog.Builder(this)
             builder.setMessage(request.string.get(this))
             request.confirmation?.let { conf ->

@@ -8,10 +8,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.location.LocationRequestCompat
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.Disposable
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.maybe.asObservable
+import com.badoo.reaktive.maybe.maybe
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.flatMapMaybe
+
 
 /**
  * Gets a single location update from the users.
@@ -25,20 +29,20 @@ fun ActivityAccess.requestLocation(
 @SuppressLint("MissingPermission")
 fun ActivityAccess.requestLocationStream(
     accuracyBetterThanMeters: Double = 10.0
-): Observable<Location> = Observable.concat(
-    internalGetCurrentLocation().toObservable(),
-    internalGetLocationUpdates(LocationRequestCompat.Builder(5L * 60L * 1000L)
-        .build())
-).filter { it.accuracy < accuracyBetterThanMeters }
+): Observable<Location> = concat(
+    internalGetCurrentLocation().asObservable(),
+    internalGetLocationUpdates(LocationRequestCompat.Builder(5L * 60L * 1000L).build())
+)
+    .filter { it.accuracy < accuracyBetterThanMeters }
 
 @SuppressLint("MissingPermission")
 internal fun ActivityAccess.internalGetCurrentLocation(
 ): Maybe<Location> = requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     .flatMapMaybe {
-        Maybe.create<Location> { em ->
+        maybe{ em ->
             val manager = (context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager) ?: run {
                 em.onError(Exception("No location service found"))
-                return@create
+                return@maybe
             }
             LocationManagerCompat.getCurrentLocation(
                 manager,
@@ -61,10 +65,10 @@ internal fun ActivityAccess.internalGetLocationUpdates(
 ): Observable<Location> = requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     .toObservable()
     .flatMap {
-        Observable.create<Location> { em ->
+        observable{ em ->
             val manager = (context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager) ?: run {
                 em.onError(Exception("No location service found"))
-                return@create
+                return@observable
             }
             val listener = LocationListenerCompat { location -> em.onNext(location) }
             LocationManagerCompat.requestLocationUpdates(
@@ -74,7 +78,7 @@ internal fun ActivityAccess.internalGetLocationUpdates(
                 ContextCompat.getMainExecutor(context),
                 listener
             )
-            em.setDisposable(Disposable.fromAction {
+            em.setDisposable(Disposable {
                 LocationManagerCompat.removeUpdates(manager, listener)
             })
         }

@@ -2,8 +2,9 @@ package com.lightningkite.rx.viewgenerators
 
 import android.location.Address
 import android.location.Geocoder
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.single
+import com.badoo.reaktive.single.singleOf
 
 /**
  * Returns a list of [Address]s matching the given [latitude] and [longitude].
@@ -13,15 +14,14 @@ fun ActivityAccess.geocode(
     maxResults: Int = 1
 ): Single<List<Address>> {
     if (address.isEmpty()) {
-        return Single.just(listOf())
+        return singleOf(listOf())
     }
-    return Single.create<List<Address>>{ emitter ->
+    return single{ emitter ->
         Thread {
             try {
-                emitter.onSuccess(Geocoder(context)
-                    .getFromLocationName(address, maxResults))
+                emitter.onSuccess(Geocoder(context).getFromLocationName(address, maxResults) ?: emptyList())
             } catch (e: Exception) {
-                emitter.tryOnError(e)
+                emitter.onError(e)
             }
         }.start()
     }
@@ -36,16 +36,15 @@ fun ActivityAccess.geocode(
     maxResults: Int = 1
 ): Single<List<Address>> {
     if (latitude == 0.0 && longitude == 0.0) {
-        return Single.just(listOf())
+        return singleOf(listOf())
     }
-    return Single.create<List<Address>>{ emitter ->
+    return single{ emitter ->
         Thread {
             try {
-                emitter.onSuccess(Geocoder(context)
-                    .getFromLocation(latitude, longitude, maxResults))
+                emitter.onSuccess(Geocoder(context).getFromLocation(latitude, longitude, maxResults) ?: emptyList())
 
             } catch (e: Exception) {
-                emitter.tryOnError(e)
+                emitter.onError(e)
             }
         }.start()
     }

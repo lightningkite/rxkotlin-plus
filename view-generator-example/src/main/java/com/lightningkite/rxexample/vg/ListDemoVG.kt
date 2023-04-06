@@ -3,7 +3,8 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.showIn
 import com.lightningkite.rx.viewgenerators.ActivityAccess
@@ -16,7 +17,7 @@ import kotlin.random.Random
 
 class ListDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
 
-    val data = ValueSubject(listOf<Int>(20, 40, 60, 80, 100))
+    val data = BehaviorSubject(listOf<Int>(20, 40, 60, 80, 100))
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = ListDemoBinding.inflate(dependency.layoutInflater)
@@ -29,7 +30,7 @@ class ListDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
         }
 
         xml.addItem.setOnClickListener {
-            data.value = (data.value + Random.nextInt(1, 100)).sorted()
+            data.onNext((data.value + Random.nextInt(1, 100)).sorted())
         }
 
         return view

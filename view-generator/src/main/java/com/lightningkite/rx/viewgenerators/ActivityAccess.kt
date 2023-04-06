@@ -4,9 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.Subject
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.single.Single
 
 /**
  * An interface for accessing activities in a decentralized way, where multiple listeners can listen

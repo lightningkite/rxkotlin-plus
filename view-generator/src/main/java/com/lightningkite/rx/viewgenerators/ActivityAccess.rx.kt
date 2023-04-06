@@ -2,8 +2,11 @@ package com.lightningkite.rx.viewgenerators
 
 import android.content.Intent
 import android.os.Bundle
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
+import com.badoo.reaktive.completable.Completable
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.asCompletable
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.single
 
 /**
  * Request a permission on an activity, but as a [Single].
@@ -14,7 +17,7 @@ fun ActivityAccess.requirePermission(permission: String): Completable = requestP
         if (!it) throw SecurityException("Permission $permission not granted")
         it
     }
-    .ignoreElement()
+    .asCompletable()
 
 /**
  * Request a permission on an activity, but as a [Single].
@@ -26,7 +29,7 @@ fun ActivityAccess.requirePermissions(permissions: Array<String>): Completable =
         if (ungranted.isNotEmpty()) throw SecurityException("Permissions ${ungranted.joinToString()} not granted")
         it
     }
-    .ignoreElement()
+    .asCompletable()
 
 /**
  * A result from an activity completing.
@@ -47,7 +50,7 @@ fun ActivityAccess.startIntent(
 fun ActivityAccess.startActivityForResult(
     intent: Intent,
     options: Bundle = android.os.Bundle()
-): Single<ActivityResult> = Single.create { em ->
+): Single<ActivityResult> = single { em ->
     activity.startActivityForResult(intent, prepareOnResult(onResult = { code, data ->
         em.onSuccess(ActivityResult(code, data))
     }), options)

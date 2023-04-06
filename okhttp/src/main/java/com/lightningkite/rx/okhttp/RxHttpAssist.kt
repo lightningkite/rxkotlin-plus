@@ -1,9 +1,11 @@
 package com.lightningkite.rx.okhttp
 
-import io.reactivex.rxjava3.core.Single
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.flatMap
+import com.badoo.reaktive.single.map
+import com.badoo.reaktive.single.singleOfError
 import kotlinx.serialization.KSerializer
 import okhttp3.Response
-import java.lang.reflect.ParameterizedType
 import kotlin.reflect.typeOf
 
 /**
@@ -27,7 +29,7 @@ fun Single<Response>.discard(): Single<Unit> {
         if (it.isSuccessful) {
             it.discard()
         } else {
-            Single.error<Unit>(HttpResponseException(it)) as Single<Unit>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -42,7 +44,7 @@ inline fun <reified T: Any> Single<Response>.readJson(): Single<T> {
         if (it.isSuccessful) {
             it.readJson<T>(type)
         } else {
-            Single.error<T>(HttpResponseException(it)) as Single<T>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -57,7 +59,7 @@ inline fun <reified T: Any> Single<Response>.readJsonDebug(): Single<T> {
         if (it.isSuccessful) {
             it.readJsonDebug<T>(type)
         } else {
-            Single.error<T>(HttpResponseException(it)) as Single<T>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -70,7 +72,7 @@ fun <T: Any> Single<Response>.readJson(serializer: KSerializer<T>): Single<T> {
         if (it.isSuccessful) {
             it.readJson<T>(serializer)
         } else {
-            Single.error<T>(HttpResponseException(it)) as Single<T>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -83,7 +85,7 @@ fun <T: Any> Single<Response>.readJsonDebug(serializer: KSerializer<T>): Single<
         if (it.isSuccessful) {
             it.readJsonDebug<T>(serializer)
         } else {
-            Single.error<T>(HttpResponseException(it)) as Single<T>
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -96,7 +98,7 @@ fun Single<Response>.readText(): Single<String> {
         if (it.isSuccessful) {
             it.readText()
         } else {
-            Single.error<String>(HttpResponseException(it))
+            singleOfError(HttpResponseException(it))
         }
     }
 }
@@ -109,7 +111,7 @@ fun Single<Response>.readByteArray(): Single<ByteArray> {
         if (it.isSuccessful) {
             it.readByteArray()
         } else {
-            Single.error<ByteArray>(HttpResponseException(it))
+            singleOfError(HttpResponseException(it))
         }
     }
 }

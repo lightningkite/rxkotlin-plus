@@ -4,12 +4,8 @@ import android.widget.HorizontalScrollView
 import android.widget.ScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.jakewharton.rxbinding4.view.scrollChangeEvents
-import com.jakewharton.rxbinding4.widget.ratingChanges
+import com.badoo.reaktive.subject.Subject
 import com.lightningkite.rx.withWrite
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
 
 fun <T : Subject<Int>> T.bindScrollPosition(scrollView: ScrollView): T =
     bindView(scrollView, scrollView.scrollChangeEvents().map { it.scrollY }.withWrite { scrollView.scrollTo(0, it) })

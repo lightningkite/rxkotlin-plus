@@ -1,9 +1,6 @@
 package com.lightningkite.rx.android
 
 import android.view.View
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  * A convenience function for hiding and showing views.

@@ -4,16 +4,15 @@ import android.content.Context
 import android.graphics.PointF
 import android.media.MediaMetadataRetriever
 import android.os.Build
-import com.lightningkite.rx.android.RequireMainThread
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.single
+import com.badoo.reaktive.single.subscribeOn
 
 /**
  * Returns a Single<Image> that is a thumbnail from the video.
  */
 fun Video.thumbnail(context: Context, timeMs: Long = 2000L, size: PointF? = null): Single<Image> {
-    return Single.create<Image> { em ->
+    return single{ em ->
         try {
             val mMMR = when (this) {
                 is VideoReference -> {

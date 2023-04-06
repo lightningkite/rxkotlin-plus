@@ -10,9 +10,11 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.mapNotNull
+import com.badoo.reaktive.observable.startWithValue
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.showIn
-import com.lightningkite.rx.mapNotNull
 import com.lightningkite.rx.okhttp.HttpClient
 import com.lightningkite.rx.okhttp.readJson
 import com.lightningkite.rx.viewgenerators.ActivityAccess
@@ -43,7 +45,7 @@ class HttpDemoVG : ViewGenerator {
         //--- Set Up xml.progress
         xml.progress.run {
             xml.progress.max =
-                10000; call.map { it.approximate }.startWithItem(0f).into(
+                10000; call.map { it.approximate }.startWithValue(0f).into(
             xml.progress
         ) { xml.progress.progress = (it * 10000).toInt() }
         }
@@ -52,7 +54,7 @@ class HttpDemoVG : ViewGenerator {
         Post(0, 0, "Default", "Failure")
         call
             .mapNotNull { it.response }
-            .startWithItem(listOf(Post(0, 0, "Loading...", "-")))
+            .startWithValue(listOf(Post(0, 0, "Loading...", "-")))
             .showIn(xml.items) { observable ->
                 //--- Make Subview For xml.items
                 val cellXml = ComponentTextBinding.inflate(dependency.layoutInflater)

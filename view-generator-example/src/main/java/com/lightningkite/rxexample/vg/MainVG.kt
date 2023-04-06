@@ -3,15 +3,16 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.visible
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rxexample.databinding.MainBinding
-import io.reactivex.rxjava3.core.Observable
 
 class MainVG : ViewGenerator, EntryPoint {
-    val stack: StackSubject<ViewGenerator> = ValueSubject(listOf<ViewGenerator>())
+    val stack: StackSubject<ViewGenerator> = BehaviorSubject(listOf<ViewGenerator>())
     override val mainStack: StackSubject<ViewGenerator>?
         get() = stack
 

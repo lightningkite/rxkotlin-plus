@@ -1,8 +1,10 @@
 //! This file will translate using Khrysalis.
 package com.lightningkite.rxexample.api
 
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.delay
+import com.badoo.reaktive.single.singleOf
 import com.lightningkite.rxexample.models.Post
-import io.reactivex.rxjava3.core.Single
 import java.util.concurrent.TimeUnit
 
 class APIMock() : APIInterface {
@@ -14,6 +16,6 @@ class APIMock() : APIInterface {
     }
 
     override fun getExamplePosts(): Single<List<Post>> {
-        return Single.just(listOf(Post(title = "First", body = APIMock.lorem))).delay(1000L, TimeUnit.MILLISECONDS)
+        return singleOf(listOf(Post(title = "First", body = APIMock.lorem))).delay(1000L, )
     }
 }

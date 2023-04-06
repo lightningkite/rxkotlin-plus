@@ -1,13 +1,9 @@
 package com.lightningkite.rx.okhttp
 
-import io.reactivex.*
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.single.*
 import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
 import okio.*
@@ -33,7 +29,7 @@ object HttpClient {
     /**
      * Schedules [single] to occur based on [HttpClient]'s schedulers.
      */
-    fun <T: Any> threadCorrectly(single: Single<T>): Single<T> {
+    fun <T> threadCorrectly(single: Single<T>): Single<T> {
         var current = single
         ioScheduler?.let { current = current.subscribeOn(it) }
         responseScheduler?.let { current = current.observeOn(it) }
@@ -43,7 +39,7 @@ object HttpClient {
     /**
      * Schedules [observable] to occur based on [HttpClient]'s schedulers.
      */
-    fun <T: Any> threadCorrectly(observable: Observable<T>): Observable<T> {
+    fun <T> threadCorrectly(observable: Observable<T>): Observable<T> {
         var current = observable
         ioScheduler?.let { current = current.subscribeOn(it) }
         responseScheduler?.let { current = current.observeOn(it) }
@@ -153,7 +149,7 @@ object HttpClient {
         body: RequestBody? = null,
         options: HttpOptions = HttpClient.defaultOptions
     ): Single<Response> {
-        return Single.create<Response> { emitter ->
+        return single<Response> { emitter ->
             try {
                 val response = callInternal(
                     url = url,
@@ -165,9 +161,10 @@ object HttpClient {
                 ).execute()
                 emitter.onSuccess(response)
             } catch (e: Exception) {
-                emitter.tryOnError(e)
+                emitter.onError(e)
             }
-        }.cache().let { threadCorrectly(it) }
+        }
+            .let { threadCorrectly(it) }
     }
 
     /**
@@ -179,7 +176,7 @@ object HttpClient {
      * @param options The caching and timeout options to use.
      * @return An [Observable] of the ongoing progress of the request.
      */
-    fun <T: Any> callWithProgress(
+    fun <T> callWithProgress(
         url: String,
         method: String = HttpClient.GET,
         headers: Map<String, String> = mapOf(),
@@ -188,7 +185,7 @@ object HttpClient {
         parse: (Response) -> Single<T>
     ): Observable<HttpProgress<T>> {
         var finished = false
-        return Observable.create<HttpProgress<T>> { em ->
+        return observable<HttpProgress<T>> { em ->
             val call = callInternal(
                 url = url,
                 method = method,
@@ -217,17 +214,17 @@ object HttpClient {
             try {
                 val response = call.execute()
                 parse(response).subscribe(
-                    { parsed ->
+                    onError = { e ->
+                        em.onError(e)
+                    },
+                    onSuccess = { parsed ->
                         finished = true
                         em.onNext(HttpProgress(HttpPhase.Done, response = parsed))
                         em.onComplete()
                     },
-                    { e ->
-                        em.tryOnError(e)
-                    }
-                )
+                    )
             } catch (e: Exception) {
-                em.tryOnError(e)
+                em.onError(e)
             }
         }.replay(1).autoConnect().let { threadCorrectly(it) }
     }
@@ -335,21 +332,24 @@ object HttpClient {
     fun webSocket(
         url: String
     ): Observable<WebSocketInterface> {
-        return Observable.using<WebSocketInterface, WebSocketInterface>(
+
+        return observableUsing<WebSocketInterface, WebSocketInterface>(
             {
                 val out = ConnectedWebSocket(url)
                 out.underlyingSocket = client.newWebSocket(
                     Request.Builder()
-                        .url(if(url.startsWith("http")) "ws" + url.substring(4) else url)
+                        .url(if (url.startsWith("http")) "ws" + url.substring(4) else url)
                         .addHeader("Accept-Language", Locale.getDefault().language)
                         .build(),
                     out
                 )
                 out
             },
+            { it.write.onComplete() },
+            false,
             { it.ownConnection },
-            { it.write.onComplete() }
-        ).let { threadCorrectly(it) }
+        )
+            .let { threadCorrectly(it) }
     }
 
 }

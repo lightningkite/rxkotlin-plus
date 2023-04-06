@@ -10,7 +10,9 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.subject.Subject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.bind
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.removed
@@ -22,9 +24,6 @@ import com.lightningkite.rx.viewgenerators.ViewGenerator
 import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.ComponentTextBinding
 import com.lightningkite.rxexample.databinding.WebsocketDemoBinding
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.subjects.Subject
 
 //--- Name (overwritten on flow generation)
 @Suppress("NAME_SHADOWING")
@@ -32,7 +31,7 @@ class WebsocketDemoVG : ViewGenerator {
 
     //--- Data
     val socket = HttpClient.webSocket("wss://ws.ifelse.io").replay(1).refCount()
-    val text: ValueSubject<String> = ValueSubject("")
+    val text: BehaviorSubject<String> = BehaviorSubject("")
 
     //--- Generate Start (overwritten on flow generation)
     override fun generate(dependency: ActivityAccess): View {
@@ -48,7 +47,7 @@ class WebsocketDemoVG : ViewGenerator {
                 itemsList.removeAt(0)
             }
             return@map itemsList
-        }.startWithItem(itemsList).retry().showIn(xml.items) { observable ->
+        }.startWithValue(itemsList).retry().showIn(xml.items) { observable ->
             //--- Make Subview For xml.items (overwritten on flow generation)
             val cellXml = ComponentTextBinding.inflate(dependency.layoutInflater)
             val cellView = cellXml.root

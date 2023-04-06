@@ -23,14 +23,14 @@ android {
     }
 }
 
+val reaktiveVersion: String by project
 dependencies {
     api(project(":rxplus"))
-    api("io.reactivex.rxjava3:rxandroid:3.0.0")
+    api("com.badoo.reaktive:reaktive:$reaktiveVersion")
     api("androidx.core:core-ktx:1.9.0")
     api("androidx.recyclerview:recyclerview:1.3.0")
     api("com.google.android.material:material:1.8.0")
     api("dev.b3nedikt.viewpump:viewpump:4.0.10")
-    api("com.jakewharton.rxbinding4:rxbinding:4.0.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.5.2")

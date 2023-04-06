@@ -4,10 +4,10 @@ package com.lightningkite.rxexample.vg
 import android.location.Location
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.single.subscribe
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.into
-import com.lightningkite.rx.mapFromNullable
-import com.lightningkite.rx.optional
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
 import com.lightningkite.rx.viewgenerators.layoutInflater
@@ -17,7 +17,7 @@ import java.util.*
 
 class LocationDemoVG : ViewGenerator {
 
-    val locationInfo = ValueSubject<Optional<Location>>(Optional.empty())
+    val locationInfo = BehaviorSubject<Location?>(null)
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = LocationDemoBinding.inflate(dependency.layoutInflater)
@@ -25,15 +25,15 @@ class LocationDemoVG : ViewGenerator {
         xml.getLocation.setOnClickListener {
             dependency.requestLocation(
                 accuracyBetterThanMeters = 100.0
-            ).subscribe { location ->
-                this.locationInfo.value = location.optional
+            ).subscribe{ location ->
+                this.locationInfo.onNext(location)
             }
         }
-        locationInfo.mapFromNullable { it ->
+        locationInfo.map { it ->
             if (it != null) {
-                return@mapFromNullable "${it}"
+                return@map "${it}"
             } else {
-                return@mapFromNullable "Nothing yet"
+                return@map "Nothing yet"
             }
         }.into(xml.locationDisplay, TextView::setText)
         return view

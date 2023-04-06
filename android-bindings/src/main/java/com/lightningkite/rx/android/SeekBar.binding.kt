@@ -1,12 +1,8 @@
 package com.lightningkite.rx.android
 
 import android.widget.SeekBar
-import com.jakewharton.rxbinding4.widget.changes
+import com.badoo.reaktive.subject.Subject
 import com.lightningkite.rx.*
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
-import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  * Binds the value of this to the seekbar's internal value. Changes will propagate both directions

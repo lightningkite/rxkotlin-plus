@@ -1,23 +1,10 @@
 package com.lightningkite.rx.okhttp
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.JsonToken
-import com.fasterxml.jackson.core.Version
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.single.*
 import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import com.fasterxml.jackson.databind.util.StdDateFormat
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.reactivex.*
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
 import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
 import okio.*
@@ -43,7 +30,7 @@ object HttpClient {
     /**
      * Schedules [single] to occur based on [HttpClient]'s schedulers.
      */
-    fun <T: Any> threadCorrectly(single: Single<T>): Single<T> {
+    fun <T : Any> threadCorrectly(single: Single<T>): Single<T> {
         var current = single
         ioScheduler?.let { current = current.subscribeOn(it) }
         responseScheduler?.let { current = current.observeOn(it) }
@@ -53,7 +40,7 @@ object HttpClient {
     /**
      * Schedules [observable] to occur based on [HttpClient]'s schedulers.
      */
-    fun <T: Any> threadCorrectly(observable: Observable<T>): Observable<T> {
+    fun <T : Any> threadCorrectly(observable: Observable<T>): Observable<T> {
         var current = observable
         ioScheduler?.let { current = current.subscribeOn(it) }
         responseScheduler?.let { current = current.observeOn(it) }
@@ -163,7 +150,7 @@ object HttpClient {
         body: RequestBody? = null,
         options: HttpOptions = HttpClient.defaultOptions
     ): Single<Response> {
-        return Single.create<Response> { emitter ->
+        return single { emitter ->
             try {
                 val response = callInternal(
                     url = url,
@@ -175,9 +162,9 @@ object HttpClient {
                 ).execute()
                 emitter.onSuccess(response)
             } catch (e: Exception) {
-                emitter.tryOnError(e)
+                emitter.onError(e)
             }
-        }.cache().let { threadCorrectly(it) }
+        }.let { threadCorrectly(it) }
     }
 
     /**
@@ -189,7 +176,7 @@ object HttpClient {
      * @param options The caching and timeout options to use.
      * @return An [Observable] of the ongoing progress of the request.
      */
-    fun <T: Any> callWithProgress(
+    fun <T : Any> callWithProgress(
         url: String,
         method: String = HttpClient.GET,
         headers: Map<String, String> = mapOf(),
@@ -198,7 +185,7 @@ object HttpClient {
         parse: (Response) -> Single<T>
     ): Observable<HttpProgress<T>> {
         var finished = false
-        return Observable.create<HttpProgress<T>> { em ->
+        return observable<HttpProgress<T>> { em ->
             val call = callInternal(
                 url = url,
                 method = method,
@@ -227,17 +214,17 @@ object HttpClient {
             try {
                 val response = call.execute()
                 parse(response).subscribe(
-                    { parsed ->
+                    onSuccess = { parsed ->
                         finished = true
                         em.onNext(HttpProgress(HttpPhase.Done, response = parsed))
                         em.onComplete()
                     },
-                    { e ->
-                        em.tryOnError(e)
+                    onError = { e ->
+                        em.onError(e)
                     }
                 )
             } catch (e: Exception) {
-                em.tryOnError(e)
+                em.onError(e)
             }
         }.share().let { threadCorrectly(it) }
     }
@@ -345,20 +332,21 @@ object HttpClient {
     fun webSocket(
         url: String
     ): Observable<ConnectedWebSocket> {
-        return Observable.using<ConnectedWebSocket, ConnectedWebSocket>(
+        return observableUsing<ConnectedWebSocket, ConnectedWebSocket>(
             {
                 val out = ConnectedWebSocket(url)
                 out.underlyingSocket = client.newWebSocket(
                     Request.Builder()
-                        .url(if(url.startsWith("http")) "ws" + url.substring(4) else url)
+                        .url(if (url.startsWith("http")) "ws" + url.substring(4) else url)
                         .addHeader("Accept-Language", Locale.getDefault().language)
                         .build(),
                     out
                 )
                 out
             },
+            { it.onComplete() },
+            false,
             { it.ownConnection },
-            { it.onComplete() }
         ).let { threadCorrectly(it) }
     }
 

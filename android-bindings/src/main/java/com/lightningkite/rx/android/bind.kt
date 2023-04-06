@@ -1,10 +1,11 @@
 package com.lightningkite.rx.android
 
 import android.view.View
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.subject.Subject
 import com.lightningkite.rx.bind
 import com.lightningkite.rx.withWrite
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.subjects.Subject
 
 internal fun <S: Subject<T>, T: Any> S.bindView(view: View, other: Subject<T>): S {
     this.observeOn(RequireMainThread)

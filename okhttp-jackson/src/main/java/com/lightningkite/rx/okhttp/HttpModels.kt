@@ -1,8 +1,6 @@
 //! This file will translate using Khrysalis.
 package com.lightningkite.rx.okhttp
 
-import okhttp3.CacheControl
-import java.util.concurrent.TimeUnit
 
 /**
  * The current phase of the request.

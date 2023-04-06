@@ -4,14 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import com.badoo.reaktive.disposable.Disposable
+import com.badoo.reaktive.scheduler.Scheduler
 import java.util.concurrent.TimeUnit
 
 val RequireMainThread = TryHandlerScheduler(Handler(Looper.getMainLooper()), true)
 
-class TryHandlerScheduler(val handler: Handler, val async: Boolean): Scheduler() {
+class TryHandlerScheduler(val handler: Handler, val async: Boolean): Scheduler {
 
     val looper = handler.looper
     val disposed = Disposable.disposed()

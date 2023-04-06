@@ -1,14 +1,14 @@
 package com.lightningkite.rx.viewgenerators
 
 import android.view.View
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.debounce
+import com.badoo.reaktive.observable.subscribe
 import com.lightningkite.rx.android.removed
 import com.lightningkite.rx.viewgenerators.transition.StackTransition
 import com.lightningkite.rx.viewgenerators.transition.TransitionTriple
 import com.lightningkite.rx.viewgenerators.transition.UsesCustomTransition
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
@@ -30,8 +30,8 @@ fun <T : Any, SOURCE : Observable<T>> SOURCE.showIn(
     makeView: (T) -> View,
 ): SOURCE {
     var currentItem: T? = null
-    this.subscribeBy { newItem ->
-        if (currentItem == newItem) return@subscribeBy
+    this.subscribe{ newItem ->
+        if (currentItem == newItem) return@subscribe
         post {
             val view = makeView(newItem)
             view.tag = WeakKey(newItem)
@@ -52,8 +52,8 @@ fun <T : ViewGenerator, SOURCE : Observable<T>> SOURCE.showIn(
     transition: TransitionTriple = TransitionTriple.FADE
 ): SOURCE {
     var currentGenerator: ViewGenerator? = null
-    this.subscribeBy { newGenerator ->
-        if (currentGenerator == newGenerator) return@subscribeBy
+    this.subscribe { newGenerator ->
+        if (currentGenerator == newGenerator) return@subscribe
         post {
             val view = newGenerator.generate(dependency)
             view.tag = WeakKey(newGenerator)
@@ -76,10 +76,10 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
 ): SOURCE {
     var currentGenerator: ViewGenerator? = null
     var currentStackSize = 0
-    this.debounce(50L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribeBy { value ->
+    this.debounce(50L, AndroidSchedulers.mainThread()).subscribe { value ->
         val newGenerator = value.lastOrNull()
         val newStackSize = value.size
-        if (currentGenerator == newGenerator) return@subscribeBy
+        if (currentGenerator == newGenerator) return@subscribe
         val view = newGenerator?.generate(dependency)
         view?.tag = WeakKey(newGenerator!!)
         swapView.swap(

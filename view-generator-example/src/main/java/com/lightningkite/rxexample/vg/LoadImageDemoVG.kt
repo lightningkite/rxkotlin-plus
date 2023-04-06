@@ -3,75 +3,75 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.maybe.subscribe
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.single.subscribe
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.removed
 import com.lightningkite.rx.android.resources.Image
 import com.lightningkite.rx.android.resources.ImageReference
 import com.lightningkite.rx.android.resources.ImageRemoteUrl
 import com.lightningkite.rx.android.resources.setImage
-import com.lightningkite.rx.kotlin
-import com.lightningkite.rx.mapFromNullable
 import com.lightningkite.rx.okhttp.toRequestBody
-import com.lightningkite.rx.optional
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rxexample.databinding.LoadImageDemoBinding
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import java.util.*
 
 class LoadImageDemoVG : ViewGenerator {
 
-    val canUpload = ValueSubject<Optional<Boolean>>(Optional.empty())
-    val currentImage = ValueSubject<Optional<Image>>(Optional.empty())
+    val canUpload = BehaviorSubject<Boolean?>(null)
+    val currentImage = BehaviorSubject<Image?>(null)
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = LoadImageDemoBinding.inflate(dependency.layoutInflater)
         val view = xml.root
 
-        currentImage.subscribeBy {
-            canUpload.value = Optional.empty()
+        currentImage.subscribe {
+            canUpload.onNext(null)
         }.addTo(view.removed)
 
         currentImage.into(xml.image) {
             xml.image.setImage(
-                it.kotlin
+                it
             )
         }
         xml.camera.setOnClickListener {
-            dependency.requestImageCamera().subscribeBy { url ->
-                currentImage.value = ImageReference(url).optional
+            dependency.requestImageCamera().subscribe { url ->
+                currentImage.onNext(ImageReference(url))
             }
         }
         xml.galleryMultiple.setOnClickListener {
-            dependency.requestImagesGallery().subscribeBy { urls ->
+            dependency.requestImagesGallery().subscribe { urls ->
                 urls.firstOrNull()?.let { url ->
-                    currentImage.value = ImageReference(url).optional
+                    currentImage.onNext(ImageReference(url))
                 }
             }
         }
         xml.gallery.setOnClickListener {
-            dependency.requestImageGallery().subscribeBy { url ->
-                currentImage.value = ImageReference(url).optional
+            dependency.requestImageGallery().subscribe { url ->
+                currentImage.onNext(ImageReference(url))
             }
         }
         xml.loremPixel.setOnClickListener {
-            currentImage.value = ImageRemoteUrl("https://picsum.photos/200").optional
+            currentImage.onNext(ImageRemoteUrl("https://picsum.photos/200"))
         }
         xml.checkCanUpload.setOnClickListener {
-            currentImage.value.kotlin?.let { i ->
-                i.toRequestBody().subscribeBy(
+            currentImage.value?.let { i ->
+                i.toRequestBody().subscribe(
                     onError = {
                         it.printStackTrace()
-                        canUpload.value = false.optional
+                        canUpload.onNext(false)
                     },
                     onSuccess = {
-                        canUpload.value = true.optional
+                        canUpload.onNext(true)
                     }
                 )
             }
         }
-        canUpload.mapFromNullable {
+        canUpload.map{
             if (it == null) "Not checked" else if (it == true) "Good to go!" else "FAILED!!!"
         }.into(xml.canUpload, TextView::setText)
         return view

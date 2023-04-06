@@ -1,11 +1,10 @@
 package com.lightningkite.rx.android
 
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.subject.Subject
 import com.google.android.material.tabs.TabLayout
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.Subject
-import io.reactivex.rxjava3.kotlin.addTo
 
 /**
  *
@@ -25,7 +24,7 @@ fun <T : Any> TabLayout.bind(
     for (tab in tabs) {
         addTab(newTab().setText(tab.let(toString)))
     }
-    selected.observeOn(RequireMainThread).subscribeBy { value ->
+    selected.observeOn(RequireMainThread).subscribe{ value ->
         val index = tabs.indexOf(value)
         if (index != -1) {
             this.getTabAt(index)?.select()

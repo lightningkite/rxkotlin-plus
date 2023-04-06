@@ -1,14 +1,7 @@
 package com.lightningkite.rx.okhttp
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.subjects.PublishSubject
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okio.ByteString
-import okio.ByteString.Companion.toByteString
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.ObservableCallbacks
 
 /**
  * A live web socket connection.
@@ -27,5 +20,5 @@ interface WebSocketInterface {
     /**
      * Messages to send through the socket
      */
-    val write: Observer<WebSocketFrame>
+    val write: ObservableCallbacks<WebSocketFrame>
 }

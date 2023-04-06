@@ -2,7 +2,7 @@ package com.lightningkite.rx.viewgenerators
 
 import android.os.Handler
 import android.os.Looper
-import io.reactivex.rxjava3.subjects.PublishSubject
+import com.badoo.reaktive.subject.publish.PublishSubject
 
 /**
  * Shortcut for calling [Handler.postDelayed]
@@ -22,4 +22,4 @@ fun post(action: () -> Unit) {
 /**
  * A subject that is called every animation frame with the time elapsed since the last frame in seconds.
  */
-val animationFrame: PublishSubject<Float> = PublishSubject.create()
+val animationFrame: PublishSubject<Float> = PublishSubject()

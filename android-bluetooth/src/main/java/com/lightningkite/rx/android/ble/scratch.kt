@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.ParcelUuid
 import android.util.Log
 import com.lightningkite.rx.android.staticApplicationContext
-import com.lightningkite.rx.filterIsPresent
 import com.lightningkite.rx.forever
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.polidea.rxandroidble3.RxBleClient
@@ -17,14 +16,6 @@ import com.polidea.rxandroidble3.scan.ScanFilter
 import com.polidea.rxandroidble3.scan.ScanSettings
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_LATENCY
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_POWER
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.exceptions.UndeliverableException
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.plugins.RxJavaPlugins
-import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
 

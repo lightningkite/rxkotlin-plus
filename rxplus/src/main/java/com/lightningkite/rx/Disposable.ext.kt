@@ -1,6 +1,6 @@
 package com.lightningkite.rx
 
-import io.reactivex.rxjava3.disposables.Disposable
+import com.badoo.reaktive.disposable.Disposable
 
 /**
  *

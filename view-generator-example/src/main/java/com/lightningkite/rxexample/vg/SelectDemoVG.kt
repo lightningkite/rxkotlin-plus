@@ -3,7 +3,9 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.jakewharton.rxbinding4.view.clicks
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.observable.observableOf
 import com.lightningkite.rx.android.RecyclerViewScrollPosition
 import com.lightningkite.rx.android.bindScrollPosition
 import com.lightningkite.rx.android.into
@@ -11,8 +13,6 @@ import com.lightningkite.rx.android.showIn
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rxexample.databinding.ComponentTestBinding
 import com.lightningkite.rxexample.databinding.SelectDemoBinding
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 class SelectDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
 
@@ -43,7 +43,7 @@ class SelectDemoVG(val stack: StackSubject<ViewGenerator>) : ViewGenerator {
     override fun generate(dependency: ActivityAccess): View {
         val xml = SelectDemoBinding.inflate(dependency.layoutInflater)
 
-        Observable.just(options).showIn(xml.list) { obs: Observable<ViewGenerator> ->
+        observableOf(options).showIn(xml.list) { obs: Observable<ViewGenerator> ->
             val cellXml = ComponentTestBinding.inflate(dependency.layoutInflater)
 
             obs

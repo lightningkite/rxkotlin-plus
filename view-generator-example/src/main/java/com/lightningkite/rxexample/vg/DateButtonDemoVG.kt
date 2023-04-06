@@ -3,7 +3,9 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.bind
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.toSubjectLocalDate
@@ -12,13 +14,12 @@ import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
 import com.lightningkite.rx.viewgenerators.layoutInflater
 import com.lightningkite.rxexample.databinding.DateButtonDemoBinding
-import io.reactivex.rxjava3.core.Observable
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 class DateButtonDemoVG : ViewGenerator {
-    val date: ValueSubject<ZonedDateTime> = ValueSubject(ZonedDateTime.now())
+    val date: BehaviorSubject<ZonedDateTime> = BehaviorSubject(ZonedDateTime.now())
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = DateButtonDemoBinding.inflate(dependency.layoutInflater)

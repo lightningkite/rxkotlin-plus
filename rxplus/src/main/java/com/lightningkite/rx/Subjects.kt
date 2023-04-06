@@ -1,92 +1,64 @@
 package com.lightningkite.rx
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.subjects.Subject
-import java.util.Optional
+import com.badoo.reaktive.disposable.CompositeDisposable
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.subject.Subject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
+import com.badoo.reaktive.subject.behavior.behaviorSubject
 import kotlin.reflect.KMutableProperty1
 
-/**
- * Convenience abstract class for dealing with subjects that have a value property
- */
-abstract class HasValueSubject<T>: Subject<T>() {
-    abstract var value: T
-}
+
 
 /**
- * BehaviorSubject does not guarantee that it will have a value on creation. ValueSubjects
- * wraps BehaviorSubject and requires a value at creation time. This prevents the possibility
- * of crashing when calling value.
+ *  A convenient function for creating a Subject out of an observable and callBacks of type T
  */
-class ValueSubject<T: Any>(value: T): HasValueSubject<T>() {
-    private val underlying = BehaviorSubject.createDefault(value)
-    override var value: T
-        get() = underlying.value!!
-        set(value) { underlying.onNext(value) }
-    override fun subscribeActual(observer: Observer<in T>) { underlying.subscribe(observer) }
-    override fun onSubscribe(d: Disposable) = underlying.onSubscribe(d)
-    override fun onNext(t: T) {
-        value = t
-    }
-    override fun onError(e: Throwable) = underlying.onError(e)
-    override fun onComplete() = underlying.onComplete()
-    override fun hasObservers(): Boolean = underlying.hasObservers()
-    override fun hasThrowable(): Boolean = underlying.hasThrowable()
-    override fun hasComplete(): Boolean = underlying.hasComplete()
-    override fun getThrowable(): Throwable? = underlying.getThrowable()
-}
-
-/**
- *  A convenient function for creating a Subject out of an observable and an observer of type T
- */
-fun <T : Any> makeSubject(
+fun <T> makeSubject(
     observable: Observable<T>,
-    observer: Observer<T>
-): Subject<T> = object : Subject<T>() {
-    private var hasObservers = false
-    private var error: Throwable? = null
-    private var hasCompleted = false
-    override fun subscribeActual(observer: Observer<in T>) {
-        hasObservers = true
-        observable.subscribe(observer)
-    }
-
-    override fun onSubscribe(d: Disposable) = observer.onSubscribe(d)
-    override fun onNext(t: T) = observer.onNext(t)
-    override fun onError(e: Throwable) {
-        error = e
-        observer.onError(e)
-    }
+    callBacks: ObservableCallbacks<T>
+): Subject<T> = object : Subject<T>, Observable<T> by observable {
+    private var _status: Subject.Status = Subject.Status.Active
+    override val status: Subject.Status
+        get() = _status
 
     override fun onComplete() {
-        hasCompleted = true
-        observer.onComplete()
+        callBacks.onComplete()
+        if(_status == Subject.Status.Active)
+            _status = Subject.Status.Completed
     }
 
-    override fun hasObservers(): Boolean = hasObservers
-    override fun hasThrowable(): Boolean = error != null
-    override fun hasComplete(): Boolean = hasCompleted
-    override fun getThrowable(): Throwable? = error
+    override fun onError(error: Throwable) {
+        callBacks.onError(error)
+        if(_status == Subject.Status.Active)
+            _status = Subject.Status.Error(error)
+    }
+
+    override fun onNext(value: T) {
+        callBacks.onNext(value)
+
+    }
 }
 
 /**
  *  Maps a Subject<A> to a Subject<B> using the lambdas provided.
  */
-fun <A : Any, B : Any> Subject<A>.map(read: (A) -> B, write: (B) -> A): Subject<B> = makeSubject<B>(
-    this.map(read),
+fun <A, B > Subject<A>.map(read: (A) -> B, write: (B) -> A): Subject<B> = makeSubject<B>(
+    this.map(mapper = read),
     this.observerMap(write)
 )
+
+/**
+ *  Maps a Subject<A> to a Subject<B> using the lambdas provided.
+ */
+//fun <A, B> Subject<A?>.map(read: (A?) -> B, write: (B) -> A?): Subject<B> = makeSubject<B>(
+//    this.map(mapper = read),
+//    this.observerMap(write)
+//)
 
 /**
  *  Maps a Subject<A> to a Subject<B> using the lambdas provided. If the write labmda returns null it will not
  *  call onNext of this.
  */
-fun <A : Any, B : Any> Subject<A>.mapMaybeWrite(read: (A) -> B, write: (B) -> A?): Subject<B> = makeSubject<B>(
+fun <A: Any, B> Subject<A>.mapMaybeWrite(read: (A) -> B, write: (B) -> A?): Subject<B> = makeSubject<B>(
     this.map(read),
     this.observerMapNotNull(write)
 )
@@ -95,52 +67,39 @@ fun <A : Any, B : Any> Subject<A>.mapMaybeWrite(read: (A) -> B, write: (B) -> A?
  *  Maps a HasValueSubject<A> to a HasValueSubject<B> using the lambdas provided. This allows for more complicated mapping
  *  between types. When written to the current value of this is passed into the write function.
  */
-fun <A : Any, B : Any> HasValueSubject<A>.mapWithExisting(read: (A) -> B, write: (A, B) -> A): HasValueSubject<B> {
-    return object : HasValueSubject<B>() {
-        override fun subscribeActual(observer: Observer<in B>) = this@mapWithExisting.map(read).subscribe(observer)
-        override fun onSubscribe(d: Disposable) = this@mapWithExisting.onSubscribe(d)
+fun <A, B> BehaviorSubject<A>.mapWithExisting(read: (A) -> B, write: (A, B) -> A): BehaviorSubject<B> {
+    return object : BehaviorSubject<B> {
         override fun onNext(t: B) = this@mapWithExisting.onNext(write(this@mapWithExisting.value, t))
-        override fun onError(e: Throwable) = this@mapWithExisting.onError(e)
-        override fun onComplete() = this@mapWithExisting.onComplete()
-        override fun hasObservers(): Boolean = this@mapWithExisting.hasObservers()
-        override fun hasThrowable(): Boolean = this@mapWithExisting.hasThrowable()
-        override fun hasComplete(): Boolean = this@mapWithExisting.hasComplete()
-        override fun getThrowable(): Throwable? = this@mapWithExisting.throwable
+        override fun onError(e: Throwable) {
+            this@mapWithExisting.onError(e)
+            _status = Subject.Status.Error(e)
+        }
+        override fun subscribe(observer: ObservableObserver<B>) {
+            this@mapWithExisting.map(read).subscribe(observer)
+        }
+
+        override fun onComplete() {
+            this@mapWithExisting.onComplete()
+            _status = Subject.Status.Completed
+        }
+        private var _status: Subject.Status = Subject.Status.Active
+        override val status: Subject.Status
+            get() = _status
         override var value: B
             get() = read(this@mapWithExisting.value)
             set(value) { this@mapWithExisting.onNext(write(this@mapWithExisting.value, value)) }
     }
 }
 
-/**
- *  Maps an Observable<Optional<T>> to an Observable<T>.
- */
-fun <T : Any> Observable<Optional<T>>.notNull(): Observable<T> = this.filter { it.isPresent }.map { it.get() }
 
-/**
- *  Retrieve the value of the optional using Kotlin's nullable type.
- */
-val <T> Optional<T>.kotlin: T? get() = if (isPresent) this.get() else null
-
-/**
- *  Wraps this into an Optional<T>
- */
-val <T : Any> T?.optional: Optional<T> get() = Optional.ofNullable(this)
-
-
-private fun <T : Any, B : Any> Observer<T>.observerMap(mapper: (B) -> T): Observer<B> = object : Observer<B> {
-    override fun onSubscribe(d: Disposable) = this@observerMap.onSubscribe(d)
+internal fun <T, B > ObservableCallbacks<T>.observerMap(mapper: (B) -> T): ObservableCallbacks<B> = object : ObservableCallbacks<B> {
     override fun onNext(t: B) = this@observerMap.onNext(mapper(t))
     override fun onError(e: Throwable) = this@observerMap.onError(e)
     override fun onComplete() = this@observerMap.onComplete()
 }
 
-private fun <T : Any, B : Any> Observer<T>.observerMapNotNull(mapper: (B) -> T?): Observer<B> = object : Observer<B> {
-    override fun onSubscribe(d: Disposable) = this@observerMapNotNull.onSubscribe(d)
-    override fun onNext(t: B) {
-        mapper(t)?.let { this@observerMapNotNull.onNext(it) }
-    }
-
+private fun <T : Any, B> ObservableCallbacks<T>.observerMapNotNull(mapper: (B) -> T?): ObservableCallbacks<B> = object : ObservableCallbacks<B> {
+    override fun onNext(t: B) { mapper(t)?.let { this@observerMapNotNull.onNext(it) } }
     override fun onError(e: Throwable) = this@observerMapNotNull.onError(e)
     override fun onComplete() = this@observerMapNotNull.onComplete()
 }
@@ -148,10 +107,9 @@ private fun <T : Any, B : Any> Observer<T>.observerMapNotNull(mapper: (B) -> T?)
 /**
  * Turn an Observable<T> into a Subject<T> using the onWrite provided to create the observer portion of the subject.
  */
-fun <T : Any> Observable<T>.withWrite(onWrite: (T) -> Unit): Subject<T> = makeSubject(
+fun <T> Observable<T>.withWrite(onWrite: (T) -> Unit): Subject<T> = makeSubject(
     observable = this,
-    observer = object : Observer<T> {
-        override fun onSubscribe(d: Disposable) {}
+    callBacks = object : ObservableCallbacks<T> {
         override fun onNext(t: T) {
             onWrite(t)
         }
@@ -164,84 +122,62 @@ fun <T : Any> Observable<T>.withWrite(onWrite: (T) -> Unit): Subject<T> = makeSu
 /**
  * From an Observable<T> create or choose a Subject<B> to use.
  */
-fun <T : Any, B : Any> Observable<T>.switchMapMutable(transformation: (T) -> Subject<B>): Subject<B> =
-    object : Subject<B>() {
+fun <T, B> Observable<T>.switchMapMutable(transformation: (T) -> Subject<B>): Subject<B> =
+    object : Subject<B> {
         private var lastValue: Subject<B>? = null
         private var hasObservers = false
         private var error: Throwable? = null
         private var hasCompleted = false
-        override fun subscribeActual(observer: Observer<in B>) {
-            hasObservers = true
-            this@switchMapMutable.map(transformation).doOnNext { lastValue = it }.switchMap{it}.subscribe(observer)
-        }
 
-        override fun onSubscribe(d: Disposable) { lastValue?.onSubscribe(d) }
         override fun onNext(b: B) { lastValue?.onNext(b) }
         override fun onError(e: Throwable) {
             error = e
+            _status = Subject.Status.Error(e)
             lastValue?.onError(e)
+        }
+
+        override fun subscribe(observer: ObservableObserver<B>) {
+            this@switchMapMutable.map(transformation).doOnAfterNext { lastValue = it }.switchMap{it}.subscribe(observer)
         }
 
         override fun onComplete() {
             hasCompleted = true
+            _status = Subject.Status.Completed
             lastValue?.onComplete()
         }
 
-        override fun hasObservers(): Boolean = hasObservers
-        override fun hasThrowable(): Boolean = error != null
-        override fun hasComplete(): Boolean = hasCompleted
-        override fun getThrowable(): Throwable? = error
+        private var _status: Subject.Status = Subject.Status.Active
+        override val status: Subject.Status
+            get() = _status
     }
 
-
-var <T> HasValueSubject<Optional<T>>.valueNullable: T?
-    get() = this.value.kotlin
-    set(value) {
-        this.value = Optional.ofNullable(value)
-    }
-
-operator fun <T : Any, V : Any> HasValueSubject<T>.get(property: KMutableProperty1<T, V?>): HasValueSubject<Optional<V>> =
-    mapWithExisting(
-        read = { property.get(it).optional },
-        write = { existing, it -> property.set(existing, it.kotlin); existing }
-    )
-
-fun <T : Any, V : Any> HasValueSubject<Optional<T>>.mapWithExistingNullable(
-    property: KMutableProperty1<T, V>,
-    defaultValue: V
-): HasValueSubject<V> =
-    mapWithExisting(
-        read = { it.kotlin?.let { property.get(it) } ?: defaultValue },
-        write = { existing, it -> existing.kotlin?.let { current -> property.set(current, it) }; existing }
-    )
-
-
-fun <T : Any, V : Any> HasValueSubject<T>.mapWithExistingDefault(
+fun <T, V : Any> BehaviorSubject<T>.mapWithExistingDefault(
     property: KMutableProperty1<T, V?>,
     defaultValue: V
-): HasValueSubject<V> =
+): BehaviorSubject<V> =
     mapWithExisting(
         read = { property.get(it) ?: defaultValue },
         write = { existing, it -> property.set(existing, it); existing }
     )
 
 
-fun <S: Subject<T>, T: Any> S.bind(other: Subject<T>): CompositeDisposable {
+fun <S: Subject<T>, T> S.bind(other: Subject<T>): CompositeDisposable {
     var suppress = false
-    return CompositeDisposable(
-        this.subscribeBy { value ->
+    return CompositeDisposable().apply {
+        add(this@bind.subscribe() { value ->
             if (!suppress) {
                 suppress = true
                 other.onNext(value)
                 suppress = false
             }
-        },
-        other.subscribeBy { value ->
+        })
+        add(other.subscribe() { value ->
             if (!suppress) {
                 suppress = true
                 onNext(value)
                 suppress = false
             }
-        }
-    )
+        })
+    }
+
 }

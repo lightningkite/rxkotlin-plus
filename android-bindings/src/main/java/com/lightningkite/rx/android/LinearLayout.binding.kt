@@ -2,17 +2,16 @@
 package com.lightningkite.rx.android
 
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.observeOn
+import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.subject.publish.PublishSubject
 
-private class LinearLayoutBoundSubview<T>(val view: View, val property: BehaviorSubject<T>)
+private class LinearLayoutBoundSubview<T>(val view: View, val property: PublishSubject<T>)
 
 /**
  * Will display the contents of this in the LinearLayout using the makeView provided for each item.
@@ -21,12 +20,12 @@ private class LinearLayoutBoundSubview<T>(val view: View, val property: Behavior
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(linearLayoutView) { obs -> ... return view }
  */
-fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showIn(
+fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     linearLayout: LinearLayout,
     makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
-    observeOn(RequireMainThread).subscribeBy { value ->
+    observeOn(RequireMainThread).subscribe{ value: List<T> ->
         //Fix view count
         val excessViews = existingViews.size - value.size
         if (excessViews > 0) {
@@ -38,7 +37,7 @@ fun <SOURCE: Observable<out List<T>>, T : Any> SOURCE.showIn(
         } else if (existingViews.size < value.size) {
             //add views
             for (iter in 1..(-excessViews)) {
-                val prop = BehaviorSubject.create<T>()
+                val prop = PublishSubject<T>()
                 val v = makeView(prop)
                 if(v.layoutParams == null) {
                     v.layoutParams = if(linearLayout.orientation == LinearLayout.VERTICAL)

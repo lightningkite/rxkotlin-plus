@@ -4,23 +4,18 @@ package com.lightningkite.rx.viewgenerators
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.ContentValues
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
-import com.lightningkite.rx.optional
-import com.lightningkite.rx.viewgenerators.ActivityAccess
-import com.lightningkite.rx.viewgenerators.post
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
+import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.maybe.map
+import com.badoo.reaktive.maybe.mapNotNull
+import com.badoo.reaktive.single.filter
+import com.badoo.reaktive.single.flatMap
+import com.badoo.reaktive.single.mapNotNull
 import java.io.*
 import java.util.*
 
@@ -40,9 +35,9 @@ private fun ActivityAccess.requestSomethings(type: String, prompt: String): Mayb
             this.startActivityForResult(chooserIntent)
         }
         .filter { it.code == Activity.RESULT_OK }
-        .mapOptional {
-            (it.data?.clipData?.let { (0 until it.itemCount).map { index -> it.getItemAt(index).uri } }
-                ?: it.data?.data?.let { listOf(it) }).optional
+        .mapNotNull {
+            it.data?.clipData?.let { (0 until it.itemCount).map { index -> it.getItemAt(index).uri } }
+                ?: it.data?.data?.let { listOf(it) }
         }
 
 private fun ActivityAccess.requestSomething(type: String, prompt: String): Maybe<Uri> =
@@ -60,7 +55,7 @@ private fun ActivityAccess.requestSomething(type: String, prompt: String): Maybe
             this.startActivityForResult(chooserIntent)
         }
         .filter { it.code == Activity.RESULT_OK }
-        .mapOptional { it.data?.data.optional }
+        .mapNotNull { it.data?.data }
 
 /**
  * Starts a new activity to get images from the gallery.
@@ -98,7 +93,7 @@ fun ActivityAccess.requestImageCamera(
             this.startActivityForResult(intent)
         }
         .filter { it.code == Activity.RESULT_OK }
-        .mapOptional { (it.data?.data ?: file).optional }
+        .mapNotNull { it.data?.data ?: file }
 }
 
 
@@ -136,7 +131,7 @@ fun ActivityAccess.requestVideoCamera(front: Boolean = false): Maybe<Uri> {
 
             this.startActivityForResult(intent)
         }
-        .mapOptional { (it.data?.data ?: file).optional }
+        .mapNotNull { it.data?.data ?: file }
 }
 
 

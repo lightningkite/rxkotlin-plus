@@ -3,12 +3,10 @@ package com.lightningkite.rx.android
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.subject.Subject
+import com.badoo.reaktive.subject.publish.PublishSubject
 
 /**
  * Sets the values displayed by the spinner to the contents of this and selections are
@@ -42,13 +40,12 @@ fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
         override fun getCount(): Int = lastPublishedResults.size
     })
     spinner.adapter = adapter
-    Observable
-        .combineLatest(selected, this@showIn.doOnNext {
+    combineLatest(selected, this@showIn.doOnAfterNext {
             val copy = it.toList()
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .observeOn(RequireMainThread).subscribeBy { index ->
+        .observeOn(RequireMainThread).subscribe{ index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)
@@ -90,9 +87,9 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showInObservable(
         @Suppress("UNCHECKED_CAST")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val v = (convertView as? TextView) ?: TextView(spinner.context).apply {
-                val event = PublishSubject.create<T>()
+                val event = PublishSubject<T>()
                 spinner.spinnerTextStyle?.apply(this)
-                event.switchMap(toString).observeOn(RequireMainThread).subscribeBy {
+                event.switchMap(toString).observeOn(RequireMainThread).subscribe {
                     text = it
                 }.addTo(removed)
                 setRemovedCondition(spinner.removed)
@@ -109,13 +106,12 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showInObservable(
         override fun getCount(): Int = lastPublishedResults.size
     })
     spinner.adapter = adapter
-    Observable
-        .combineLatest(selected, this@showInObservable.doOnNext {
+    combineLatest(selected, this@showInObservable.doOnAfterNext {
             val copy = it.toList()
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .observeOn(RequireMainThread).subscribeBy { index ->
+        .observeOn(RequireMainThread).subscribe { index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)

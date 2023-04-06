@@ -3,7 +3,7 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.ViewFlipper
-import com.lightningkite.rx.ValueSubject
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.android.bind
 import com.lightningkite.rx.android.into
 import com.lightningkite.rx.android.resources.ViewStringRaw
@@ -15,11 +15,11 @@ class LoginDemoVG(
     val stack: ViewGeneratorStack
 ) : ViewGenerator {
 
-    val username = ValueSubject("")
-    val password = ValueSubject("")
-    val verifyPassword = ValueSubject("")
-    val agree = ValueSubject(false)
-    val loading = ValueSubject(false)
+    val username = BehaviorSubject("")
+    val password = BehaviorSubject("")
+    val verifyPassword = BehaviorSubject("")
+    val agree = BehaviorSubject(false)
+    val loading = BehaviorSubject(false)
 
     override fun generate(dependency: ActivityAccess): View {
         val xml = LoginDemoBinding.inflate(dependency.activity.layoutInflater)
@@ -59,9 +59,9 @@ class LoginDemoVG(
             return
         }
         println("Submit!")
-        this.loading.value = true
+        this.loading.onNext(true)
         delay(1000) {
-            this.loading.value = false
+            this.loading.onNext(false)
             this.stack.push(ExampleContentVG())
         }
     }
