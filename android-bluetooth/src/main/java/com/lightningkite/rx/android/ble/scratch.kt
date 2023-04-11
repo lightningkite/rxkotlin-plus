@@ -4,6 +4,13 @@ import android.bluetooth.BluetoothGatt
 import android.os.Build
 import android.os.ParcelUuid
 import android.util.Log
+import com.badoo.reaktive.annotations.ExperimentalReaktiveApi
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.plugin.ReaktivePlugin
+import com.badoo.reaktive.plugin.registerReaktivePlugin
+import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.single.*
 import com.lightningkite.rx.android.staticApplicationContext
 import com.lightningkite.rx.forever
 import com.lightningkite.rx.viewgenerators.ActivityAccess
@@ -16,8 +23,10 @@ import com.polidea.rxandroidble3.scan.ScanFilter
 import com.polidea.rxandroidble3.scan.ScanSettings
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_LATENCY
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_POWER
+import kotlinx.coroutines.delay
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
 data class BleScanResult(
     val name: String?,
@@ -26,8 +35,15 @@ data class BleScanResult(
     val services: Map<UUID, ByteArray>,
 )
 
+//@OptIn(ExperimentalReaktiveApi::class)
 private object FixRxUndeliverable {
     init {
+//        registerReaktivePlugin(object:ReaktivePlugin{
+//            override fun <T> onAssembleObservable(observable: Observable<T>): Observable<T> {
+//                return super.onAssembleObservable(observable)
+//
+//            }
+//        })
         val originalHandler = RxJavaPlugins.getErrorHandler()
         RxJavaPlugins.setErrorHandler { throwable ->
             if (throwable is UndeliverableException) {
@@ -55,40 +71,40 @@ private val ActivityAccess.requireBle: Single<Unit>
     get() {
         FixRxUndeliverable
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Single.just(Unit)
+            singleOf(Unit)
                 .flatMap {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         requestPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-                            .doOnSuccess { if (!it) throw Exception() }
+                            .doOnAfterSuccess { if (!it) throw Exception() }
                             .map { Unit }
                     } else {
-                        Single.just(Unit)
+                        singleOf(Unit)
                     }
                 }
                 .flatMap {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         requestPermission(android.Manifest.permission.BLUETOOTH_SCAN)
-                            .doOnSuccess { if (!it) throw Exception() }
+                            .doOnAfterSuccess { if (!it) throw Exception() }
                             .map { Unit }
                     } else {
-                        Single.just(Unit)
+                        singleOf(Unit)
                     }
                 }
         } else {
-            Single.just(Unit)
+            singleOf(Unit)
                 .flatMap {
                     requestPermission(android.Manifest.permission.BLUETOOTH)
-                        .doOnSuccess { if (!it) throw Exception() }
+                        .doOnAfterSuccess { if (!it) throw Exception() }
                         .map { Unit }
                 }
                 .flatMap {
                     requestPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                        .doOnSuccess { if (!it) throw Exception() }
+                        .doOnAfterSuccess { if (!it) throw Exception() }
                         .map { Unit }
                 }
                 .flatMap {
                     requestPermission(android.Manifest.permission.BLUETOOTH_ADMIN)
-                        .doOnSuccess { if (!it) throw Exception() }
+                        .doOnAfterSuccess { if (!it) throw Exception() }
                         .map { Unit }
                 }
         }
@@ -98,10 +114,12 @@ fun ActivityAccess.bleScan(
     lowPower: Boolean = false,
     filterForService: UUID? = null,
 ): Observable<BleScanResult> = requireBle.flatMapObservable {
-    ble.scanBleDevices(
+    ble
+        .scanBleDevices(
         ScanSettings.Builder().setScanMode(if (lowPower) SCAN_MODE_LOW_POWER else SCAN_MODE_LOW_LATENCY).build(),
         filterForService?.let { ScanFilter.Builder().setServiceUuid(ParcelUuid(it)).build() } ?: ScanFilter.empty()
-    ).map {
+    )
+        .map {
         BleScanResult(
             name = it.bleDevice.name,
             rssi = it.rssi,
@@ -135,7 +153,7 @@ private class AndroidBleDevice private constructor(
             val value = cache.getOrPut(id) {
                 AndroidBleDevice(activityAccess, ble.getBleDevice(id), mtu)
             }
-            if(value.mtu != mtu){
+            if (value.mtu != mtu) {
                 val newDevice = AndroidBleDevice(activityAccess, ble.getBleDevice(id), mtu)
                 cache[id] = newDevice
                 return newDevice
@@ -150,102 +168,124 @@ private class AndroidBleDevice private constructor(
         //Check and see if bond is required
         device.establishConnection(false)
             .doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }
-    }.map { Optional.of(it) } //Maps to a optional because a connection may or may not be present
+    } //Maps to a optional because a connection may or may not be present
     val connection: Observable<RxBleConnection> = rawConnection.onErrorResumeNext {
         println("Connection failed to ${device.name ?: device.macAddress} with $it")
         it.printStackTrace()
         /*Connects the pipelines to allow a connection to fire if present and do nothing
         if no connection is present*/
-        Observable.concat<Optional<RxBleConnection>>(
-            Observable.just(Optional.empty()),
-            Observable.empty<Optional<RxBleConnection>>()
-                .delay(1000L, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()),
+        concat<RxBleConnection?>(
+            observableOf(null),
+            observableOfEmpty<RxBleConnection?>()
+                .delay(1000L, AndroidSchedulers.mainThread()),
             rawConnection
         )
-    }.filterIsPresent()
+    }
+        .filterIsPresent()
         .flatMapSingle {
-            mtu?.let { mtu ->
-                it.requestMtu(mtu).map { _ -> it }
-            } ?: Single.just(it)
+            mtu
+                ?.let { mtu -> it.requestMtu(mtu).map { _ -> it } }
+                ?: singleOf(it)
         }
         .replay(1).refCount(5_000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
 
-    override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges().map {
-        when (it) {
-            RxBleConnection.RxBleConnectionState.CONNECTED -> true
-            else -> false
+    override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges()
+        .map {
+            when (it) {
+                RxBleConnection.RxBleConnectionState.CONNECTED -> true
+                else -> false
+            }
         }
-    }.startWithItem(device.connectionState == RxBleConnection.RxBleConnectionState.CONNECTED)
+        .startWithItem(device.connectionState == RxBleConnection.RxBleConnectionState.CONNECTED)
 
     override fun stayConnected(): Observable<Unit> =
-        connection.switchMap { Observable.never<Unit>() }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
+        connection.switchMap { observableOfNever<Unit>() }.retry { attempt, error -> delay(1000L) }
 
     override fun rssi(): Single<Int> =
         connection.firstOrError().flatMap { it.readRssi() }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
 
     override fun read(characteristic: BleCharacteristic): Single<ByteArray> = connection
-        .doOnSubscribe { connection.take(5000L, TimeUnit.MILLISECONDS).subscribeBy(onError = {}).forever() }
-        .firstOrError().flatMap {
-            it.readCharacteristic(characteristic.id)
+        .doOnAfterSubscribe { connection.take(5000L).subscribe(onError = {}).forever() }
+        .firstOrError()
+        .flatMap { it.readCharacteristic(characteristic.id) }
+        .doOnAfterSuccess {
+            Log.d(
+                "RxPlusAndroidBle",
+                "Read ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})"
+            )
         }
-        .doOnSuccess { Log.d("RxPlusAndroidBle", "Read ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})") }
         .doOnError {
             Log.w("RxPlusAndroidBle", "Failed to read ${characteristic.id}")
-            connection.firstOrError().flatMapObservable {
-                it.queue(CustomRefresh())
-            }.subscribeBy(onError = { it.printStackTrace()}, onNext = { println("Refresh $it") })
+            connection.firstOrError()
+                .flatMapObservable { it.queue(CustomRefresh()) }
+                .subscribe(onError = { it.printStackTrace() }, onNext = { println("Refresh $it") })
         }
 
 
     override fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit> =
-        connection.firstOrError().flatMap {
-            it.writeCharacteristic(characteristic.id, value)
-        }.map { Unit }
-            .doOnSuccess { Log.d("RxPlusAndroidBle", "Wrote ${characteristic.id}: ${value.contentToString()} (${value.toString(Charsets.UTF_8)})") }
+        connection.firstOrError()
+            .flatMap { it.writeCharacteristic(characteristic.id, value) }
+            .map { Unit }
+            .doOnAfterSuccess {
+                Log.d(
+                    "RxPlusAndroidBle",
+                    "Wrote ${characteristic.id}: ${value.contentToString()} (${value.toString(Charsets.UTF_8)})"
+                )
+            }
             .doOnError {
                 Log.w("RxPlusAndroidBle", "Failed to write ${characteristic.id}")
                 connection.firstOrError().flatMapObservable {
                     it.queue(CustomRefresh())
-                }.subscribeBy(onError = { it.printStackTrace()}, onNext = { println("Refresh $it") })
+                }
+                    .subscribe(onError = { it.printStackTrace() }, onNext = { println("Refresh $it") })
             }
 
 
-    override fun notify(characteristic: BleCharacteristic): Observable<ByteArray> = connection.flatMap {
-        it.setupNotification(characteristic.id).switchMap { it }
-        .doOnNext { Log.d("RxPlusAndroidBle", "Notified ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})") }
+    override fun notify(characteristic: BleCharacteristic): Observable<ByteArray> = connection
+        .flatMap {
+            it.setupNotification(characteristic.id).switchMap { it }
+                .doOnNext {
+                    Log.d(
+                        "RxPlusAndroidBle",
+                        "Notified ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})"
+                    )
+                }
 
-}
-
-fun BleDevice.readNotify(characteristic: BleCharacteristic) = Observable.merge(
-    read(characteristic).toObservable().retry(1),
-    notify(characteristic)
-)
-
-class CustomRefresh: RxBleCustomOperation<Boolean> {
-
-    @Throws(Throwable::class)
-    override fun asObservable(bluetoothGatt: BluetoothGatt,
-                              rxBleGattCallback: RxBleGattCallback,
-                              scheduler: Scheduler): Observable<Boolean> {
-
-        return Observable.fromCallable<Boolean> { refreshDeviceCache(bluetoothGatt) }
-            .delay(500, TimeUnit.MILLISECONDS, Schedulers.computation())
-            .subscribeOn(scheduler)
-    }
-
-    private fun refreshDeviceCache(gatt: BluetoothGatt): Boolean {
-        var isRefreshed = false
-
-        try {
-            val localMethod = gatt.javaClass.getMethod("refresh")
-            if (localMethod != null) {
-                isRefreshed = (localMethod.invoke(gatt) as Boolean)
-                Log.i("CustomRefresh", "Gatt cache refresh successful: [$isRefreshed]")
-            }
-        } catch (localException: Exception) {
-            Log.e("CustomRefresh", "An exception occured while refreshing device", localException)
         }
 
-        return isRefreshed
+    fun BleDevice.readNotify(characteristic: BleCharacteristic) = merge(
+        read(characteristic).toObservable().retry(1),
+        notify(characteristic)
+    )
+
+    class CustomRefresh : RxBleCustomOperation<Boolean> {
+
+        @Throws(Throwable::class)
+        override fun asObservable(
+            bluetoothGatt: BluetoothGatt,
+            rxBleGattCallback: RxBleGattCallback,
+            scheduler: Scheduler
+        ): Observable<Boolean> {
+
+            return observableFromFunction { refreshDeviceCache(bluetoothGatt) }
+                .delay(500, Schedulers.computation())
+                .subscribeOn(scheduler)
+        }
+
+        private fun refreshDeviceCache(gatt: BluetoothGatt): Boolean {
+            var isRefreshed = false
+
+            try {
+                val localMethod = gatt.javaClass.getMethod("refresh")
+                if (localMethod != null) {
+                    isRefreshed = (localMethod.invoke(gatt) as Boolean)
+                    Log.i("CustomRefresh", "Gatt cache refresh successful: [$isRefreshed]")
+                }
+            } catch (localException: Exception) {
+                Log.e("CustomRefresh", "An exception occured while refreshing device", localException)
+            }
+
+            return isRefreshed
+        }
     }
-} }
+}

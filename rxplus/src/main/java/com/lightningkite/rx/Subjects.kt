@@ -34,7 +34,6 @@ fun <T> makeSubject(
 
     override fun onNext(value: T) {
         callBacks.onNext(value)
-
     }
 }
 

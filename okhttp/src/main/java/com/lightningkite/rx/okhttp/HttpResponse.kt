@@ -6,6 +6,7 @@ import com.badoo.reaktive.single.single
 import com.badoo.reaktive.single.singleFromFunction
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.serializer
@@ -84,5 +85,5 @@ inline fun <reified T> Response.readJsonDebug(): Single<T?> = readJsonDebug(type
  * Reads the body of the response as a [Single], using [defaultJsonMapper] to parse the JSON.
  * Dumps the raw response to [System.out].
  */
-fun <T> Response.readJsonDebug(typeToken: KType): Single<T?> = this.readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(typeToken) }
-fun <T> Response.readJsonDebug(serializer: KSerializer<T>): Single<T?> = this.readText().map { println("HttpResponse got $it"); it.fromJsonString<T>(serializer) }
+fun <T> Response.readJsonDebug(typeToken: KType): Single<T> = this.readText().map { println("HttpResponse got $it"); it.fromJsonString(typeToken) }
+fun <T> Response.readJsonDebug(serializer: KSerializer<T>): Single<T> = this.readText().map { println("HttpResponse got $it"); it.fromJsonString(serializer) }

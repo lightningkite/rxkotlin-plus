@@ -54,12 +54,12 @@ inline fun <reified T> String.fromJsonString(): T? = try { defaultJsonMapper.dec
 /**
  * Uses the [defaultJsonMapper] to transform the JSON string into a value.
  */
-fun <T> String.fromJsonString(type: KType): T? = try { defaultJsonMapper.decodeFromString(defaultJsonMapper.serializersModule.serializer(type), this) as? T } catch(e: SerializationException) { e.printStackTrace(); null }
+fun <T> String.fromJsonString(type: KType): T = (defaultJsonMapper.decodeFromString(defaultJsonMapper.serializersModule.serializer(type), this) as T )
 
 /**
  * Uses the [defaultJsonMapper] to transform the JSON string into a value.
  */
-fun <T> String.fromJsonString(serializer: KSerializer<T>): T? = try { defaultJsonMapper.decodeFromString(serializer, this) } catch(e: SerializationException) { e.printStackTrace(); null }
+fun <T> String.fromJsonString(serializer: KSerializer<T>): T = defaultJsonMapper.decodeFromString(serializer, this)
 
 /**
  * Uses the [defaultJsonMapper] to transform the JSON string into a primitive value or a Map<String, Any?> or a List<Any?>.
