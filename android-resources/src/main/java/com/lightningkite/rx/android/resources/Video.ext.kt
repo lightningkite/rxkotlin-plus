@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.PointF
 import android.media.MediaMetadataRetriever
 import android.os.Build
+import com.badoo.reaktive.scheduler.ioScheduler
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.single
 import com.badoo.reaktive.single.subscribeOn
@@ -50,5 +51,5 @@ fun Video.thumbnail(context: Context, timeMs: Long = 2000L, size: PointF? = null
             em.onError(e)
         }
     }
-        .subscribeOn(Schedulers.io())
+        .subscribeOn(ioScheduler)
 }

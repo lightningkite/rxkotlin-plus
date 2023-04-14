@@ -5,6 +5,7 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.debounce
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.lightningkite.rx.android.removed
 import com.lightningkite.rx.viewgenerators.transition.StackTransition
 import com.lightningkite.rx.viewgenerators.transition.TransitionTriple
@@ -76,7 +77,7 @@ fun <T : ViewGenerator, SOURCE : Observable<List<T>>> SOURCE.showIn(
 ): SOURCE {
     var currentGenerator: ViewGenerator? = null
     var currentStackSize = 0
-    this.debounce(50L, AndroidSchedulers.mainThread()).subscribe { value ->
+    this.debounce(50L, mainScheduler).subscribe { value ->
         val newGenerator = value.lastOrNull()
         val newStackSize = value.size
         if (currentGenerator == newGenerator) return@subscribe

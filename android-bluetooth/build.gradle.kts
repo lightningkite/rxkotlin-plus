@@ -23,9 +23,11 @@ android {
     }
 }
 
+val reaktiveVersion: String by project
 dependencies {
     api(project(":view-generator"))
     implementation("com.polidea.rxandroidble3:rxandroidble:1.16.0")
+    implementation("com.badoo.reaktive:rxjava3-interop:$reaktiveVersion")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     testImplementation("junit:junit:4.13.2")

@@ -7,6 +7,7 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.Subject
 import com.lightningkite.rx.withWrite
 
@@ -67,7 +68,7 @@ fun <SOURCE : Subject<Boolean>> SOURCE.bind(compoundButton: CompoundButton): SOU
  */
 fun <SOURCE : Subject<Boolean>> SOURCE.bindNoUncheck(compoundButton: CompoundButton): SOURCE {
     var lastKnownValue: Boolean = false
-    observeOn(RequireMainThread).subscribe{ it ->
+    observeOn(mainScheduler).subscribe{ it ->
         lastKnownValue = it
         if (it != compoundButton.isChecked) {
             compoundButton.isChecked = it

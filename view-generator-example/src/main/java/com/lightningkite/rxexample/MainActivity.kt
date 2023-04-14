@@ -7,6 +7,8 @@ import com.lightningkite.rx.android.staticApplicationContext
 import com.lightningkite.rx.okhttp.HttpClient
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.ViewPumpAppCompatDelegate
+import com.badoo.reaktive.scheduler.ioScheduler
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.lightningkite.rxexample.dslvg.MainDslVG
 import com.lightningkite.rxexample.vg.MainVG
 import dev.b3nedikt.viewpump.ViewPump
@@ -27,8 +29,8 @@ class MainActivity : ViewGeneratorActivity() {
         )
         ApplicationAccess.applicationIsActiveStartup(application)
         staticApplicationContext = applicationContext
-        HttpClient.ioScheduler = Schedulers.io()
-        HttpClient.responseScheduler = AndroidSchedulers.mainThread()
+        HttpClient.ioScheduler = ioScheduler
+        HttpClient.responseScheduler = mainScheduler
         super.onCreate(savedInstanceState)
     }
 

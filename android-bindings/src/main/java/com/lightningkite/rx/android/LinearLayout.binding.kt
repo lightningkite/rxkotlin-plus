@@ -9,6 +9,7 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.publish.PublishSubject
 
 private class LinearLayoutBoundSubview<T>(val view: View, val property: PublishSubject<T>)
@@ -25,7 +26,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     makeView: (Observable<T>) -> View
 ): SOURCE {
     val existingViews: ArrayList<LinearLayoutBoundSubview<T>> = ArrayList()
-    observeOn(RequireMainThread).subscribe{ value: List<T> ->
+    observeOn(mainScheduler).subscribe{ value: List<T> ->
         //Fix view count
         val excessViews = existingViews.size - value.size
         if (excessViews > 0) {

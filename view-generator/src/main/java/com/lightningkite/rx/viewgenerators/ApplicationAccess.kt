@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.debounce
 import com.badoo.reaktive.observable.distinctUntilChanged
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +19,7 @@ object ApplicationAccess {
      * Whether the application is in the foreground.
      */
     val foreground: Observable<Boolean> = applicationIsActiveEvent
-        .debounce(100L, AndroidSchedulers.mainThread())
+        .debounce(100L, mainScheduler)
         .distinctUntilChanged()
 
     /**

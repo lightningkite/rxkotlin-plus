@@ -9,6 +9,7 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableCallbacks
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 
 /**
  * Filters the contents of this based on the inputs of the view and then displays
@@ -44,7 +45,8 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
     var lastPublishedResults: List<T> = listOf()
     autoCompleteTextView.setAdapter(object : BaseAdapter(), Filterable {
         init {
-            observeOn(RequireMainThread).observeOn(RequireMainThread).subscribe {
+            observeOn(mainScheduler)
+                .subscribe {
                 val copy = it.toList()
                 autoCompleteTextView.post {
                     lastPublishedResults = copy

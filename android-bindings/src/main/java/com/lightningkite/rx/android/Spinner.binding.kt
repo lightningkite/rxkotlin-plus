@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.Subject
 import com.badoo.reaktive.subject.publish.PublishSubject
 
@@ -45,7 +46,7 @@ fun <SOURCE: Observable<out List<T>>, T> SOURCE.showIn(
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .observeOn(RequireMainThread).subscribe{ index ->
+        .observeOn(mainScheduler).subscribe{ index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)
@@ -89,7 +90,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showInObservable(
             val v = (convertView as? TextView) ?: TextView(spinner.context).apply {
                 val event = PublishSubject<T>()
                 spinner.spinnerTextStyle?.apply(this)
-                event.switchMap(toString).observeOn(RequireMainThread).subscribe {
+                event.switchMap(toString).observeOn(mainScheduler).subscribe {
                     text = it
                 }.addTo(removed)
                 setRemovedCondition(spinner.removed)
@@ -111,7 +112,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showInObservable(
             lastPublishedResults = copy
             adapter.notifyDataSetChanged()
         }) { sel: T, list: List<T> -> list.indexOf(sel) }
-        .observeOn(RequireMainThread).subscribe { index ->
+        .observeOn(mainScheduler).subscribe { index ->
             if (index != -1 && index != spinner.selectedItemPosition && !suppressChange) {
                 suppressChange = true
                 spinner.setSelection(index)

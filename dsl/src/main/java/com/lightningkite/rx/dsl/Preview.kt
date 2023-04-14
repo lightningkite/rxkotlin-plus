@@ -10,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.badoo.reaktive.observable.Observable
+import com.badoo.reaktive.observable.observableOfNever
+import com.badoo.reaktive.single.Single
+import com.badoo.reaktive.single.singleOf
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 
 @RxKotlinViewDsl abstract class VgPreview(context: Context, attrs: AttributeSet? = null, val vg: ViewGenerator) : FrameLayout(context, attrs) {
     init {
@@ -29,16 +31,16 @@ import io.reactivex.rxjava3.core.Single
 private class PreviewActivityAccess(override val context: Context): ActivityAccess {
     override val activity: Activity get() = throw NotImplementedError()
     override val savedInstanceState: Bundle? get() = null
-    override val onResume: Observable<Unit> = Observable.never()
-    override val onPause: Observable<Unit> = Observable.never()
-    override val onSaveInstanceState: Observable<Bundle> = Observable.never()
-    override val onLowMemory: Observable<Unit> = Observable.never()
-    override val onDestroy: Observable<Unit> = Observable.never()
-    override val onActivityResult: Observable<Triple<Int, Int, Intent?>> = Observable.never()
-    override val onNewIntent: Observable<Intent> = Observable.never()
+    override val onResume: Observable<Unit> = observableOfNever()
+    override val onPause: Observable<Unit> = observableOfNever()
+    override val onSaveInstanceState: Observable<Bundle> = observableOfNever()
+    override val onLowMemory: Observable<Unit> = observableOfNever()
+    override val onDestroy: Observable<Unit> = observableOfNever()
+    override val onActivityResult: Observable<Triple<Int, Int, Intent?>> = observableOfNever()
+    override val onNewIntent: Observable<Intent> = observableOfNever()
 
     override fun performBackPress() {}
     override fun prepareOnResult(presetCode: Int, onResult: (Int, Intent?) -> Unit): Int = 0
-    override fun requestPermissions(permission: Array<String>): Single<Set<String>> = Single.just(permission.toSet())
-    override fun requestPermission(permission: String): Single<Boolean> = Single.just(true)
+    override fun requestPermissions(permission: Array<String>): Single<Set<String>> = singleOf(permission.toSet())
+    override fun requestPermission(permission: String): Single<Boolean> = singleOf(true)
 }

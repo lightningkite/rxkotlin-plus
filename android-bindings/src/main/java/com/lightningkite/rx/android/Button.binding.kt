@@ -8,6 +8,7 @@ import com.badoo.reaktive.maybe.observeOn
 import com.badoo.reaktive.maybe.subscribe
 import com.badoo.reaktive.observable.firstOrComplete
 import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.Subject
 import java.util.Optional
 import java.text.DateFormat
@@ -35,7 +36,7 @@ fun <SOURCE: Subject<LocalDate>> SOURCE.bind(
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
-        firstOrComplete().observeOn(RequireMainThread).subscribe{ start ->
+        firstOrComplete().observeOn(mainScheduler).subscribe{ start ->
             button.context.dateSelectorDialog(start) {
                 this.onNext(it)
             }
@@ -62,7 +63,7 @@ fun <SOURCE: Subject<LocalDate?>> SOURCE.bind(
 ): SOURCE {
     this.map { it.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
     button.setOnClickListener {
-        firstOrComplete().observeOn(RequireMainThread).subscribe{ start ->
+        firstOrComplete().observeOn(mainScheduler).subscribe{ start ->
             button.context.dateSelectorDialog(start ?: LocalDate.now()) {
                 this.onNext(it)
             }
@@ -92,7 +93,7 @@ fun <SOURCE: Subject<LocalTime>> SOURCE.bind(
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
-        firstOrComplete().observeOn(RequireMainThread).subscribe { start ->
+        firstOrComplete().observeOn(mainScheduler).subscribe { start ->
             button.context.timeSelectorDialog(start) {
                 this.onNext(it)
             }
@@ -119,7 +120,7 @@ fun <SOURCE: Subject<LocalTime?>> SOURCE.bind(
 ): SOURCE {
     this.map { it.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
     button.setOnClickListener {
-        firstOrComplete().observeOn(RequireMainThread).subscribe{ start ->
+        firstOrComplete().observeOn(mainScheduler).subscribe{ start ->
             button.context.timeSelectorDialog(start ?: LocalTime.now()) {
                 this.onNext(it)
             }
@@ -149,7 +150,7 @@ fun <SOURCE: Subject<LocalDateTime>> SOURCE.bind(
 ): SOURCE {
     this.map { formatter.format(it) }.into(button, Button::setText)
     button.setOnClickListener {
-        firstOrComplete().observeOn(RequireMainThread).subscribe { start ->
+        firstOrComplete().observeOn(mainScheduler).subscribe { start ->
             button.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 button.context.timeSelectorDialog(start.toLocalTime()) { t ->
                     this.onNext(LocalDateTime.of(d, t))
@@ -179,7 +180,7 @@ fun <SOURCE: Subject<LocalDateTime?>> SOURCE.bind(
 ): SOURCE {
     this.map { it.let { formatter.format(it) } ?: nullText }.into(button, Button::setText)
     button.setOnClickListener {
-        firstOrComplete().observeOn(RequireMainThread).subscribe {  element ->
+        firstOrComplete().observeOn(mainScheduler).subscribe {  element ->
             val start: LocalDateTime = element ?: LocalDateTime.now()
             button.context.dateSelectorDialog(start.toLocalDate()) { d ->
                 button.context.timeSelectorDialog(start.toLocalTime()) { t ->

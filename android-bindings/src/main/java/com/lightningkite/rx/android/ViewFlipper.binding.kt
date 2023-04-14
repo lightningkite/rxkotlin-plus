@@ -18,6 +18,7 @@ import com.badoo.reaktive.maybe.doOnBeforeTerminate
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.doOnAfterSubscribe
 import com.badoo.reaktive.single.doOnBeforeTerminate
@@ -35,7 +36,7 @@ import java.util.*
 @Deprecated("Simplified to use subscribeAutoDispose", ReplaceWith("this.subscribeAutoDispose(viewFlipper, ViewFlipper::showLoading)", "com.lightningkite.rx.android.showLoading", "com.lightningkite.rx.android.subscribeAutoDispose"))
 fun <SOURCE: Observable<Boolean>> SOURCE.showLoading(viewFlipper: ViewFlipper, color: ColorResource? = null): SOURCE {
     defaults(viewFlipper, color)
-    observeOn(RequireMainThread).subscribe{ it ->
+    observeOn(mainScheduler).subscribe{ it ->
         viewFlipper.displayedChild = if (it) 1 else 0
     }.addTo(viewFlipper.removed)
     return this

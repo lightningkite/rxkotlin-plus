@@ -13,6 +13,8 @@ import com.badoo.reaktive.maybe.observeOn
 import com.badoo.reaktive.maybe.subscribe
 import com.badoo.reaktive.observable.*
 import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.scheduler.createMainScheduler
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.single.Single
 import com.badoo.reaktive.single.observeOn
 import com.badoo.reaktive.single.subscribe
@@ -125,7 +127,7 @@ private class ViewLongClickObservable(
  * values.subscribeAutoDispose(textView){ action() }
  */
 fun <SOURCE : Completable, VIEW : View> SOURCE.subscribeAutoDispose(view: VIEW, action: VIEW.() -> Unit = {}): SOURCE {
-    observeOn(RequireMainThread).subscribe {
+    observeOn(mainScheduler).subscribe {
         action(view)
     }.addTo(view.removed)
     return this
@@ -145,7 +147,7 @@ fun <SOURCE : Single<TYPE>, VIEW : View, TYPE> SOURCE.subscribeAutoDispose(
     view: VIEW,
     setter: VIEW.(TYPE) -> Unit
 ): SOURCE {
-    observeOn(RequireMainThread).subscribe {
+    observeOn(mainScheduler).subscribe {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -165,7 +167,7 @@ fun <SOURCE : Maybe<TYPE>, VIEW : View, TYPE> SOURCE.subscribeAutoDispose(
     view: VIEW,
     setter: VIEW.(TYPE) -> Unit
 ): SOURCE {
-    observeOn(RequireMainThread).subscribe {
+    observeOn(mainScheduler).subscribe {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -185,7 +187,7 @@ fun <SOURCE : Observable<TYPE>, VIEW : View, TYPE> SOURCE.subscribeAutoDispose(
     view: VIEW,
     setter: VIEW.(TYPE) -> Unit
 ): SOURCE {
-    observeOn(RequireMainThread).subscribe {
+    observeOn(mainScheduler).subscribe {
         setter(view, it)
     }.addTo(view.removed)
     return this
@@ -205,7 +207,7 @@ fun <SOURCE : Observable<TYPE>, VIEW : View, TYPE> SOURCE.subscribeAutoDispose(
     view: VIEW,
     setter: KMutableProperty1<VIEW, TYPE>
 ): SOURCE {
-    observeOn(RequireMainThread).subscribe {
+    observeOn(mainScheduler).subscribe {
         setter.set(view, it)
     }.addTo(view.removed)
     return this
@@ -297,12 +299,13 @@ fun <SOURCE : Observable<TYPE>, VIEW : View, TYPE> SOURCE.into(
 @Deprecated(
     "Just do it directly instead.",
     ReplaceWith(
-        "this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)",
+        "this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, mainScheduler).subscribe { action() }.addTo(this.removed)",
         "com.jakewharton.rxbinding4.view.clicks"
     )
 )
 fun <V : View> V.onClick(disabledMilliseconds: Long = 500L, action: () -> Unit): V {
-    clicks().throttleLatest(disabledMilliseconds, AndroidSchedulers.mainThread())
+
+    clicks().throttleLatest(disabledMilliseconds, mainScheduler)
         .subscribe { action() }.addTo(this.removed)
     return this
 }
@@ -317,12 +320,12 @@ fun <V : View> V.onClick(disabledMilliseconds: Long = 500L, action: () -> Unit):
 @Deprecated(
     "Just do it directly instead.",
     ReplaceWith(
-        "this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)",
+        "this.clicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, mainScheduler).flatMap{observable.take(1)}.subscribe { action(it) }.addTo(this.removed)",
         "com.jakewharton.rxbinding4.view.clicks"
     )
 )
 fun <T> View.onClick(observable: Observable<T>, disabledMilliseconds: Long = 500L, action: (T) -> Unit) {
-    clicks().throttleLatest(disabledMilliseconds, AndroidSchedulers.mainThread())
+    clicks().throttleLatest(disabledMilliseconds, mainScheduler)
         .flatMap { observable.take(1) }.subscribe { action(it) }.addTo(this.removed)
 }
 
@@ -333,12 +336,12 @@ fun <T> View.onClick(observable: Observable<T>, disabledMilliseconds: Long = 500
 @Deprecated(
     "Just do it directly instead.",
     ReplaceWith(
-        "this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).subscribe { action() }.addTo(this.removed)",
+        "this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, mainScheduler).subscribe { action() }.addTo(this.removed)",
         "com.jakewharton.rxbinding4.view.longClicks"
     )
 )
 fun View.onLongClick(disabledMilliseconds: Long = 500L, action: () -> Unit) {
-    longClicks().throttleLatest(disabledMilliseconds, AndroidSchedulers.mainThread())
+    longClicks().throttleLatest(disabledMilliseconds, mainScheduler)
         .subscribe { action() }.addTo(this.removed)
 }
 
@@ -352,12 +355,12 @@ fun View.onLongClick(disabledMilliseconds: Long = 500L, action: () -> Unit) {
 @Deprecated(
     "Just do it directly instead.",
     ReplaceWith(
-        "this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread()).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)",
+        "this.longClicks().throttleFirst(disabledMilliseconds, TimeUnit.MILLISECONDS, mainScheduler).flatMap{observable.take(1)}.subscribe{ action(it) }.addTo(this.removed)",
         "com.jakewharton.rxbinding4.view.longClicks"
     )
 )
 fun <T> View.onLongClick(observable: Observable<T>, disabledMilliseconds: Long = 500L, action: (T) -> Unit) {
-    longClicks().throttleLatest(disabledMilliseconds, AndroidSchedulers.mainThread())
+    longClicks().throttleLatest(disabledMilliseconds, mainScheduler)
         .flatMap { observable.take(1) }.subscribe { action(it) }.addTo(this.removed)
 }
 

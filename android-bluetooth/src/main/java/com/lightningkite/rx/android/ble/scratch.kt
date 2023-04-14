@@ -9,7 +9,11 @@ import com.badoo.reaktive.observable.*
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.plugin.ReaktivePlugin
 import com.badoo.reaktive.plugin.registerReaktivePlugin
+import com.badoo.reaktive.rxjavainterop.asReaktiveObservable
+import com.badoo.reaktive.rxjavainterop.asReaktiveSingle
 import com.badoo.reaktive.scheduler.Scheduler
+import com.badoo.reaktive.scheduler.computationScheduler
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.single.*
 import com.lightningkite.rx.android.staticApplicationContext
 import com.lightningkite.rx.forever
@@ -23,6 +27,9 @@ import com.polidea.rxandroidble3.scan.ScanFilter
 import com.polidea.rxandroidble3.scan.ScanSettings
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_LATENCY
 import com.polidea.rxandroidble3.scan.ScanSettings.SCAN_MODE_LOW_POWER
+import io.reactivex.rxjava3.exceptions.UndeliverableException
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.delay
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -38,12 +45,6 @@ data class BleScanResult(
 //@OptIn(ExperimentalReaktiveApi::class)
 private object FixRxUndeliverable {
     init {
-//        registerReaktivePlugin(object:ReaktivePlugin{
-//            override fun <T> onAssembleObservable(observable: Observable<T>): Observable<T> {
-//                return super.onAssembleObservable(observable)
-//
-//            }
-//        })
         val originalHandler = RxJavaPlugins.getErrorHandler()
         RxJavaPlugins.setErrorHandler { throwable ->
             if (throwable is UndeliverableException) {
@@ -116,18 +117,19 @@ fun ActivityAccess.bleScan(
 ): Observable<BleScanResult> = requireBle.flatMapObservable {
     ble
         .scanBleDevices(
-        ScanSettings.Builder().setScanMode(if (lowPower) SCAN_MODE_LOW_POWER else SCAN_MODE_LOW_LATENCY).build(),
-        filterForService?.let { ScanFilter.Builder().setServiceUuid(ParcelUuid(it)).build() } ?: ScanFilter.empty()
-    )
-        .map {
-        BleScanResult(
-            name = it.bleDevice.name,
-            rssi = it.rssi,
-            id = it.bleDevice.macAddress,
-            services = (it.scanRecord?.serviceData?.mapKeys { it.key.uuid }
-                ?: mapOf()) + (it.scanRecord?.serviceUuids?.associate { it.uuid to byteArrayOf() } ?: mapOf())
+            ScanSettings.Builder().setScanMode(if (lowPower) SCAN_MODE_LOW_POWER else SCAN_MODE_LOW_LATENCY).build(),
+            filterForService?.let { ScanFilter.Builder().setServiceUuid(ParcelUuid(it)).build() } ?: ScanFilter.empty()
         )
-    }
+        .map {
+            BleScanResult(
+                name = it.bleDevice.name,
+                rssi = it.rssi,
+                id = it.bleDevice.macAddress,
+                services = (it.scanRecord?.serviceData?.mapKeys { it.key.uuid }
+                    ?: mapOf()) + (it.scanRecord?.serviceUuids?.associate { it.uuid to byteArrayOf() } ?: mapOf())
+            )
+        }
+        .asReaktiveObservable()
 }
 
 fun ActivityAccess.bleDevice(
@@ -167,7 +169,8 @@ private class AndroidBleDevice private constructor(
         println("Attempting connection to ${device.name ?: device.macAddress}")
         //Check and see if bond is required
         device.establishConnection(false)
-            .doOnNext { println("Established connection to ${device.name ?: device.macAddress}") }
+            .asReaktiveObservable()
+            .doOnAfterNext { println("Established connection to ${device.name ?: device.macAddress}") }
     } //Maps to a optional because a connection may or may not be present
     val connection: Observable<RxBleConnection> = rawConnection.onErrorResumeNext {
         println("Connection failed to ${device.name ?: device.macAddress} with $it")
@@ -177,54 +180,62 @@ private class AndroidBleDevice private constructor(
         concat<RxBleConnection?>(
             observableOf(null),
             observableOfEmpty<RxBleConnection?>()
-                .delay(1000L, AndroidSchedulers.mainThread()),
+                .delay(1000L, mainScheduler),
             rawConnection
         )
     }
-        .filterIsPresent()
+        .mapNotNull { it }
         .flatMapSingle {
             mtu
-                ?.let { mtu -> it.requestMtu(mtu).map { _ -> it } }
+                ?.let { mtu -> it.requestMtu(mtu).map { _ -> it }.asReaktiveSingle() }
                 ?: singleOf(it)
         }
-        .replay(1).refCount(5_000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+        .replay(1).refCount()
 
     override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges()
+        .asReaktiveObservable()
         .map {
             when (it) {
                 RxBleConnection.RxBleConnectionState.CONNECTED -> true
                 else -> false
             }
         }
-        .startWithItem(device.connectionState == RxBleConnection.RxBleConnectionState.CONNECTED)
+        .startWithValue(device.connectionState == RxBleConnection.RxBleConnectionState.CONNECTED)
 
+    // This delay retry method needs reviewing.
+    // Reaktive does not have a retryWhen like rxjava does.
     override fun stayConnected(): Observable<Unit> =
-        connection.switchMap { observableOfNever<Unit>() }.retry { attempt, error -> delay(1000L) }
+        connection.switchMap { observableOfNever<Unit>() }
+            .delaySubscription(1000L, mainScheduler)
+            .retry { _, _ -> true}
 
     override fun rssi(): Single<Int> =
-        connection.firstOrError().flatMap { it.readRssi() }.retryWhen { it.delay(1000L, TimeUnit.MILLISECONDS) }
+        connection.firstOrError()
+            .flatMap { it.readRssi().asReaktiveSingle() }
+            .delaySubscription(1000L, mainScheduler)
+            .retry { _, _ -> true}
 
     override fun read(characteristic: BleCharacteristic): Single<ByteArray> = connection
-        .doOnAfterSubscribe { connection.take(5000L).subscribe(onError = {}).forever() }
+        .doOnAfterSubscribe { connection.take(5000).subscribe(onError = {}).forever() }
         .firstOrError()
-        .flatMap { it.readCharacteristic(characteristic.id) }
+        .flatMap { it.readCharacteristic(characteristic.id).asReaktiveSingle() }
         .doOnAfterSuccess {
             Log.d(
                 "RxPlusAndroidBle",
                 "Read ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})"
             )
         }
-        .doOnError {
+        .doOnAfterError {
             Log.w("RxPlusAndroidBle", "Failed to read ${characteristic.id}")
             connection.firstOrError()
-                .flatMapObservable { it.queue(CustomRefresh()) }
+                .flatMapObservable { it.queue(CustomRefresh()).asReaktiveObservable() }
                 .subscribe(onError = { it.printStackTrace() }, onNext = { println("Refresh $it") })
         }
 
 
     override fun write(characteristic: BleCharacteristic, value: ByteArray): Single<Unit> =
         connection.firstOrError()
-            .flatMap { it.writeCharacteristic(characteristic.id, value) }
+            .flatMap { it.writeCharacteristic(characteristic.id, value).asReaktiveSingle() }
             .map { Unit }
             .doOnAfterSuccess {
                 Log.d(
@@ -232,19 +243,20 @@ private class AndroidBleDevice private constructor(
                     "Wrote ${characteristic.id}: ${value.contentToString()} (${value.toString(Charsets.UTF_8)})"
                 )
             }
-            .doOnError {
+            .doOnAfterError {
                 Log.w("RxPlusAndroidBle", "Failed to write ${characteristic.id}")
-                connection.firstOrError().flatMapObservable {
-                    it.queue(CustomRefresh())
-                }
+                connection.firstOrError()
+                    .flatMapObservable { it.queue(CustomRefresh()).asReaktiveObservable() }
                     .subscribe(onError = { it.printStackTrace() }, onNext = { println("Refresh $it") })
             }
 
 
     override fun notify(characteristic: BleCharacteristic): Observable<ByteArray> = connection
         .flatMap {
-            it.setupNotification(characteristic.id).switchMap { it }
-                .doOnNext {
+            it.setupNotification(characteristic.id)
+                .switchMap { it }
+                .asReaktiveObservable()
+                .doOnAfterNext {
                     Log.d(
                         "RxPlusAndroidBle",
                         "Notified ${characteristic.id}: ${it.contentToString()} (${it.toString(Charsets.UTF_8)})"
@@ -264,11 +276,11 @@ private class AndroidBleDevice private constructor(
         override fun asObservable(
             bluetoothGatt: BluetoothGatt,
             rxBleGattCallback: RxBleGattCallback,
-            scheduler: Scheduler
-        ): Observable<Boolean> {
+            scheduler: io.reactivex.rxjava3.core.Scheduler
+        ): io.reactivex.rxjava3.core.Observable<Boolean> {
 
-            return observableFromFunction { refreshDeviceCache(bluetoothGatt) }
-                .delay(500, Schedulers.computation())
+            return io.reactivex.rxjava3.core.Observable.fromCallable<Boolean> { refreshDeviceCache(bluetoothGatt) }
+                .delay(500, TimeUnit.MILLISECONDS, Schedulers.computation())
                 .subscribeOn(scheduler)
         }
 
@@ -287,5 +299,6 @@ private class AndroidBleDevice private constructor(
 
             return isRefreshed
         }
+
     }
 }

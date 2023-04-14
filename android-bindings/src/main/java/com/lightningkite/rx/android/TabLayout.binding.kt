@@ -3,6 +3,7 @@ package com.lightningkite.rx.android
 import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.Subject
 import com.google.android.material.tabs.TabLayout
 
@@ -24,7 +25,7 @@ fun <T : Any> TabLayout.bind(
     for (tab in tabs) {
         addTab(newTab().setText(tab.let(toString)))
     }
-    selected.observeOn(RequireMainThread).subscribe{ value ->
+    selected.observeOn(mainScheduler).subscribe{ value ->
         val index = tabs.indexOf(value)
         if (index != -1) {
             this.getTabAt(index)?.select()

@@ -8,6 +8,7 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.Subject
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.lightningkite.rx.*
@@ -29,7 +30,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     var lastSubmitted = listOf<T>()
     viewPager2.adapter = object : ObservableRVA<T>(viewPager2.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(RequireMainThread).subscribe{ it ->
+            observeOn(mainScheduler).subscribe{ it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -45,12 +46,12 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
             return s
         }
     }
-    observeOn(RequireMainThread).subscribe { list ->
+    observeOn(mainScheduler).subscribe { list ->
         lastSubmitted = list
         viewPager2.adapter!!.notifyDataSetChanged()
         viewPager2.currentItem
     }.addTo(viewPager2.removed)
-    showIndex.observeOn(RequireMainThread).subscribe { value ->
+    showIndex.observeOn(mainScheduler).subscribe { value ->
         viewPager2.currentItem = value
     }.addTo(viewPager2.removed)
     viewPager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {

@@ -3,13 +3,8 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
-import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.map
-import com.badoo.reaktive.observable.observableOf
-import com.lightningkite.rx.android.RecyclerViewScrollPosition
-import com.lightningkite.rx.android.bindScrollPosition
-import com.lightningkite.rx.android.into
-import com.lightningkite.rx.android.showIn
+import com.badoo.reaktive.observable.*
+import com.lightningkite.rx.android.*
 import com.lightningkite.rx.viewgenerators.*
 import com.lightningkite.rxexample.databinding.ComponentTestBinding
 import com.lightningkite.rxexample.databinding.SelectDemoBinding

@@ -11,6 +11,7 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.subject.publish.PublishSubject
 
@@ -71,7 +72,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
+            observeOn(mainScheduler).subscribe { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -99,7 +100,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, determineType, makeView) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
+            observeOn(mainScheduler).subscribe { it ->
                 val new = it.toList()
                 lastPublished = new
                 this.notifyDataSetChanged()
@@ -125,7 +126,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
+            observeOn(mainScheduler).subscribe { it ->
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new
@@ -160,7 +161,7 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, determineType, makeView) {
         init {
-            observeOn(AndroidSchedulers.mainThread()).subscribe { it ->
+            observeOn(mainScheduler).subscribe { it ->
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new

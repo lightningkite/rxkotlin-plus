@@ -12,9 +12,9 @@ group = "com.lightningkite.rx"
 
 val reaktiveVersion: String by project
 dependencies {
+    api("com.badoo.reaktive:reaktive:$reaktiveVersion")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:4.8.0")
-    api("com.badoo.reaktive:reaktive:$reaktiveVersion")
 }
 
 standardPublishing {
