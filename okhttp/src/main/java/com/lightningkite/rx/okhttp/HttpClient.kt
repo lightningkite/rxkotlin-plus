@@ -334,7 +334,7 @@ object HttpClient {
     ): Observable<WebSocketInterface> {
 
         return observableUsing<WebSocketInterface, WebSocketInterface>(
-            {
+            resourceSupplier = {
                 val out = ConnectedWebSocket(url)
                 out.underlyingSocket = client.newWebSocket(
                     Request.Builder()
@@ -345,9 +345,8 @@ object HttpClient {
                 )
                 out
             },
-            { it.write.onComplete() },
-            false,
-            { it.ownConnection },
+            sourceSupplier = { it.ownConnection },
+            resourceCleanup = { it.write.onComplete() },
         )
             .let { threadCorrectly(it) }
     }

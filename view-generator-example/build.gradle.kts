@@ -30,24 +30,24 @@ android {
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-    maven("https://jitpack.io")
-    mavenLocal()
-}
 
 dependencies {
-    api(project(":view-generator"))
-    api(project(":okhttp"))
-    api(project(":okhttp-resources"))
-    api(project(":dsl"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
+
+    implementation(project(":view-generator"))
+    implementation(project(":okhttp"))
+    implementation(project(":okhttp-resources"))
+    implementation(project(":dsl"))
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("com.android.support.test.espresso:espresso-core:3.0.2")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
 

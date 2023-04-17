@@ -1,7 +1,9 @@
 package com.lightningkite.rx.okhttp
 
+import com.badoo.reaktive.disposable.Disposable
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.ObservableCallbacks
+import com.badoo.reaktive.observable.ObservableObserver
 import com.badoo.reaktive.subject.publish.PublishSubject
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -17,12 +19,9 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterf
         println("Web socket to $url attempted")
     }
     internal var underlyingSocket: WebSocket? = null
-    private val _read =
-        PublishSubject<WebSocketFrame>()
+    private val _read = PublishSubject<WebSocketFrame>()
     private val _ownConnection = PublishSubject<WebSocketInterface>()
-
     override val ownConnection: Observable<WebSocketInterface> get() = _ownConnection.let { HttpClient.threadCorrectly(it) }
-
     override val read: Observable<WebSocketFrame> get() = _read.let { HttpClient.threadCorrectly(it) }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -61,9 +60,12 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterf
         println("Web socket to $url closed code $code")
     }
 
-    override val write: ObservableCallbacks<WebSocketFrame> = object : ObservableCallbacks<WebSocketFrame> {
+    override val write: ObservableObserver<WebSocketFrame> = object : ObservableObserver<WebSocketFrame> {
         override fun onComplete() {
             underlyingSocket?.close(1000, null)
+        }
+
+        override fun onSubscribe(disposable: Disposable) {
         }
 
         override fun onNext(frame: WebSocketFrame) {
@@ -78,5 +80,6 @@ class ConnectedWebSocket(val url: String) : WebSocketListener(), WebSocketInterf
         override fun onError(error: Throwable) {
             underlyingSocket?.close(1011, error.message)
         }
+
     }
 }

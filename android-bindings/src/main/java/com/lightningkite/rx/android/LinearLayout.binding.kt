@@ -10,9 +10,10 @@ import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
 import com.badoo.reaktive.scheduler.mainScheduler
+import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.subject.publish.PublishSubject
 
-private class LinearLayoutBoundSubview<T>(val view: View, val property: PublishSubject<T>)
+private class LinearLayoutBoundSubview<T>(val view: View, val property: BehaviorSubject<T>)
 
 /**
  * Will display the contents of this in the LinearLayout using the makeView provided for each item.
@@ -38,7 +39,7 @@ fun <SOURCE: Observable<List<T>>, T> SOURCE.showIn(
         } else if (existingViews.size < value.size) {
             //add views
             for (iter in 1..(-excessViews)) {
-                val prop = PublishSubject<T>()
+                val prop = InternalBehaviorSubject<T>()
                 val v = makeView(prop)
                 if(v.layoutParams == null) {
                     v.layoutParams = if(linearLayout.orientation == LinearLayout.VERTICAL)

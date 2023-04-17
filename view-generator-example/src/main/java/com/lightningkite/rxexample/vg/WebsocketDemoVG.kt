@@ -10,15 +10,14 @@ package com.lightningkite.rxexample.vg
 
 import android.view.View
 import android.widget.TextView
+import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.*
 import com.badoo.reaktive.subject.Subject
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
-import com.lightningkite.rx.android.bind
-import com.lightningkite.rx.android.into
-import com.lightningkite.rx.android.removed
-import com.lightningkite.rx.android.showIn
+import com.lightningkite.rx.android.*
 import com.lightningkite.rx.okhttp.HttpClient
 import com.lightningkite.rx.okhttp.WebSocketFrame
+import com.lightningkite.rx.okhttp.WebSocketInterface
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
 import com.lightningkite.rx.viewgenerators.layoutInflater
@@ -40,26 +39,34 @@ class WebsocketDemoVG : ViewGenerator {
 
         //--- Set Up xml.items
         val itemsList = ArrayList<WebSocketFrame>()
-        socket.switchMap { it -> it.read }.map { it ->
-            println("Adding item")
-            itemsList.add(it)
-            while (itemsList.size > 20) {
-                itemsList.removeAt(0)
-            }
-            return@map itemsList
-        }.startWithValue(itemsList).retry().showIn(xml.items) { observable ->
-            //--- Make Subview For xml.items (overwritten on flow generation)
-            val cellXml = ComponentTextBinding.inflate(dependency.layoutInflater)
-            val cellView = cellXml.root
 
-            //--- Set Up cellXml.label
-            observable.map { it.text ?: "<Binary>" }.into(cellXml.label, TextView::setText)
-            //--- End Make Subview For xml.items (overwritten on flow generation)
-            cellView
-        }
+        // There is currently a Reaktive bug with refCount that this second subscribe works around. Leave here until that bug is fixed.
+        socket.subscribe{}.addTo(view.removed)
+        socket
+            .switchMap { it -> it.read }
+            .map { it ->
+                println("Adding item")
+                itemsList.add(it)
+                while (itemsList.size > 20) {
+                    itemsList.removeAt(0)
+                }
+                return@map itemsList
+            }
+            .startWithValue(itemsList)
+            .retry()
+            .showIn(xml.items) { observable ->
+                //--- Make Subview For xml.items (overwritten on flow generation)
+                val cellXml = ComponentTextBinding.inflate(dependency.layoutInflater)
+                val cellView = cellXml.root
+
+                //--- Set Up cellXml.label
+                observable.map { it.text ?: "<Binary>" }.into(cellXml.label, TextView::setText)
+                //--- End Make Subview For xml.items (overwritten on flow generation)
+                cellView
+            }
 
         //--- Set Up xml.input
-        text.bind<Subject<String>>(xml.input)
+        text.bind(xml.input)
 
         //--- Set Up xml.submit
         xml.submit.setOnClickListener {

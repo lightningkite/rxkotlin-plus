@@ -4,13 +4,17 @@ import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClient.ConnectionState
 import com.android.billingclient.api.Purchase.PurchaseState
+import com.badoo.reaktive.maybe.Maybe
+import com.badoo.reaktive.maybe.maybeOf
+import com.badoo.reaktive.maybe.maybeOfEmpty
+import com.badoo.reaktive.maybe.maybeOfError
+import com.badoo.reaktive.observable.firstOrError
+import com.badoo.reaktive.observable.mapNotNull
+import com.badoo.reaktive.single.*
+import com.badoo.reaktive.subject.publish.PublishSubject
 import com.lightningkite.rx.android.staticApplicationContext
-import com.lightningkite.rx.mapNotNull
 import com.lightningkite.rx.playbilling.GoogleIab.toException
 import com.lightningkite.rx.viewgenerators.ActivityAccess
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.PublishSubject
 
 object GoogleIab {
     val virtualPurchases: ArrayList<Purchase> = arrayListOf()
@@ -27,21 +31,21 @@ object GoogleIab {
             }
         """.trimIndent(), ""))
     }
-    private val onPurchaseUpdate: PublishSubject<Pair<BillingResult, List<Purchase>?>> = PublishSubject.create()
+    private val onPurchaseUpdate: PublishSubject<Pair<BillingResult, List<Purchase>?>> = PublishSubject()
     private val c = BillingClient.newBuilder(staticApplicationContext).enablePendingPurchases().setListener { billingResult, purchases ->
         onPurchaseUpdate.onNext(billingResult to purchases)
     }.build()
     private var currentConnectionAttempt: Single<BillingClient>? = null
     private fun BillingResult.toException(): Exception = Exception("Error code ${responseCode}: $debugMessage")
     fun client(): Single<BillingClient> {
-        if (c.connectionState == ConnectionState.CONNECTED) return Single.just(c)
+        if (c.connectionState == ConnectionState.CONNECTED) return singleOf(c)
         else {
             currentConnectionAttempt?.let { return it }
-            val att = Single.create<BillingClient> { em ->
+            val att = single <BillingClient> { em ->
                 c.startConnection(object : BillingClientStateListener {
                     override fun onBillingServiceDisconnected() {
                         currentConnectionAttempt = null
-                        em.tryOnError(Exception("Billing disconnected"))
+                        em.onError(Exception("Billing disconnected"))
                     }
 
                     override fun onBillingSetupFinished(r: BillingResult) {
@@ -49,7 +53,7 @@ object GoogleIab {
                         when (r.responseCode) {
                             BillingResponseCode.OK -> em.onSuccess(c)
                             else -> {
-                                em.tryOnError(r.toException())
+                                em.onError(r.toException())
                             }
                         }
                     }
@@ -63,7 +67,7 @@ object GoogleIab {
         type: String = BillingClient.ProductType.SUBS,
     ): Single<List<Purchase>> {
         return client().flatMap {
-            Single.create { em ->
+            single { em ->
                 it.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(type).build()) { a, b ->
                     when (a.responseCode) {
                         BillingResponseCode.OK -> em.onSuccess(b)
@@ -76,7 +80,7 @@ object GoogleIab {
 
     fun queryProductDetails(request: List<QueryProductDetailsParams.Product>): Single<List<ProductDetails>> =
         client().flatMap {
-            Single.create { em ->
+            single { em ->
                 it.queryProductDetailsAsync(
                     QueryProductDetailsParams.newBuilder()
                         .setProductList(request)
@@ -138,20 +142,23 @@ object GoogleIab {
         val r = c.launchBillingFlow(dependency.activity, params)
 
         return when (r.responseCode) {
-            BillingResponseCode.OK -> onPurchaseUpdate.mapNotNull {
+            BillingResponseCode.OK -> onPurchaseUpdate
+                .mapNotNull {
                 it.second?.find { it.products.toSet() == products }?.let { p ->
                     it.first to p
                 }
-            }.firstOrError().flatMapMaybe {
+            }
+                .firstOrError()
+                .flatMapMaybe {
                 when (it.first.responseCode) {
-                    BillingResponseCode.OK -> Maybe.just(it.second)
-                    BillingResponseCode.USER_CANCELED -> Maybe.empty()
-                    else -> Maybe.error(it.first.toException())
+                    BillingResponseCode.OK -> maybeOf(it.second)
+                    BillingResponseCode.USER_CANCELED -> maybeOfEmpty()
+                    else -> maybeOfError(it.first.toException())
                 }
             }
 
             else -> {
-                return Maybe.error(r.toException())
+                return maybeOfError(r.toException())
             }
         }
     }

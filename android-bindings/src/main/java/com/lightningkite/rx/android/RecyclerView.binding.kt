@@ -11,13 +11,14 @@ import com.badoo.reaktive.disposable.addTo
 import com.badoo.reaktive.observable.Observable
 import com.badoo.reaktive.observable.observeOn
 import com.badoo.reaktive.observable.subscribe
+import com.badoo.reaktive.scheduler.createMainScheduler
 import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.subject.publish.PublishSubject
 
 
-private fun RecyclerView.defaultLayoutManager(){
-    if(layoutManager == null) {
+private fun RecyclerView.defaultLayoutManager() {
+    if (layoutManager == null) {
         layoutManager = object : LinearLayoutManager(context) {
             override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
                 return super.generateDefaultLayoutParams().apply {
@@ -28,11 +29,11 @@ private fun RecyclerView.defaultLayoutManager(){
     }
 }
 
-internal open class ObservableRVA<T: Any>(
+internal open class ObservableRVA<T : Any>(
     val removeCondition: CompositeDisposable,
-    val determineType: (T)->Int,
+    val determineType: (T) -> Int,
     val makeView: (Int, Observable<T>) -> View
-): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var lastPublished: List<T> = listOf()
 
     override fun getItemViewType(position: Int): Int {
@@ -40,7 +41,7 @@ internal open class ObservableRVA<T: Any>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val event = PublishSubject<T>()
+        val event = InternalBehaviorSubject<T>()
         val subview = makeView(viewType, event)
         subview.setRemovedCondition(removeCondition)
         subview.tag = event
@@ -65,18 +66,21 @@ internal open class ObservableRVA<T: Any>(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView) { obs -> ... return view }
  */
-fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE : Observable<List<T>>, T : Any> SOURCE.showIn(
     recyclerView: RecyclerView,
     makeView: (Observable<T>) -> View
 ): SOURCE {
     recyclerView.defaultLayoutManager()
     recyclerView.adapter = object : ObservableRVA<T>(recyclerView.removed, { 0 }, { _, obs -> makeView(obs) }) {
         init {
-            observeOn(mainScheduler).subscribe { it ->
-                val new = it.toList()
-                lastPublished = new
-                this.notifyDataSetChanged()
-            }.addTo(recyclerView.removed)
+            this@showIn
+                .observeOn(createMainScheduler())
+                .subscribe { it ->
+                    val new = it.toList()
+                    lastPublished = new
+                    this.notifyDataSetChanged()
+                }
+                .addTo(recyclerView.removed)
         }
     }
     return this
@@ -92,9 +96,9 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView, {item -> if(item < 5) 0 else 1 } ) { type, obs -> ... return view }
  */
-fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE : Observable<List<T>>, T : Any> SOURCE.showIn(
     recyclerView: RecyclerView,
-    determineType: (T)->Int,
+    determineType: (T) -> Int,
     makeView: (Int, Observable<T>) -> View
 ): SOURCE {
     recyclerView.defaultLayoutManager()
@@ -118,9 +122,9 @@ fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView) { obs -> ... return view }
  */
-fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
+fun <SOURCE : Observable<List<T>>, T : Any, ID : Any> SOURCE.showIn(
     recyclerView: RecyclerView,
-    getId: (T)->ID,
+    getId: (T) -> ID,
     makeView: (Observable<T>) -> View
 ): SOURCE {
     recyclerView.defaultLayoutManager()
@@ -130,11 +134,14 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new
-                DiffUtil.calculateDiff(object: DiffUtil.Callback() {
+                DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                     override fun getOldListSize(): Int = old.size
                     override fun getNewListSize(): Int = new.size
-                    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = old[oldItemPosition].let(getId) == new[newItemPosition].let(getId)
-                    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = old[oldItemPosition] == new[newItemPosition]
+                    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                        old[oldItemPosition].let(getId) == new[newItemPosition].let(getId)
+
+                    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                        old[oldItemPosition] == new[newItemPosition]
                 }).dispatchUpdatesTo(this)
             }.addTo(recyclerView.removed)
         }
@@ -152,10 +159,10 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
  * val data = ValueSubject<List<Int>>(listOf(1,2,3,4,5,6,7,8,9,0))
  * data.showIn(recyclerView, {item -> if(item < 5) 0 else 1 } ) { type, obs -> ... return view }
  */
-fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
+fun <SOURCE : Observable<List<T>>, T : Any, ID : Any> SOURCE.showIn(
     recyclerView: RecyclerView,
-    getId: (T)->ID,
-    determineType: (T)->Int,
+    getId: (T) -> ID,
+    determineType: (T) -> Int,
     makeView: (Int, Observable<T>) -> View
 ): SOURCE {
     recyclerView.defaultLayoutManager()
@@ -165,11 +172,14 @@ fun <SOURCE: Observable<out List<T>>, T: Any, ID: Any> SOURCE.showIn(
                 val old = lastPublished
                 val new = it.toList()
                 lastPublished = new
-                DiffUtil.calculateDiff(object: DiffUtil.Callback() {
+                DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                     override fun getOldListSize(): Int = old.size
                     override fun getNewListSize(): Int = new.size
-                    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = old[oldItemPosition].let(getId) == new[newItemPosition].let(getId)
-                    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = old[oldItemPosition] == new[newItemPosition]
+                    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                        old[oldItemPosition].let(getId) == new[newItemPosition].let(getId)
+
+                    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                        old[oldItemPosition] == new[newItemPosition]
                 }).dispatchUpdatesTo(this)
             }.addTo(recyclerView.removed)
         }

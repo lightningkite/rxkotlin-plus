@@ -5,14 +5,15 @@ import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
+import com.badoo.reaktive.disposable.CompositeDisposable
 import com.badoo.reaktive.disposable.Disposable
-import com.badoo.reaktive.observable.Observable
-import com.badoo.reaktive.observable.ObservableCallbacks
-import com.badoo.reaktive.observable.ObservableObserver
-import com.badoo.reaktive.observable.map
+import com.badoo.reaktive.disposable.addTo
+import com.badoo.reaktive.observable.*
+import com.badoo.reaktive.scheduler.mainScheduler
 import com.badoo.reaktive.subject.Subject
 import com.badoo.reaktive.subject.behavior.BehaviorSubject
 import com.badoo.reaktive.subject.publish.PublishSubject
+import com.lightningkite.rx.bind
 import com.lightningkite.rx.withWrite
 
 
@@ -70,6 +71,28 @@ private class TextViewTextChangesObservable(
  * val name = ValueSubject("Jason")
  * name.bind(editTextView)
  */
-fun <SOURCE : Subject<String>> SOURCE.bind(editText: EditText): SOURCE =
-    bindView(editText, editText.textChanges().map { it.toString() }.withWrite { editText.setText(it) })
+fun <SOURCE : Subject<String>> SOURCE.bind(editText: EditText): SOURCE {
 
+    var suppress = false
+    CompositeDisposable().apply {
+        add(this@bind.subscribe { value ->
+            if (!suppress) {
+                suppress = true
+                editText.setText(value)
+                suppress = false
+            }
+        })
+        add(editText
+            .textChanges()
+            .map { it.toString() }
+            .subscribe { value ->
+                if (!suppress) {
+                    suppress = true
+                    onNext(value)
+                    suppress = false
+                }
+            })
+    }
+        .addTo(editText.removed)
+    return this
+}

@@ -22,7 +22,7 @@ import com.lightningkite.rx.*
  * val showing = ValueSubject(0)
  * data.showIn(viewPagerView, showing) { obs -> ... return view }
  */
-fun <SOURCE: Observable<out List<T>>, T: Any> SOURCE.showIn(
+fun <SOURCE: Observable<List<T>>, T: Any> SOURCE.showIn(
     viewPager2: ViewPager2,
     showIndex: Subject<Int> = BehaviorSubject(0),
     makeView: (Observable<T>)->View
