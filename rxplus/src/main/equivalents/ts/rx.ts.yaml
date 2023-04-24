@@ -296,9 +296,10 @@
   type: call
   arguments: []
   template:
-    pattern: ~this~.pipe(distinctUntilChanged())
+    pattern: ~this~.pipe(distinctUntilChanged(safeEq))
     imports:
       distinctUntilChanged: rxjs/operators
+      safeEq: '@lightningkite/khrysalis-runtime'
 
 - id: io.reactivex.rxjava3.core.Observable.distinctUntilChanged
   type: call
