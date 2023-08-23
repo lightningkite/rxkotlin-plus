@@ -12,7 +12,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.util.*
 
 /**
  * An activity that implements [ActivityAccess].
@@ -33,10 +32,12 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
     override val onDestroy = PublishSubject.create<Unit>()
     override val onActivityResult = PublishSubject.create<Triple<Int, Int, Intent?>>()
     override val onNewIntent = PublishSubject.create<Intent>()
+//    override val isNetworkAvailable: ValueSubject<Boolean> get() = ValueSubject(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.savedInstanceState = savedInstanceState
+
     }
     override fun onResume() {
         super.onResume()
@@ -59,6 +60,7 @@ abstract class AccessibleActivity : AppCompatActivity(), ActivityAccess {
         onDestroy.onNext(Unit)
         super.onDestroy()
     }
+
     override fun onNewIntent(intent: Intent) {
         onNewIntent.onNext(intent)
         super.onNewIntent(intent)

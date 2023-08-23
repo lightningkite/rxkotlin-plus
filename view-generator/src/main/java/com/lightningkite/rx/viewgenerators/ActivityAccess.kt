@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.Subject
@@ -88,4 +89,6 @@ interface ActivityAccess {
      */
     fun requestPermission(permission: String): Single<Boolean>
 
+    val isNetworkAvailable: ValueSubject<Boolean>
+    var monitorNetwork: Boolean
 }

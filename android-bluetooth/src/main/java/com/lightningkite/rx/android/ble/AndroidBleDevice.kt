@@ -53,9 +53,12 @@ internal class AndroidBleDevice private constructor(
                 it.requestMtu(mtu).map { _ -> it }
             } ?: Single.just(it)
         }
-        .replay(1).refCount(5_000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+        .replay(1)
+        .refCount(5_000, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
 
-    override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges().map {
+    override fun isConnected(): Observable<Boolean> = device.observeConnectionStateChanges()
+        .startWithItem(device.connectionState)
+        .map {
         when (it) {
             RxBleConnection.RxBleConnectionState.CONNECTED -> true
             else -> false

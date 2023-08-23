@@ -195,7 +195,9 @@ class SlideFixed() : Visibility() {
             override fun getGoneX(sceneRoot: ViewGroup, view: View): Float {
                 val isRtl = (ViewCompat.getLayoutDirection(sceneRoot)
                         == ViewCompat.LAYOUT_DIRECTION_RTL)
+
                 val x: Float
+
                 x = if (isRtl) {
                     view.translationX - sceneRoot.width
                 } else {

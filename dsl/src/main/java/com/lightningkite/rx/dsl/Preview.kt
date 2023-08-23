@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.lightningkite.rx.ValueSubject
 import com.lightningkite.rx.viewgenerators.ActivityAccess
 import com.lightningkite.rx.viewgenerators.ViewGenerator
 import io.reactivex.rxjava3.core.Observable
@@ -36,6 +37,7 @@ private class PreviewActivityAccess(override val context: Context): ActivityAcce
     override val onDestroy: Observable<Unit> = Observable.never()
     override val onActivityResult: Observable<Triple<Int, Int, Intent?>> = Observable.never()
     override val onNewIntent: Observable<Intent> = Observable.never()
+    override val isNetworkAvailable: ValueSubject<Boolean> get() = ValueSubject(false)
 
     override fun performBackPress() {}
     override fun prepareOnResult(presetCode: Int, onResult: (Int, Intent?) -> Unit): Int = 0
