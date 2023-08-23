@@ -37,7 +37,6 @@ private class PreviewActivityAccess(override val context: Context): ActivityAcce
     override val onDestroy: Observable<Unit> = Observable.never()
     override val onActivityResult: Observable<Triple<Int, Int, Intent?>> = Observable.never()
     override val onNewIntent: Observable<Intent> = Observable.never()
-    override val isNetworkAvailable: ValueSubject<Boolean> get() = ValueSubject(false)
 
     override fun performBackPress() {}
     override fun prepareOnResult(presetCode: Int, onResult: (Int, Intent?) -> Unit): Int = 0

@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.lightningkite.rx.ValueSubject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.Subject
 
 /**
  * An interface for accessing activities in a decentralized way, where multiple listeners can listen
@@ -88,7 +86,4 @@ interface ActivityAccess {
      * Requests a permission, but with a callback response.
      */
     fun requestPermission(permission: String): Single<Boolean>
-
-    val isNetworkAvailable: ValueSubject<Boolean>
-    var monitorNetwork: Boolean
 }
