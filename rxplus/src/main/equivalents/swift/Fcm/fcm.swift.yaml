@@ -1,9 +1,8 @@
 ---
 
-# Observables
 - id: com.lightningkite.rx.viewgenerators.fcm.Notifications.configure
   type: call
   template:
-    pattern: Notifications.INSTANCE.configure(~0~)
+    pattern: ~this~.configure(~0~)
     imports:
       - RxSwiftPlus
