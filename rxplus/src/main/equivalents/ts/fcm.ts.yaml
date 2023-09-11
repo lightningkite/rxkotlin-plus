@@ -1,0 +1,6 @@
+---
+
+- id: com.lightningkite.rx.viewgenerators.fcm.Notifications.configure
+  type: call
+  template:
+    pattern: ~this~.configure(~0~)

@@ -1297,10 +1297,18 @@
       zip: rxjs
       map: rxjs/operators
 
+#- id: com.lightningkite.rx.zip
+#  type: call
+#  template:
+#    pattern: zip(...~this~)
+#    imports:
+#      zip: rxjs
+
 - id: com.lightningkite.rx.zip
+#  receiver: kotlin.collections.List
   type: call
   template:
-    pattern: zip(...~this~)
+    pattern: zip(~this~)
     imports:
       zip: rxjs
 
