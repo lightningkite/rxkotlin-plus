@@ -17,8 +17,7 @@ internal class AndroidBleDevice private constructor(
     val activityAccess: ActivityAccess,
     val device: RxBleDevice,
     val mtu: Int? = null,
-) :
-    BleDevice {
+) : BleDevice {
     override val id: String
         get() = device.macAddress
 
@@ -30,6 +29,10 @@ internal class AndroidBleDevice private constructor(
     }
 
     //get bluetooth permission
+    //TODO Need to separate out obtaining permission into a different location
+    //AndroidBleDevice should have one responsibility which is communication with the BLE Device
+    //System level permissions is a separate responsibility, this would also allow us to remove the dependency
+    //of activity access.
     private val rawConnection = activityAccess.requireBle.flatMapObservable {
         println("Attempting connection to ${device.name ?: device.macAddress}")
         //Check and see if bond is required
