@@ -329,7 +329,7 @@
 - id: io.reactivex.rxjava3.core.Observable.skip
   type: call
   template:
-    pattern: ~this~.pipe(skip(0))
+    pattern: ~this~.pipe(skip(~0~))
     imports:
       skip: rxjs/operators
 
@@ -1704,7 +1704,7 @@
 - id: io.reactivex.rxjava3.core.Flowable.skip
   type: call
   template:
-    pattern: ~this~.pipe(skip(0))
+    pattern: ~this~.pipe(skip(~0~))
     imports:
       skip: rxjs/operators
 
